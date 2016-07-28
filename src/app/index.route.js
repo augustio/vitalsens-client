@@ -6,6 +6,30 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
       templateUrl: 'app/main/main.html',
       controller: 'MainController',
       controllerAs: 'main'
+    })
+    .state('patient-list', {
+      url: '/patient-list',
+      templateUrl: 'app/patient/views/list-patients.html',
+      controller: 'PatientListController',
+      controllerAs: 'pList'
+    })
+    .state('record-list', {
+      url: '/record-list',
+      templateUrl: 'app/record/views/list-records.html',
+      controller: 'RecordListController',
+      controllerAs: 'rList'
+    })
+    .state('record-details', {
+      url: '/record-details',
+      templateUrl: 'app/record/views/view-record.html',
+      controller: 'RecordViewController',
+      controllerAs: 'rView'
+    })
+    .state('auth', {
+      url: '/auth',
+      templateUrl: 'app/auth/auth.html',
+      controller: 'AuthController',
+      controllerAs: 'auth'
     });
 
   $urlRouterProvider.otherwise('/');

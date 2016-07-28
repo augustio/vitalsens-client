@@ -4,12 +4,18 @@ import { config } from './index.config';
 import { routerConfig } from './index.route';
 import { runBlock } from './index.run';
 import { MainController } from './main/main.controller';
+import { AuthController } from './auth/auth.controller';
+import { CompareToDirective } from './directives/compareTo.directive';
+import { PatientListController } from './patient/controllers/patient-list.controller';
+import { RecordListController } from './record/controllers/record-list.controller';
+import { RecordViewController } from './record/controllers/record-view.controller';
 import { GithubContributorService } from '../app/components/githubContributor/githubContributor.service';
 import { WebDevTecService } from '../app/components/webDevTec/webDevTec.service';
 import { NavbarDirective } from '../app/components/navbar/navbar.directive';
 import { MalarkeyDirective } from '../app/components/malarkey/malarkey.directive';
 
-angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr'])
+angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer'])
+  .constant('API_URL', 'http://localhost:5000/')
   .constant('malarkey', malarkey)
   .constant('moment', moment)
   .config(config)
@@ -18,5 +24,10 @@ angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr'])
   .service('githubContributor', GithubContributorService)
   .service('webDevTec', WebDevTecService)
   .controller('MainController', MainController)
+  .controller('AuthController', AuthController)
+  .controller('PatientListController', PatientListController)
+  .controller('RecordListController', RecordListController)
+  .controller('RecordViewController', RecordViewController)
   .directive('acmeNavbar', NavbarDirective)
-  .directive('acmeMalarkey', MalarkeyDirective);
+  .directive('acmeMalarkey', MalarkeyDirective)
+  .directive('compareTo', CompareToDirective);

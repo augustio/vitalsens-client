@@ -1,0 +1,21 @@
+<div class="container">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Record Detail</div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="rd in rView.recordDetails">
+                    sequenceId: {{rd.sequenceId}}<br>
+                    timeStamp: {{rd.timeStamp}}<br>
+                    patientId: {{rd.patientId}}<br>
+                    duration:  {{rd.duration}}<br>
+                    type:      {{rd.type}}<br>
+                    chOne:{{rd.chOne}}<br>
+                    chTwo:{{rd.chTwo}}<br>
+                    chThree:{{rd.chThree}}
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>

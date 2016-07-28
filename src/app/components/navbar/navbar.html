@@ -3,12 +3,13 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
       <ul class="nav navbar-nav">
         <li class="navbar-header active"><a ng-href="#">Vitalsens</a></li>
-        <li><a ng-href="#">About</a></li>
-        <li><a ng-href="#">Contact</a></li>
+        <li><a ui-sref="record-list">Records</a></li>
+        <li><a ui-sref="record-details">Records Details</a></li>
+        <li><a ui-sref="patient-list">Patients</a></li>
       </ul>
 
-      <ul class="nav navbar-nav navbar-right acme-navbar-text">
-        <li>Application was created {{ vm.relativeDate }}.</li>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a ui-sref="auth">Login</a></li>
       </ul>
     </div>
   </div>
