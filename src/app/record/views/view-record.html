@@ -5,14 +5,35 @@
         <div class="panel-body">
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="rd in rView.recordDetails">
-                    sequenceId: {{rd.sequenceId}}<br>
-                    timeStamp: {{rd.timeStamp}}<br>
-                    patientId: {{rd.patientId}}<br>
-                    duration:  {{rd.duration}}<br>
-                    type:      {{rd.type}}<br>
-                    chOne:{{rd.chOne}}<br>
-                    chTwo:{{rd.chTwo}}<br>
-                    chThree:{{rd.chThree}}
+                    <p>
+                        sequenceId: {{rd.sequenceId}}<br>
+                        timeStamp: {{rd.timeStamp}}<br>
+                        patientId: {{rd.patientId}}<br>
+                        duration:  {{rd.duration}}<br>
+                        type:      {{rd.type}}
+                    </p>
+                    <p>rPeaks<br>
+                        locS: {{rd.rPeaks.locS}}<br>
+                        locT: {{rd.rPeaks.locS}}
+                    </p>
+                    <p>pvcEvents<br>
+                        locS: {{rd.pvcEvents.locS}}<br>
+                    </p>
+                    <p>rrIntervals<br>
+                        signal: {{rd.rrIntervals.signal}}<br>
+                    </p>
+                    <p>hrvFeatures<br>
+                        sdnn: {{rd.hrvFeatures.features.sdnn}}<br>
+                        SD1: {{rd.hrvFeatures.features.SD1}}<br>
+                        SD2: {{rd.hrvFeatures.features.SD2}}<br>
+                        LFHF: {{rd.hrvFeatures.features.LFHF}}<br>
+                        SPentr: {{rd.hrvFeatures.features.SPentr}}<br>
+                        SD1/SD2: {{rd.hrvFeatures.features.SD1/SD2}}<br>
+                        stdrr: {{rd.hrvFeatures.features.stdrr}}<br>
+                        DF: {{rd.hrvFeatures.features.DF}}<br>
+                        rmssd: {{rd.hrvFeatures.features.rmssd}}<br>
+                        mean: {{rd.hrvFeatures.features.mean}}
+                    </p>
                 </li>
             </ul>
         </div>
