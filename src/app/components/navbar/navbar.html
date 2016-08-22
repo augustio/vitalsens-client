@@ -1,15 +1,18 @@
-<nav class="navbar navbar-static-top navbar-inverse">
+<nav ng-controller="NavbarController as nav" class="navbar navbar-static-top navbar-inverse">
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
       <ul class="nav navbar-nav">
         <li class="navbar-header active"><a ng-href="#">Vitalsens</a></li>
-        <li><a ui-sref="record-list">Records</a></li>
-        <li><a ui-sref="record-details">Records Details</a></li>
-        <li><a ui-sref="patient-list">Patients</a></li>
+        <ul ng-show="nav.isAuthenticated()" class="nav navbar-nav">
+            <li><a ui-sref="record-list">Records</a></li>
+            <li><a ui-sref="record-details">Records Details</a></li>
+            <li><a ui-sref="patient-list">Patients</a></li>
+      </ul>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a ui-sref="auth">Login</a></li>
+          <li ng-hide="nav.isAuthenticated()"><a ui-sref="auth">Login</a></li>
+          <li ng-show="nav.isAuthenticated()"><a ng-click="nav.logout()" >Logout</a></li>
       </ul>
     </div>
   </div>

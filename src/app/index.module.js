@@ -5,6 +5,7 @@ import { routerConfig } from './index.route';
 import { runBlock } from './index.run';
 import { MainController } from './main/main.controller';
 import { AuthController } from './auth/auth.controller';
+import { NavbarController } from './components/navbar/navbar.controller';
 import { CompareToDirective } from './directives/compareTo.directive';
 import { PatientListController } from './patient/controllers/patient-list.controller';
 import { RecordListController } from './record/controllers/record-list.controller';
@@ -25,6 +26,7 @@ angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer'
   .service('webDevTec', WebDevTecService)
   .controller('MainController', MainController)
   .controller('AuthController', AuthController)
+  .controller('NavbarController', NavbarController)
   .controller('PatientListController', PatientListController)
   .controller('RecordListController', RecordListController)
   .controller('RecordViewController', RecordViewController)
