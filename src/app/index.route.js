@@ -25,9 +25,15 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
       controller: 'RecordViewController',
       controllerAs: 'rView'
     })
-    .state('auth', {
-      url: '/auth',
-      templateUrl: 'app/auth/auth.html',
+    .state('register', {
+      url: '/register',
+      templateUrl: 'app/auth/register.html',
+      controller: 'AuthController',
+      controllerAs: 'auth'
+    })
+    .state('login', {
+      url: '/login',
+      templateUrl: 'app/auth/login.html',
       controller: 'AuthController',
       controllerAs: 'auth'
     });
