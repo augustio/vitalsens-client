@@ -7,9 +7,10 @@ import { MainController } from './main/main.controller';
 import { AuthController } from './auth/auth.controller';
 import { NavbarController } from './components/navbar/navbar.controller';
 import { CompareToDirective } from './directives/compareTo.directive';
-import { PatientListController } from './patient/controllers/patient-list.controller';
-import { RecordListController } from './record/controllers/record-list.controller';
-import { RecordViewController } from './record/controllers/record-view.controller';
+import { PatientController } from './patient/controllers/patient.controller';
+import { PatientRecordController } from './patient/controllers/patient.record.controller';
+import { RecordController } from './record/controllers/record.controller';
+import { RecordDetailController } from './record/controllers/record.detail.controller';
 import { GithubContributorService } from '../app/components/githubContributor/githubContributor.service';
 import { WebDevTecService } from '../app/components/webDevTec/webDevTec.service';
 import { NavbarDirective } from '../app/components/navbar/navbar.directive';
@@ -27,9 +28,10 @@ angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer'
   .controller('MainController', MainController)
   .controller('AuthController', AuthController)
   .controller('NavbarController', NavbarController)
-  .controller('PatientListController', PatientListController)
-  .controller('RecordListController', RecordListController)
-  .controller('RecordViewController', RecordViewController)
+  .controller('PatientController', PatientController)
+  .controller('PatientRecordController', PatientRecordController)
+  .controller('RecordController', RecordController)
+  .controller('RecordDetailController', RecordDetailController)
   .directive('acmeNavbar', NavbarDirective)
   .directive('acmeMalarkey', MalarkeyDirective)
   .directive('compareTo', CompareToDirective);

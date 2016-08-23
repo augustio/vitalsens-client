@@ -1,34 +1,33 @@
 <div class="container">
-
-    <div class="panel panel-default">
-        <div class="panel-heading">Record Detail</div>
-        <div class="panel-body">
-            <ul class="list-group">
-                <li class="list-group-item" ng-repeat="rd in rView.recordDetails">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">Record Detail</div>
+            <div class="panel-body">
+                <ul class="list-group" ng-repeat="rd in rDetail.detail">
+                <li class="list-group-item">
                     <p>
-                        sequenceId: {{rd.sequenceId}}<br>
-                        timeStamp: {{rd.timeStamp}}<br>
-                        patientId: {{rd.patientId}}<br>
-                        duration:  {{rd.duration}}<br>
-                        type:      {{rd.type}}
+                        <strong>Patient Id:</strong> {{rd.patientId}}<br>
+                        <strong>Record time:</strong> {{rd.timeStamp}}<br>
+                        <strong>Record duration:</strong> {{rd.duration}} milliseconds<br>
+                        <strong>Record Type:</strong> {{rd.type}}
                     </p>
-                    <p>rPeaks<br>
+                    <p><strong>rPeaks</strong><br>
                         locS: {{rd.rPeaks.locS}}<br>
                         locT: {{rd.rPeaks.locS}}
                     </p>
-                    <p>pvcEvents<br>
+                    <p><strong>pvcEvents</strong><br>
                         locS: {{rd.pvcEvents.locS}}<br>
                     </p>
-                    <p>rrIntervals<br>
+                    <p><strong>rrIntervals</strong><br>
                         signal: {{rd.rrIntervals.signal}}<br>
                     </p>
-                    <p>hrvFeatures<br>
+                    <p><strong>hrvFeatures</strong><br>
                         sdnn: {{rd.hrvFeatures.features.sdnn}}<br>
                         SD1: {{rd.hrvFeatures.features.SD1}}<br>
                         SD2: {{rd.hrvFeatures.features.SD2}}<br>
                         LFHF: {{rd.hrvFeatures.features.LFHF}}<br>
                         SPentr: {{rd.hrvFeatures.features.SPentr}}<br>
-                        SD1/SD2: {{rd.hrvFeatures.features}}<br>
+                        SD1/SD2: {{rd.hrvFeatures.features.SD1/SD2}}<br>
                         stdrr: {{rd.hrvFeatures.features.stdrr}}<br>
                         DF: {{rd.hrvFeatures.features.DF}}<br>
                         rmssd: {{rd.hrvFeatures.features.rmssd}}<br>
@@ -38,5 +37,7 @@
             </ul>
         </div>
     </div>
+    </div>
+    
 
 </div>

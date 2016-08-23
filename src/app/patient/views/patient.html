@@ -1,0 +1,20 @@
+
+<div class="container">
+<div class="row">
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">Patients</div>
+            <ul class="list-group">
+                <li ng-repeat="p in patient.patients">
+                    <a ui-sref-active="active" ui-sref="patient.record({
+                                                        patientId: p.patientId
+                                                        })" class="list-group-item" >
+                        <strong>patient id:</strong> {{p.patientId}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div ui-view></div>
+</div>
+</div>

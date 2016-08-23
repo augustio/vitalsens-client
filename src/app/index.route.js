@@ -7,23 +7,37 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
       controller: 'MainController',
       controllerAs: 'main'
     })
-    .state('patient-list', {
-      url: '/patient-list',
-      templateUrl: 'app/patient/views/list-patients.html',
-      controller: 'PatientListController',
-      controllerAs: 'pList'
+    .state('patient', {
+      url: '/patient',
+      templateUrl: 'app/patient/views/patient.html',
+      controller: 'PatientController',
+      controllerAs: 'patient'
     })
-    .state('record-list', {
-      url: '/record-list',
-      templateUrl: 'app/record/views/list-records.html',
-      controller: 'RecordListController',
-      controllerAs: 'rList'
+    .state('patient.record', {
+      url: '/patient-record',
+      params:{
+          patientId: null
+      },
+      templateUrl: 'app/patient/views/patient.record.html',
+      controller: 'PatientRecordController',
+      controllerAs: 'pRecord'
     })
-    .state('record-details', {
-      url: '/record-details',
-      templateUrl: 'app/record/views/view-record.html',
-      controller: 'RecordViewController',
-      controllerAs: 'rView'
+    .state('record', {
+      url: '/record',
+      templateUrl: 'app/record/views/record.html',
+      controller: 'RecordController',
+      controllerAs: 'record'
+    })
+    .state('record-detail', {
+      url: '/record-detail',
+      params:{
+          timeStamp: null,
+          patientId: null,
+          type: null
+      },
+      templateUrl: 'app/record/views/record.detail.html',
+      controller: 'RecordDetailController',
+      controllerAs: 'rDetail'
     })
     .state('register', {
       url: '/register',

@@ -2,12 +2,11 @@
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
       <ul class="nav navbar-nav">
-        <li class="navbar-header active"><a ng-href="#">Vitalsens</a></li>
-        <ul ng-show="nav.isAuthenticated()" class="nav navbar-nav">
-            <li><a ui-sref="record-list">Records</a></li>
-            <li><a ui-sref="record-details">Records Details</a></li>
-            <li><a ui-sref="patient-list">Patients</a></li>
-      </ul>
+          <li class="navbar-header active"><a ng-href="#">Vitalsens</a></li>
+          <ul ng-show="nav.isAuthenticated()" class="nav navbar-nav">
+              <li><a ui-sref="record">Records</a></li>
+              <li><a ui-sref="patient">Patients</a></li>
+          </ul>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">

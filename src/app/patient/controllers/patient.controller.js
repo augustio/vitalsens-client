@@ -1,4 +1,4 @@
-export class PatientListController {
+export class PatientController {
   constructor ($http) {
       'ngInject';
 

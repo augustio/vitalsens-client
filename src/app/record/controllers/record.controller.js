@@ -1,4 +1,4 @@
-export class RecordListController {
+export class RecordController {
   constructor ($http) {
       'ngInject';
 
