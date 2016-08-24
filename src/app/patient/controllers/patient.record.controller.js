@@ -11,7 +11,7 @@ export class PatientRecordController {
     getPatientRecords(){
         var vm = this;
         var pId = this.$state.params.patientId;
-        this.$http.get('http://'+this.API_URL+'api/records?patientId='+pId).then(function(result){
+        this.$http.get(this.API_URL+'api/records?patientId='+pId).then(function(result){
             vm.records = result.data;
         });
     }

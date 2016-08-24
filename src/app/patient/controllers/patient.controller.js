@@ -9,7 +9,7 @@ export class PatientController {
 
     getPatients(){
         var vm = this;
-        this.$http.get('http://'+this.API_URL+'api/patients').then(function(result){
+        this.$http.get(this.API_URL+'api/patients').then(function(result){
             vm.patients = result.data;
         });
     }
