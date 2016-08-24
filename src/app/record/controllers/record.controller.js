@@ -9,7 +9,7 @@ export class RecordController {
 
     getRecords(){
         var vm = this;
-        this.$http.get('http://'+this.API_URL+':5000/api/records').then(function(result){
+        this.$http.get('http://'+this.API_URL+'api/records').then(function(result){
             vm.records = result.data;
         });
     }

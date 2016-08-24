@@ -13,7 +13,7 @@ export class RecordDetailController {
         var tStamp = this.$state.params.timeStamp;
         var pId = this.$state.params.patientId;
         var tp = this.$state.params.type;
-        this.$http.get('http://'+this.API_URL+':5000/api/record-details?timeStamp='+tStamp+'&patientId='+pId+'&type='+tp).then(function(result){
+        this.$http.get('http://'+this.API_URL+'api/record-details?timeStamp='+tStamp+'&patientId='+pId+'&type='+tp).then(function(result){
             vm.detail = result.data;
         });
     }
