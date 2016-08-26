@@ -13,4 +13,33 @@ export class RecordController {
             vm.records = result.data;
         });
     }
+    
+    timeConverter(ts, format){
+        var a = new Date(ts);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+        var year = a.getFullYear();
+        var month_num = a.getMonth()+1;
+        var month = months[(month_num -1)];
+        var date = a.getDate();
+        var day = days[a.getDay()];
+        var hour = a.getHours();
+        var min = a.getMinutes();
+        var sec = a.getSeconds();
+        a.getD
+        
+        switch (format){
+            case 1:
+                return day + ", " + date + "." + month_num + "." + year + " " + hour + ":" + min + ":" + sec;
+                break;
+            case 2:
+                return date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
+                break;
+            case 3:
+                return hour + ":" + min + ":" + sec;
+                break;
+            default:
+                return "";
+        }
+    }
 }

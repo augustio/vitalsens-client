@@ -1,0 +1,36 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {{rComponents.patientId}}
+                        </div>
+                        <div class="col-md-4 text-center">
+                            {{rComponents.timeConverter(rComponents.timeStamp, 1)}}
+                        </div>
+                        <div class="col-md-4 text-center">
+                            {{rComponents.type}}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-2 text-center">
+                            <ul class="list-group">
+                                <li ng-repeat="rc in rComponents.components">
+                                    <a class="list-group-item" ui-sref-active="active" ui-sref="record-components.detail({_id: rc._id})" >
+                                            {{rComponents.timeConverter(rc.start, 3)}}<br>
+                                            {{(rc.end - rc.start) * 0.001}} seconds
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div ui-view></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

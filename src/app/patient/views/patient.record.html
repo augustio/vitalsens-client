@@ -3,14 +3,13 @@
     <div class="col-md-4">
         <ul class="list-group">
             <li ng-repeat="r in pRecord.records">
-                <a class="list-group-item" ui-sref-active="active" ui-sref="record-detail({
+                <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({
                                                 timeStamp: r.timeStamp,
                                                 patientId: r.patientId,
                                                 type: r.type
                                                 })">
-                    <strong>timeStamp:</strong> {{r.timeStamp}}<br>
-                    <strong>patientId:</strong> {{r.patientId}}<br>
-                    <strong>type:</strong>      {{r.type}}
+                    {{pRecord.timeConverter(r.timeStamp, 2)}}<br>
+                    {{r.type}}
                 </a>
             </li>
         </ul>

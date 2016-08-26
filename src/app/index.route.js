@@ -28,15 +28,24 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
       controller: 'RecordController',
       controllerAs: 'record'
     })
-    .state('record-detail', {
-      url: '/record-detail',
+    .state('record-components', {
+      url: '/record-components',
       params:{
           timeStamp: null,
           patientId: null,
           type: null
       },
-      templateUrl: 'app/record/views/record.detail.html',
-      controller: 'RecordDetailController',
+      templateUrl: 'app/record/views/record.components.html',
+      controller: 'RecordComponentsController',
+      controllerAs: 'rComponents'
+    })
+    .state('record-components.detail', {
+      url: '/record-components.detail',
+      params:{
+          _id: null
+      },
+      templateUrl: 'app/record/views/record.components.detail.html',
+      controller: 'RecordComponentsDetailController',
       controllerAs: 'rDetail'
     })
     .state('register', {

@@ -1,23 +1,26 @@
-export class PatientRecordController {
+export class RecordComponentsController {
   constructor ($http, $state, API_URL) {
       'ngInject';
 
       this.$http = $http;
       this.$state = $state;
       this.API_URL = API_URL;
-      this.getPatientRecords();
+      this.getRecordComponents();
   }
 
-    getPatientRecords(){
+    getRecordComponents(){
         var vm = this;
-        var pId = this.$state.params.patientId;
-        this.$http.get(this.API_URL+'api/records?patientId='+pId).then(function(result){
-            vm.records = result.data;
+        vm.timeStamp = this.$state.params.timeStamp;
+        vm.patientId = this.$state.params.patientId;
+        vm.type = this.$state.params.type;
+        this.$http.get(this.API_URL+'api/record-details?timeStamp='+vm.timeStamp+'&patientId='+vm.patientId+'&type='+vm.type)
+            .then(function(result){
+            vm.components = result.data;
         });
     }
     
-    timeConverter(timestamp, format){
-        var a = new Date(timestamp);
+    timeConverter(ts, format){
+        var a = new Date(ts);
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
         var year = a.getFullYear();

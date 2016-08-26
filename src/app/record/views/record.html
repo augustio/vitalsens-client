@@ -5,14 +5,14 @@
             <div class="panel-heading text-center">Records</div>
             <ul class="list-group">
                 <li ng-repeat="r in record.records">
-                    <a class="list-group-item" ui-sref-active="active" ui-sref="record-detail({
+                    <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({
                                                         timeStamp: r.timeStamp,
                                                         patientId: r.patientId,
                                                         type: r.type
                                                         })">
-                        <strong>timeStamp:</strong> {{r.timeStamp}}<br>
-                        <strong>patientId:</strong> {{r.patientId}}<br>
-                        <strong>type:</strong>      {{r.type}}
+                        {{record.timeConverter(r.timeStamp, 2)}}<br>
+                        <strong>Patient Id:</strong> {{r.patientId}}<br>
+                        <strong>Type:</strong>      {{r.type}}
                     </a>
                 </li>
             </ul>
