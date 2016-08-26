@@ -16,8 +16,8 @@ export class PatientRecordController {
         });
     }
     
-    timeConverter(timestamp, format){
-        var a = new Date(timestamp);
+    timeConverter(ts, format){
+        var a = new Date(ts);
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
         var year = a.getFullYear();
@@ -29,18 +29,20 @@ export class PatientRecordController {
         var min = a.getMinutes();
         var sec = a.getSeconds();
         
+        var res = "";
+        
         switch (format){
             case 1:
-                return day + ", " + date + "." + month_num + "." + year + " " + hour + ":" + min + ":" + sec;
+                res =  day + ", " + date + "." + month_num + "." + year + " " + hour + ":" + min + ":" + sec;
                 break;
             case 2:
-                return date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
+                res =  date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
                 break;
             case 3:
-                return hour + ":" + min + ":" + sec;
+                res =  hour + ":" + min + ":" + sec;
                 break;
-            default:
-                return "";
         }
+        
+        return res;
     }
 }

@@ -27,18 +27,20 @@ export class RecordController {
         var min = a.getMinutes();
         var sec = a.getSeconds();
         
+        var res = "";
+        
         switch (format){
             case 1:
-                return day + ", " + date + "." + month_num + "." + year + " " + hour + ":" + min + ":" + sec;
+                res =  day + ", " + date + "." + month_num + "." + year + " " + hour + ":" + min + ":" + sec;
                 break;
             case 2:
-                return date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
+                res =  date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
                 break;
             case 3:
-                return hour + ":" + min + ":" + sec;
+                res =  hour + ":" + min + ":" + sec;
                 break;
-            default:
-                return "";
         }
+        
+        return res;
     }
 }
