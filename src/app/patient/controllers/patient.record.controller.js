@@ -28,7 +28,6 @@ export class PatientRecordController {
         var hour = a.getHours();
         var min = a.getMinutes();
         var sec = a.getSeconds();
-        a.getD
         
         switch (format){
             case 1:
