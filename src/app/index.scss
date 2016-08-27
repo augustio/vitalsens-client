@@ -32,9 +32,17 @@ $icon-font-path: "../../bootstrap-sass/assets/fonts/bootstrap/";
     margin: 0 auto;
 }
 
-
 ul {
     list-style-type: none;
+}
+
+.h-scroll {
+    height: 90vh; /* %-height of the viewport */
+    overflow-y: scroll;
+}
+
+.list-item-horizontal{
+    float: left;
 }
 /**
  *  Do not remove the comments below. It's the markers used by gulp-inject to inject
