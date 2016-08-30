@@ -1,29 +1,91 @@
 <div class="container">
-    <div class="row">
-        <div class="col-md-9">
+    <div class="col-md-9">
+        <div class="row">
             <div class="panel panel-default">
-                <p><strong>rPeaks</strong><br>
-                    locS: {{rDetail.detail.rPeaks.locS}}<br>
-                    locT: {{rDetail.detail.rPeaks.locS}}
-                </p>
-                <p><strong>pvcEvents</strong><br>
-                    locS: {{rDetail.detail.pvcEvents.locS}}<br>
-                </p>
-                <p><strong>rrIntervals</strong><br>
-                    signal: {{rDetail.detail.rrIntervals.signal}}<br>
-                </p>
-                <p><strong>hrvFeatures</strong><br>
-                    sdnn: {{rDetail.detail.hrvFeatures.features.sdnn}}<br>
-                    SD1: {{rDetail.detail.hrvFeatures.features.SD1}}<br>
-                    SD2: {{rDetail.detail.hrvFeatures.features.SD2}}<br>
-                    LFHF: {{rDetail.detail.hrvFeatures.features.LFHF}}<br>
-                    SPentr: {{rDetail.detail.hrvFeatures.features.SPentr}}<br>
-                    SD1/SD2: {{rDetail.detail.hrvFeatures.features.SD1/SD2}}<br>
-                    stdrr: {{rDetail.detail.hrvFeatures.features.stdrr}}<br>
-                    DF: {{rDetail.detail.hrvFeatures.features.DF}}<br>
-                    rmssd: {{rDetail.detail.hrvFeatures.features.rmssd}}<br>
-                    mean: {{rDetail.detail.hrvFeatures.features.mean}}
-                </p>
+                <div class="panel-heading text-center">
+                    <strong>{{rDetail.detail.type}}</strong>
+                </div>
+                <div class="panel-body xy-scroll">
+                    <div class="row">
+                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
+                    </div>
+                    <div class="row">
+                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
+                    </div>
+                    <div class="row">
+                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree"></nvd3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <strong>TACHOGRAM (RR INTERVAL SIGNAL)</strong>
+                </div>
+                <div class="panel-body">
+                    <nvd3 options="rDetail.rrOptions" data="rDetail.rr"></nvd3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table">
+                            <thead>
+                                <tr class="info">
+                                    <th>Feature</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="success">
+                                    <td>Mean</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.mean)}}</td>
+                                </tr>
+                                <tr class="info">
+                                    <td>Standard Deviation</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.sdnn)}}</td>
+                                </tr>
+                                <tr class="success">
+                                    <td>Ratio of Powers (LF/HF)</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.LFHF)}}</td>
+                                </tr>
+                                <tr class="info">
+                                    <td>Spectral Entropy</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.SPentr)}}</td>
+                                </tr>
+                                <tr class="success">
+                                    <td>Dominant Frequency</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.DF)}}</td>
+                                </tr>
+                                <tr class="info">
+                                    <td>Standard Deviation (Nearest RR Intervals)</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.stdrr)}}</td>
+                                </tr>
+                                <tr class="success">
+                                    <td>Root Mean Square(Standard Deviation)</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.rmssd)}}</td>
+                                </tr>
+                                <tr class="info">
+                                    <td>SD1</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.SD1)}}</td>
+                                </tr>
+                                <tr class="success">
+                                    <td>SD2</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.SD2)}}</td>
+                                </tr>
+                                <tr class="info">
+                                    <td>SD1/SD2</td>
+                                    <td>{{rDetail.formatValue(rDetail.detail.hrvFeatures.features.SD1_SD2)}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>    
             </div>
         </div>
     </div>
