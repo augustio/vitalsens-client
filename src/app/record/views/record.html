@@ -1,22 +1,26 @@
 <div class="container">
-<div class="row">
-    <div class="col-md-3">
-        <div class="panel panel-info">
-            <div class="panel-heading text-center">Records</div>
-            <ul class="list-group">
-                <li ng-repeat="r in record.records">
-                    <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info h-scroll">
+                <div class="panel-heading text-center">
+                    Records
+                </div>
+                <ul>
+                    <li class="list-item-horizontal" ng-repeat="r in record.records">
+                        <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({
                                                         timeStamp: r.timeStamp,
                                                         patientId: r.patientId,
                                                         type: r.type
                                                         })">
-                        {{record.timeConverter(r.timeStamp, 2)}}<br>
-                        <strong>Patient Id:</strong> {{r.patientId}}<br>
-                        <strong>Type:</strong>      {{r.type}}
-                    </a>
-                </li>
-            </ul>
+                            <button type="button" class="btn btn-info btn-md">
+                                {{record.timeConverter(r.timeStamp, 2)}}<br>
+                                {{r.patientId}}<br>
+                                {{r.type}}
+                            </button>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
 </div>
