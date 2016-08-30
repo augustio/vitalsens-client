@@ -1,10 +1,14 @@
 export class RecordComponentsDetailController {
-  constructor ($http, $state, API_URL) {
+  constructor ($http, $state, API_URL, $interval) {
       'ngInject';
 
       this.$http = $http;
       this.$state = $state;
       this.API_URL = API_URL;
+      this.$interval = $interval;
+      this.showOne = true;
+      this.showTwo = true;
+      this.showThree = true;
       this.getDetail();
       
       this.rrOptions = {
@@ -55,20 +59,51 @@ export class RecordComponentsDetailController {
             }
             vm.chOne = [{key:"chOne", values:[]}];
             vm.one = vm.detail.chOne;
-            for(var k=0; k<vm.one.length; k++){
-                vm.chOne[0].values.push({x: k*4, y: parseInt(vm.one[k])});
-            }
             vm.chTwo = [{key:"chTwo", values:[]}];
             vm.two = vm.detail.chTwo;
-            for(var l=0; l<vm.two.length; l++){
-                vm.chTwo[0].values.push({x: l*4, y: parseInt(vm.two[l])});
-            }
             vm.chThree = [{key:"chThree", values:[]}];
             vm.three = vm.detail.chThree;
-            for(var m=0; m<vm.three.length; m++){
-                vm.chThree[0].values.push({x: m*4, y: parseInt(vm.three[m])});
-            }
+            
+            vm.displayChannel(3);
+            vm.displayChannel(2);
+            vm.displayChannel(1);
+            
         });
+    }
+    
+    displayChannel(channel){
+        switch(channel){
+            case 1:
+                this.showOne = true;
+                this.showTwo = false;
+                this.showThree = false;
+                if(this.chOne[0].values.length < this.one.length ){
+                    for(var k=0; k<this.one.length; k++){
+                        this.chOne[0].values.push({x: k*4, y: parseInt(this.one[k])});
+                    }
+                }
+                break;
+            case 2:
+                this.showOne = false;
+                this.showTwo = true;
+                this.showThree = false;
+                if(this.chTwo[0].values.length < this.two.length ){
+                    for(var l=0; l<this.two.length; l++){
+                        this.chTwo[0].values.push({x: l*4, y: parseInt(this.two[l])});
+                    }
+                }
+                break;
+            case 3:
+                this.showThree = true;
+                this.showOne = false;
+                this.showTwo = false;
+                if(this.chThree[0].values.length < this.three.length ){
+                    for(var m=0; m<this.three.length; m++){
+                        this.chThree[0].values.push({x: m*4, y: parseInt(this.three[m])});
+                    }
+                }
+                break;
+        }
     }
     
     formatValue(value){
@@ -77,5 +112,4 @@ export class RecordComponentsDetailController {
         } 
         return value;
     }
-    
 }
