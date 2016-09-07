@@ -18,7 +18,7 @@ import { NavbarDirective } from '../app/components/navbar/navbar.directive';
 import { MalarkeyDirective } from '../app/components/malarkey/malarkey.directive';
 
 angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer', 'nvd3'])
-  .constant('API_URL', 'http://52.210.133.58:5000/')
+  .constant('API_URL', 'http://52.51.162.106:5000/')
   .constant('malarkey', malarkey)
   .constant('moment', moment)
   .config(config)
