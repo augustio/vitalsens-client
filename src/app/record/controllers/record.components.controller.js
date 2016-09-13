@@ -48,4 +48,8 @@ export class RecordComponentsController {
         
         return res;
     }
+    
+    getDuration(end, start){ 
+        return Math.round((end - start) * 0.001);
+    }
 }
