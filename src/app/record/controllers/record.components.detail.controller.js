@@ -30,7 +30,7 @@ export class RecordComponentsDetailController {
       
       this.ecgOptions = {
           chart: {
-              type: 'lineChart',
+              type: 'lineWithFocusChart',
               height: 200,
               useInteractiveGuideline: true,
               color: ['#0000ff'],
@@ -39,10 +39,12 @@ export class RecordComponentsDetailController {
               xAxis: {
                   axisLabel: 'Time(ms)'
               },
+              x2Axis: {},
               yAxis: {
                   axisLabel: 'Voltage(mv)'
               },
-              transitionDuration: 500
+              y2Axis: {},
+              duration: 500
           }
       }
   }
