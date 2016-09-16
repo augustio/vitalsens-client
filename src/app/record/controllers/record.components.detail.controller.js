@@ -53,10 +53,13 @@ export class RecordComponentsDetailController {
         this.$http.get(this.API_URL+'api/record-details?_id='+vm._id)
             .then(function(result){
             vm.detail = result.data;
-            vm.rr = [{key:"HRV", values:[]}];
-            for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
-                vm.rr[0].values.push({x: vm.detail.rPeaks.locT[j], y: vm.detail.rrIntervals.signal[i]});
+            if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
+                vm.rr = [{key:"HRV", values:[]}];
+                for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
+                    vm.rr[0].values.push({x: vm.detail.rPeaks.locT[j], y: vm.detail.rrIntervals.signal[i]});
+                }
             }
+            
             vm.chOne = [{key:"chOne", values:[]}];
             vm.one = vm.detail.chOne;
             vm.chTwo = [{key:"chTwo", values:[]}];
