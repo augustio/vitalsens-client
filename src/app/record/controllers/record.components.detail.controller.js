@@ -55,7 +55,7 @@ export class RecordComponentsDetailController {
             if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
                 vm.rr = [{key:"HRV", values:[]}];
                 for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
-                    vm.rr[0].values.push({x: vm.detail.rPeaks.locT[j], y: vm.detail.rrIntervals.signal[i]});
+                    vm.rr[0].values.push({x: i, y: vm.detail.rrIntervals.signal[i]});
                 }
             }
             
