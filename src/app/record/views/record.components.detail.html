@@ -5,22 +5,30 @@
                 <div class="panel-heading text-center">
                     <strong>{{rDetail.detail.type}}</strong>
                 </div>
-                <div>
-                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(1)">
+                <!--div>
+                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(1, 1)">
                         Channel One
                     </buttton>
-                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(2)">
+                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(2, 1)">
                         Channel Two
                     </buttton>
-                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(3)">
+                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(3, 1)">
                         Channel Three
                     </buttton>
-                </div>
+                </div-->
                 <div class="panel-body xy-scroll">
                     <div class="row">
-                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne" ng-show="rDetail.showOne"></nvd3>
-                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo" ng-show="rDetail.showTwo"></nvd3>
-                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree" ng-show="rDetail.showThree"></nvd3>
+                        <div ng-click="rDetail.nextDisplay(1)" class="btn btn-info">
+                            A
+                        </div>
+                        <div ng-click="rDetail.nextDisplay(2)" class="btn btn-info">
+                            B
+                        </div>
+                    </div>
+                    <div class="row">
+                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
+                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
+                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree"></nvd3>
                     </div>
                 </div>
             </div>

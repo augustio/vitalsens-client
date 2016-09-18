@@ -16,6 +16,10 @@ export class RecordComponentsController {
         this.$http.get(this.API_URL+'api/record-details?timeStamp='+vm.timeStamp+'&patientId='+vm.patientId+'&type='+vm.type)
             .then(function(result){
             vm.components = result.data;
+            
+            var index = vm.components.length - 1;
+            var comp = {_id: vm.components[index]._id};
+            vm.$state.go('record-components.detail', comp);
         });
     }
     
