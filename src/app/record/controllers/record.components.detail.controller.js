@@ -12,6 +12,7 @@ export class RecordComponentsDetailController {
           chart: {
               type: 'lineChart',
               height: 200,
+              useVoronoi: false,
               useInteractiveGuideline: true,
               color: ['#ff0000'],
               x: function(d){ return d.x; },
@@ -29,6 +30,7 @@ export class RecordComponentsDetailController {
           chart: {
               type: 'lineWithFocusChart',
               height: 200,
+              useVoronoi: false,
               useInteractiveGuideline: true,
               color: ['#0000ff'],
               x: function(d){ return d.x; },
@@ -36,7 +38,9 @@ export class RecordComponentsDetailController {
               xAxis: {
                   axisLabel: 'Time(ms)'
               },
-              x2Axis: {},
+              x2Axis: {
+                  showMaxMin: false
+              },
               yAxis: {
                   axisLabel: 'Voltage(mv)'
               },
