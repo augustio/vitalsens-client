@@ -13,8 +13,10 @@ export class PatientController {
         this.$http.get(this.API_URL+'api/patients').then(function(result){
             vm.patients = result.data;
             
-            var patient = {patientId: vm.patients[0].patientId};
-            vm.$state.go('patient.record', patient);
+            if(vm.patients.length > 0){
+                var patient = {patientId: vm.patients[0].patientId};
+                vm.$state.go('patient.record', patient);
+            }
         });
     }
 }
