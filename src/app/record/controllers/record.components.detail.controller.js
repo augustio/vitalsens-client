@@ -1,11 +1,16 @@
 export class RecordComponentsDetailController {
-  constructor ($http, $state, API_URL, $interval) {
+  constructor ($http, $state, API_URL, $interval, $scope) {
       'ngInject';
 
       this.$http = $http;
       this.$state = $state;
       this.API_URL = API_URL;
       this.$interval = $interval;
+      this.$scope = $scope;
+      
+      this.display = 0;
+      this.lastIndex = 0;
+      
       this.getDetail();
       
       this.rrOptions = {
@@ -63,52 +68,39 @@ export class RecordComponentsDetailController {
                 }
             }
             
-            vm.chOneA = [{key:"chOneA", values:[]}];
-            vm.chOneB = [{key:"chOneB", values:[]}];
+            vm.chOne = [{key:"chOne", values:[]}];
             vm.one = vm.detail.chOne;
-            vm.chTwoA = [{key:"chTwoA", values:[]}];
-            vm.chTwoB = [{key:"chTwoB", values:[]}];
+            vm.chTwo = [{key:"chTwo", values:[]}];
             vm.two = vm.detail.chTwo;
-            vm.chThreeA = [{key:"chThreeA", values:[]}];
-            vm.chThreeB = [{key:"chThreeB", values:[]}];
+            vm.chThree = [{key:"chThree", values:[]}];
             vm.three = vm.detail.chThree;
             
             vm.populateData();
-            vm.nextDisplay(1);
             
         });
     }
     
     populateData(){
-        var len = this.one.length;
-        if(this.two.length <= len)
-            len = this.two.length;
-        if(this.three.length <= len)
-            len = this.three.length;
+        if(this.lastIndex == this.one.length)
+            this.lastIndex = 0;
+        var rem = this.one.length - this.lastIndex;
+        var len = (rem < 1000)? rem : 1000;
+        len += this.lastIndex;
+        var x1 = [], x2 = [], x3 = [];
         
-        for(var k=0; k<len; k++){
-            if(k < len/2){
-                this.chOneA[0].values.push({x: k*4, y: parseInt(this.one[k])});
-                this.chTwoA[0].values.push({x: k*4, y: parseInt(this.two[k])});
-                this.chThreeA[0].values.push({x: k*4, y: parseInt(this.three[k])});
-            }else{
-                this.chOneB[0].values.push({x: k*4, y: parseInt(this.one[k])});
-                this.chTwoB[0].values.push({x: k*4, y: parseInt(this.two[k])});
-                this.chThreeB[0].values.push({x: k*4, y: parseInt(this.three[k])});
-            } 
+        for(var i=this.lastIndex; i<len; i++){
+            x1.push({x: i*4, y: parseInt(this.one[i])});
+            x2.push({x: i*4, y: parseInt(this.two[i])});
+            x3.push({x: i*4, y: parseInt(this.three[i])});
+            this.lastIndex++;
         }
+        this.chOne[0].values = x1;
+        this.chTwo[0].values = x2;
+        this.chThree[0].values = x3;
     }
     
-    nextDisplay(next){
-        if(next == 1){
-            this.chOne = this.chOneA;
-            this.chTwo = this.chTwoA;
-            this.chThree = this.chThreeA;
-        }else{
-            this.chOne = this.chOneB;
-            this.chTwo = this.chTwoB;
-            this.chThree = this.chThreeB;
-        }
+    setDisplay(option){
+        this.display = option;
     }
     
     formatValue(value){

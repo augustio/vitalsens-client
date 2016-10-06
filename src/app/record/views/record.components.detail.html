@@ -1,30 +1,13 @@
 <div class="container">
-    <div class="col-md-9">
-        <div class="row">
+    <div class="col-md-10">
+        <div class="row" ng-show="rDetail.display == 0">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
-                    <strong>{{rDetail.detail.type}}</strong>
+                    <span class="text-center"><strong>{{rDetail.detail.type}}</strong></span>
                 </div>
-                <!--div>
-                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(1, 1)">
-                        Channel One
-                    </buttton>
-                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(2, 1)">
-                        Channel Two
-                    </buttton>
-                    <button type="button" class="btn btn-info btn-md" ng-click="rDetail.displayChannel(3, 1)">
-                        Channel Three
-                    </buttton>
-                </div-->
                 <div class="panel-body xy-scroll">
-                    <div class="row">
-                        <div ng-click="rDetail.nextDisplay(1)" class="btn btn-info">
-                            A
-                        </div>
-                        <div ng-click="rDetail.nextDisplay(2)" class="btn btn-info">
-                            B
-                        </div>
-                    </div>
+                    <button type="button" class="pull-right btn btn-info" ng-click="rDetail.populateData()">Next</button>
+                    <button type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
                     <div class="row">
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
@@ -33,17 +16,17 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row" ng-if="rDetail.display == 1">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
-                    <strong>TACHOGRAM (RR INTERVAL SIGNAL)</strong>
+                    <strong></strong>
+                    <span class="text-center"><strong>TACHOGRAM (RR INTERVAL SIGNAL)</strong></span>
                 </div>
                 <div class="panel-body">
+                    <button type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(0)">Show Raw</button>
                     <nvd3 options="rDetail.rrOptions" data="rDetail.rr"></nvd3>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="col-md-6">
@@ -102,7 +85,7 @@
                     </div>
                 </div>    
             </div>
-        </div>
+    </div>
     </div>
 </div>
 
