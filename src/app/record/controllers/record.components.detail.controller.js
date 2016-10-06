@@ -103,6 +103,11 @@ export class RecordComponentsDetailController {
         this.display = option;
     }
     
+    isECG(){
+        var str = vm.detail.type;
+        return (str.toUpperCase().indexOf("ECG") >= 0);
+    }
+    
     formatValue(value){
         if(typeof value == "number"){
             return value.toFixed(3);

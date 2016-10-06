@@ -7,7 +7,7 @@
                 </div>
                 <div class="panel-body xy-scroll">
                     <button type="button" class="pull-right btn btn-info" ng-click="rDetail.populateData()">Next</button>
-                    <button type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
+                    <button ng-show="rDetail.isECG()" type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
                     <div class="row">
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
