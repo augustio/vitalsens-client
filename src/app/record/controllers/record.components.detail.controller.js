@@ -23,10 +23,11 @@ export class RecordComponentsDetailController {
               x: function(d){ return d.x; },
               y: function(d){ return d.y; },
               xAxis: {
-                  axisLabel: 'Time'
+                  axisLabel: 'RR-Intervals (i = 0, 1,...n)',
+                  axisLableDistance: 5
               },
               yAxis: {
-                  axisLabel: 'RR-Intervals',
+                  axisLabel: 'Time (Seconds)',
                   tickFormat: function(d){
                       return d3.format('.02f')(d);
                   },
@@ -72,7 +73,7 @@ export class RecordComponentsDetailController {
             .then(function(result){
             vm.detail = result.data;
             if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
-                vm.rr = [{key:"HRV", values:[]}];
+                vm.rr = [{key:"RR Series", values:[]}];
                 for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
                     vm.rr[0].values.push({x: i, y: vm.detail.rrIntervals.signal[i]});
                 }
