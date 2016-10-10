@@ -17,8 +17,28 @@ export class RecordComponentsDetailController {
           chart: {
               type: 'lineChart',
               height: 200,
-              useVoronoi: false,
-              useInteractiveGuideline: true,
+              useInteractiveGuideline: false,
+              tooltip: {
+                  contentGenerator: function (e) {
+                      var series = e.series[0];
+                      if (isPVC(e.value)){
+                          var rows = 
+                              "<tr>" + "<td class='key'>" + 'Location: ' + "</td>" +
+                              "<td class='x-value'>" + e.value + "</td>" + 
+                              "</tr>";
+                          var header = 
+                              "<thead>" + 
+                              "<tr>" + 
+                              "<td class='legend-color-guide'><div style='background-color: " + series.color + ";'></div></td>" + 
+                              "<td class='key'><strong>" + 'PVC' + "</strong></td>" + 
+                              "</tr>" + 
+                              "</thead>";
+                          return "<table>" + header + "<tbody>" + rows + "</tbody>" + "</table>";
+                      }else{
+                          series.tooltip = useVoronoi = false;
+                      }
+                  }
+              },
               color: ['#ff0000'],
               x: function(d){ return d.x; },
               y: function(d){ return d.y; },
@@ -33,11 +53,47 @@ export class RecordComponentsDetailController {
                   },
                   axisLableDistance: 5
               },
+              forceY: [0, 1.5],
               callback: highlightPoints,
               dispatch: {
                   renderEnd: function(){
                       highlightPoints(chart )
                   }
+              }
+          }
+      };
+      
+      this.poincareOptions = {
+          chart: {
+              type: 'scatterChart',
+              height: 350,
+              useVoronoi: false,
+              duration: 250,
+              pointSize: 3,
+              pointDomain: [0, 5],
+              xAxis: {
+                  axisLabel: 'RR (i)',
+                  tickFormat: function(d){
+                      return d3.format('.02f')(d);
+                  }
+              },
+              forceX: [-2, 0, 2],
+              forceY: [-2, 0, 2],
+              yAxis: {
+                  axisLabel: 'RR (i+1)',
+                  tickFormat: function(d){
+                      return d3.format('.02f')(d);
+                  }
+              },
+              zoom: {
+                  //NOTE: All attributes below are optional
+                  enabled: true,
+                  scaleExtent: [1, 10],
+                  useFixedDomain: false,
+                  useNiceScale: false,
+                  horizontalOff: false,
+                  verticalOff: false,
+                  unzoomEventType: 'dblclick.zoom'
               }
           }
       };
@@ -74,8 +130,16 @@ export class RecordComponentsDetailController {
             vm.detail = result.data;
             if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
                 vm.rr = [{key:"RR Series", values:[]}];
+                vm.poincare = [{key:"Poincare", values:[]}];
+                var xValue;
                 for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
-                    vm.rr[0].values.push({x: i, y: vm.detail.rrIntervals.signal[i]});
+                    var sample = vm.detail.rrIntervals.signal[i];
+                    if((i % 2) == 0){
+                        xValue = sample;
+                    }else{
+                        vm.poincare[0].values.push({x: xValue, y: sample});
+                    }
+                    vm.rr[0].values.push({x: i, y: sample});
                 }
             }
             

@@ -60,6 +60,18 @@ ul {
     fill-opacity: .5;
     stroke-opacity: .5;
 }
+
+.pvc{
+    fill: #00ff00;
+}
+
+.normal-points{
+    fill: #0000ff;
+}
+
+.pvc-points{
+    fill: #ff0000;
+}
 /**
  *  Do not remove the comments below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically

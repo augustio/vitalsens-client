@@ -24,7 +24,6 @@
         <div class="row" ng-if="rDetail.display == 1">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
-                    <strong></strong>
                     <span class="text-center"><strong>PVC EVENT</strong></span>
                 </div>
                 <div class="panel-body">
@@ -32,7 +31,6 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
-                    <strong></strong>
                     <span class="text-center"><strong>TACHOGRAM SIGNAL (RR INTERVAL SERIES)</strong></span>
                 </div>
                 <div class="panel-body">
@@ -42,6 +40,14 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading text-center">
+                                <span class="text-center"><strong>POINCARE PLOT</strong></span>
+                            </div>
+                            <div class="panel-body">
+                                <nvd3 options="rDetail.poincareOptions" data="rDetail.poincare" class="with-3d-shadow with-transitions poincarePlot"></nvd3>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <table class="table">
