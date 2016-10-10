@@ -49,6 +49,17 @@ ul {
 .list-item-horizontal{
     float: left;
 }
+
+.dashed {
+    stroke-dasharray: 5,5;
+}
+
+.nvd3.nv-scatter .nv-groups .nv-point.hover,
+.nvd3 .nv-groups circle.pvc.hover {
+    stroke-width: 20px;
+    fill-opacity: .5;
+    stroke-opacity: .5;
+}
 /**
  *  Do not remove the comments below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically

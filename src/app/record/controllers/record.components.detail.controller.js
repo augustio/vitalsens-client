@@ -26,7 +26,17 @@ export class RecordComponentsDetailController {
                   axisLabel: 'Time'
               },
               yAxis: {
-                  axisLabel: 'RR-Intervals'
+                  axisLabel: 'RR-Intervals',
+                  tickFormat: function(d){
+                      return d3.format('.02f')(d);
+                  },
+                  axisLableDistance: 5
+              },
+              callback: highlightPoints,
+              dispatch: {
+                  renderEnd: function(){
+                      highlightPoints(chart )
+                  }
               }
           }
       };
@@ -68,6 +78,8 @@ export class RecordComponentsDetailController {
                 }
             }
             
+            pvcLocs = vm.detail.pvcEvents.locs;
+
             vm.chOne = [{key:"chOne", values:[]}];
             vm.one = vm.detail.chOne;
             vm.chTwo = [{key:"chTwo", values:[]}];
@@ -80,6 +92,10 @@ export class RecordComponentsDetailController {
         });
     }
     
+    onReady(scope, el){
+        chart = scope.chart;
+    }
+
     populateData(){
         if(this.lastIndex == this.one.length)
             this.lastIndex = 0;
@@ -114,4 +130,36 @@ export class RecordComponentsDetailController {
         } 
         return value;
     }
+}
+
+var chart;
+var pvcLocs;
+
+function isPVC(value){
+    for(var i = 0; i < pvcLocs.length; i++){
+        if(value == pvcLocs[i])
+            return true;
+    }
+    return false;
+}
+
+function highlightPoints(ch){
+    var data = d3.select('.rrInt')
+                .select('svg').datum();
+
+    d3.select('.nv-groups')
+        .selectAll("circle.pvc")
+        .remove();
+
+    var points = d3.select('.nv-groups')
+        .selectAll("circle.pvc")
+        .data(data[0].values.filter(function(d) {
+            return isPVC(d.x);
+        }));
+
+    points.enter().append("circle")
+        .attr("class", "pvc")
+        .attr("cx", function(d) { return ch.xAxis.scale()(d.x); })
+        .attr("cy", function(d) { return ch.yAxis.scale()(d.y); })
+        .attr("r", 5);
 }

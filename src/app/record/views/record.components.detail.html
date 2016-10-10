@@ -1,13 +1,15 @@
 <div class="container">
     <div class="col-md-10">
-        <div class="row" ng-show="rDetail.display == 0">
+        <div class="row" ng-if="rDetail.display == 0">
+            <button ng-show="rDetail.isECG()" type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
+        </div>
+        <div class="row" ng-if="rDetail.display == 0">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
                     <span class="text-center"><strong>{{rDetail.detail.type}}</strong></span>
                 </div>
                 <div class="panel-body xy-scroll">
                     <button type="button" class="pull-right btn btn-info" ng-click="rDetail.populateData()">Next</button>
-                    <button ng-show="rDetail.isECG()" type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
                     <div class="row">
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
@@ -17,14 +19,24 @@
             </div>
         </div>
         <div class="row" ng-if="rDetail.display == 1">
+            <button type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(0)">Show Raw</button>
+        </div>
+        <div class="row" ng-if="rDetail.display == 1">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <strong></strong>
+                    <span class="text-center"><strong>PVC EVENT</strong></span>
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
                     <strong></strong>
                     <span class="text-center"><strong>TACHOGRAM (RR INTERVAL SIGNAL)</strong></span>
                 </div>
                 <div class="panel-body">
-                    <button type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(0)">Show Raw</button>
-                    <nvd3 options="rDetail.rrOptions" data="rDetail.rr"></nvd3>
+                    <nvd3 options="rDetail.rrOptions" data="rDetail.rr" on-ready="rDetail.onReady" class="with-3d-shadow with-transitions rrInt"></nvd3>
                 </div>
             </div>
             <div class="panel panel-default">
