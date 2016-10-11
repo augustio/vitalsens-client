@@ -4,14 +4,17 @@
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-md-4 text-center">
+                        <div class="col-md-3 text-center">
                             {{rComponents.patientId}}
                         </div>
-                        <div class="col-md-4 text-center">
+                        <div class="col-md-3 text-center">
                             {{rComponents.timeConverter(rComponents.timeStamp, 1)}}
                         </div>
-                        <div class="col-md-4 text-center">
+                        <div class="col-md-3 text-center">
                             {{rComponents.type}}
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="pull-right btn btn-info" ng-click="rComponents.downloadData()">Download</button>
                         </div>
                     </div>
                 </div>
