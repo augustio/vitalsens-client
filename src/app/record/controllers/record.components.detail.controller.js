@@ -7,6 +7,7 @@ export class RecordComponentsDetailController {
       this.API_URL = API_URL;
       this.$interval = $interval;
       this.$scope = $scope;
+      this.NAN = -4096;
       
       this.display = 0;
       this.lastIndex = 0;
@@ -170,9 +171,15 @@ export class RecordComponentsDetailController {
         var x1 = [], x2 = [], x3 = [];
         
         for(var i=this.lastIndex; i<len; i++){
-            x1.push({x: i*4, y: parseInt(this.one[i])});
-            x2.push({x: i*4, y: parseInt(this.two[i])});
-            x3.push({x: i*4, y: parseInt(this.three[i])});
+            if(this.one[i] == this.NAN){
+                x1.push({x: i*4, y: parseInt(NaN)});
+                x2.push({x: i*4, y: parseInt(NaN)});
+                x3.push({x: i*4, y: parseInt(NaN)});
+            }else{
+                x1.push({x: i*4, y: parseInt(this.one[i])});
+                x2.push({x: i*4, y: parseInt(this.two[i])});
+                x3.push({x: i*4, y: parseInt(this.three[i])});
+            }
             this.lastIndex++;
         }
         this.chOne[0].values = x1;
