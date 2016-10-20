@@ -1,9 +1,14 @@
 export class RecordController {
-  constructor ($http, API_URL) {
+  constructor ($http, $auth, API_URL) {
       'ngInject';
 
       this.$http = $http;
+      this.$auth = $auth;
       this.API_URL = API_URL;
+      
+      if(!this.$auth.isAuthenticated())
+          this.$state.go('home');
+      
       this.getRecords();
   }
 

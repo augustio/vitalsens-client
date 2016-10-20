@@ -1,10 +1,15 @@
 export class PatientRecordController {
-  constructor ($http, $state, API_URL) {
+  constructor ($http, $state, $auth, API_URL) {
       'ngInject';
 
       this.$http = $http;
       this.$state = $state;
+      this.$auth = $auth;
       this.API_URL = API_URL;
+      
+      if(!this.$auth.isAuthenticated())
+          this.$state.go('home');
+      
       this.getPatientRecords();
   }
 

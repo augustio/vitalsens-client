@@ -1,4 +1,4 @@
-<div class="container">
+<div ng-if="rDetail.$auth.isAuthenticated()" class="container">
     <div class="col-md-10">
         <div class="row" ng-if="rDetail.display == 0">
             <button ng-show="rDetail.isECG()" type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(1)">Show Analysis</button>

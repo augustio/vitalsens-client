@@ -1,5 +1,5 @@
 export class RecordComponentsDetailController {
-  constructor ($http, $state, API_URL, $interval, $scope) {
+  constructor ($http, $state, API_URL, $interval, $scope, $auth) {
       'ngInject';
 
       this.$http = $http;
@@ -7,10 +7,14 @@ export class RecordComponentsDetailController {
       this.API_URL = API_URL;
       this.$interval = $interval;
       this.$scope = $scope;
+      this.$auth = $auth;
       this.NAN = -4096;
       
       this.display = 0;
       this.lastIndex = 0;
+      
+      if(!this.$auth.isAuthenticated())
+          this.$state.go('home');
       
       this.getDetail();
       
