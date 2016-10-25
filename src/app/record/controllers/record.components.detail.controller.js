@@ -130,36 +130,38 @@ export class RecordComponentsDetailController {
     getDetail(){
         var vm = this;
         vm._id = this.$state.params._id;
-        this.$http.get(this.API_URL+'api/record-details?_id='+vm._id)
-            .then(function(result){
-            vm.detail = result.data;
-            if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
-                vm.rr = [{key:"RR Series", values:[]}];
-                vm.poincare = [{key:"Poincare", values:[]}];
-                var xValue;
-                for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
-                    var sample = vm.detail.rrIntervals.signal[i];
-                    if((i % 2) == 0){
-                        xValue = sample;
-                    }else{
-                        vm.poincare[0].values.push({x: xValue, y: sample});
+        if(vm._id != null){
+            this.$http.get(this.API_URL+'api/record-details?_id='+vm._id)
+                .then(function(result){
+                vm.detail = result.data;
+                if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
+                    vm.rr = [{key:"RR Series", values:[]}];
+                    vm.poincare = [{key:"Poincare", values:[]}];
+                    var xValue;
+                    for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
+                        var sample = vm.detail.rrIntervals.signal[i];
+                        if((i % 2) == 0){
+                            xValue = sample;
+                        }else{
+                            vm.poincare[0].values.push({x: xValue, y: sample});
+                        }
+                        vm.rr[0].values.push({x: i, y: sample});
                     }
-                    vm.rr[0].values.push({x: i, y: sample});
                 }
-            }
             
-            pvcLocs = vm.detail.pvcEvents.locs;
+                pvcLocs = vm.detail.pvcEvents.locs;
 
-            vm.chOne = [{key:"chOne", values:[]}];
-            vm.one = vm.detail.chOne;
-            vm.chTwo = [{key:"chTwo", values:[]}];
-            vm.two = vm.detail.chTwo;
-            vm.chThree = [{key:"chThree", values:[]}];
-            vm.three = vm.detail.chThree;
+                vm.chOne = [{key:"chOne", values:[]}];
+                vm.one = vm.detail.chOne;
+                vm.chTwo = [{key:"chTwo", values:[]}];
+                vm.two = vm.detail.chTwo;
+                vm.chThree = [{key:"chThree", values:[]}];
+                vm.three = vm.detail.chThree;
             
-            vm.populateData();
+                vm.populateData();
             
-        });
+            });
+        }
     }
     
     onReady(scope, el){

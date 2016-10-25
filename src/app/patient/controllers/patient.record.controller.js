@@ -16,9 +16,11 @@ export class PatientRecordController {
     getPatientRecords(){
         var vm = this;
         var pId = this.$state.params.patientId;
-        this.$http.get(this.API_URL+'api/records?patientId='+pId).then(function(result){
-            vm.records = result.data;
-        });
+        if(pId != null){
+            this.$http.get(this.API_URL+'api/records?patientId='+pId).then(function(result){
+                vm.records = result.data;
+            });
+        }
     }
     
     timeConverter(ts, format){
