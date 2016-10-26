@@ -9,6 +9,7 @@ export class RecordComponentsDetailController {
       this.$scope = $scope;
       this.$auth = $auth;
       this.NAN = -4096;
+      this.ECG_3 = "Three Channels ECG";
       
       this.display = 0;
       this.lastIndex = 0;
@@ -134,22 +135,23 @@ export class RecordComponentsDetailController {
             this.$http.get(this.API_URL+'api/record-details?_id='+vm._id)
                 .then(function(result){
                 vm.detail = result.data;
-                if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
-                    vm.rr = [{key:"RR Series", values:[]}];
-                    vm.poincare = [{key:"Poincare", values:[]}];
-                    var xValue;
-                    for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
-                        var sample = vm.detail.rrIntervals.signal[i];
-                        if((i % 2) == 0){
-                            xValue = sample;
-                        }else{
-                            vm.poincare[0].values.push({x: xValue, y: sample});
+                if(vm.detail.type.toUpperCase().indexOf("ECG") >= 0){
+                    if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
+                        vm.rr = [{key:"RR Series", values:[]}];
+                        vm.poincare = [{key:"Poincare", values:[]}];
+                        var xValue;
+                        for(var i=0, j=1; i<vm.detail.rrIntervals.signal.length; i++, j++){
+                            var sample = vm.detail.rrIntervals.signal[i];
+                            if((i % 2) == 0){
+                                xValue = sample;
+                            }else{
+                                vm.poincare[0].values.push({x: xValue, y: sample});
+                            }
+                            vm.rr[0].values.push({x: i, y: sample});
                         }
-                        vm.rr[0].values.push({x: i, y: sample});
+                        pvcLocs = vm.detail.pvcEvents.locs;
                     }
                 }
-            
-                pvcLocs = vm.detail.pvcEvents.locs;
 
                 vm.chOne = [{key:"chOne", values:[]}];
                 vm.one = vm.detail.chOne;
@@ -157,6 +159,8 @@ export class RecordComponentsDetailController {
                 vm.two = vm.detail.chTwo;
                 vm.chThree = [{key:"chThree", values:[]}];
                 vm.three = vm.detail.chThree;
+
+                vm.isECG = (vm.detail.type.toUpperCase().indexOf("ECG") >= 0);
             
                 vm.populateData();
             
@@ -195,11 +199,6 @@ export class RecordComponentsDetailController {
     
     setDisplay(option){
         this.display = option;
-    }
-    
-    isECG(){
-        var str = vm.detail.type;
-        return (str.toUpperCase().indexOf("ECG") >= 0);
     }
     
     formatValue(value){
