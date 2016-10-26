@@ -1,8 +1,9 @@
 <nav ng-controller="NavbarController as nav" class="navbar navbar-static-top navbar-inverse">
   <div class="container-fluid">
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
       <ul class="nav navbar-nav">
-          <li class="navbar-header active"><a ng-href="#">Vitalsens</a></li>
+          <li class="navbar-header active">
+              <a class="navbar-brand" ng-href="#">Vitalsens</a>
+          </li>
           <ul ng-show="nav.isAuthenticated()" class="nav navbar-nav">
               <li><a ui-sref="record">Records</a></li>
               <li><a ui-sref="patient">Patients</a></li>
@@ -13,10 +14,13 @@
           <li ng-show="nav.isAuthenticated() && nav.getUser()">
               <a uref="#">{{nav.userEmail}}</a>
           </li>
-          <li ng-show="nav.isAuthenticated() && nav.isAdmin()"><a ui-sref="register">Register</a></li>
-          <li ng-hide="nav.isAuthenticated()"><a ui-sref="login">Login</a></li>
+          <li ng-show="nav.isAuthenticated() && nav.isAdmin()">
+              <a ui-sref="register">Register</a>
+          </li>
+          <li ng-hide="nav.isAuthenticated()">
+              <a ui-sref="login">Login</a>
+          </li>
           <li ng-show="nav.isAuthenticated()"><a ng-click="nav.logout()" >Logout</a></li>
       </ul>
     </div>
-  </div>
 </nav>
