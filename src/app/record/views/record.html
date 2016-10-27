@@ -1,25 +1,30 @@
 <div ng-if="record.$auth.isAuthenticated()" class="container">
     <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-info h-scroll">
+        <div class="col-xs-12">
+            <div class="panel panel-info">
                 <div class="panel-heading text-center">
                     Records
                 </div>
-                <ul>
-                    <li class="list-item-horizontal" ng-repeat="r in record.records">
-                        <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({
-                                                        timeStamp: r.timeStamp,
-                                                        patientId: r.patientId,
-                                                        type: r.type
-                                                        })">
-                            <button type="button" class="btn btn-info btn-md">
-                                {{record.timeConverter(r.timeStamp, 2)}}<br>
-                                {{r.patientId}}<br>
-                                {{r.type}}
-                            </button>
-                        </a>
-                    </li>
-                </ul>
+                <div class="panel-body">
+                    <div class="text-center">
+                        <ul uib-pagination total-items="record.totalItems" items-per-page="record.itemsPerPage" ng-change="record.getPageContent()" ng-model="record.currentPage" max-size="record.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+                    </div>
+                    <ul>
+                        <li class="list-group-item list-item-horizontal" ng-repeat="r in record.pageContent">
+                            <a ui-sref="record-components({
+                                        timeStamp: r.timeStamp,
+                                        patientId: r.patientId,
+                                        type: r.type
+                                        })">
+                                <button type="button" class="btn btn-info btn-md">
+                                    {{record.timeConverter(r.timeStamp, 2)}}<br>
+                                    {{r.patientId}}<br>
+                                    {{r.type}}
+                                </button>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

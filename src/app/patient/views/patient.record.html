@@ -1,20 +1,25 @@
 <div ng-if="pRecord.$auth.isAuthenticated()" class="container">
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-xs-10">
             <div class="panel panel-info h-scroll">
                 <div class="panel-heading text-center">
-                    Records
+                    {{pRecord.pId}} Records
                 </div>
-                <ul>
-                    <li class="list-item-horizontal" ng-repeat="r in pRecord.records">
-                        <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({timeStamp:        r.timeStamp, patientId: r.patientId, type: r.type})">
-                            <button type="button" class="btn btn-info btn-md">
-                                {{pRecord.timeConverter(r.timeStamp, 2)}}<br>
-                                {{r.type}}
-                            </button>
-                        </a>
-                    </li>
-                </ul>
+                <div class="panel-body">
+                    <div class="text-center">
+                        <ul uib-pagination total-items="pRecord.totalItems" items-per-page="pRecord.itemsPerPage" ng-change="pRecord.getPageContent()" ng-model="pRecord.currentPage" max-size="pRecord.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+                    </div>
+                    <ul>
+                        <li class="list-item-horizontal" ng-repeat="r in pRecord.pageContent">
+                            <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({timeStamp:        r.timeStamp, patientId: r.patientId, type: r.type})">
+                                <button type="button" class="btn btn-info btn-md">
+                                    {{pRecord.timeConverter(r.timeStamp, 2)}}<br>
+                                    {{r.type}}
+                                </button>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

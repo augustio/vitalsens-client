@@ -1,19 +1,19 @@
 <div ng-if="rComponents.$auth.isAuthenticated()" class="container">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-xs-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-md-3 text-center">
+                        <div class="col-xs-3 text-center">
                             {{rComponents.patientId}}
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-xs-3 text-center">
                             {{rComponents.timeConverter(rComponents.timeStamp, 1)}}
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-xs-3 text-center">
                             {{rComponents.type}}
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-xs-3">
                             <button type="button" class="pull-right btn btn-info" ng-click="rComponents.downloadData()">Download</button>
                         </div>
                     </div>

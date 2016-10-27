@@ -6,6 +6,10 @@ export class PatientRecordController {
       this.$state = $state;
       this.$auth = $auth;
       this.API_URL = API_URL;
+      this.currentPage = 1;
+      this.maxSize = 5;
+      this.itemsPerPage = 40;
+      this.pageContent = [];
       
       if(!this.$auth.isAuthenticated())
           this.$state.go('home');
@@ -15,14 +19,31 @@ export class PatientRecordController {
 
     getPatientRecords(){
         var vm = this;
-        var pId = this.$state.params.patientId;
-        if(pId != null){
-            this.$http.get(this.API_URL+'api/records?patientId='+pId).then(function(result){
+        vm.pId = this.$state.params.patientId;
+        if(vm.pId != null){
+            this.$http.get(this.API_URL+'api/records?patientId='+vm.pId).then(function(result){
                 vm.records = result.data;
-            });
-        }
+
+                vm.totalItems = vm.records.length;
+                vm.numPages = Math.floor(vm.totalItems/vm.itemsPerPage);
+                if(vm.totalItems % vm.itemsPerPage > 0)
+                    vm.numPages++;
+            
+                vm.getPageContent();
+                });
+            }
     }
     
+    getPageContent(){
+        var start = (this.currentPage - 1) * this.itemsPerPage;
+        var end = start + this.itemsPerPage;
+        if(this.currentPage == this.numPages){
+            this.pageContent = this.records.slice(start);
+        }else{
+            this.pageContent = this.records.slice(start, end);
+        }
+    }
+
     timeConverter(ts, format){
         var a = new Date(ts);
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -31,10 +52,18 @@ export class PatientRecordController {
         var month_num = a.getMonth()+1;
         var month = months[(month_num -1)];
         var date = a.getDate();
+        if(date < 10)
+            date = '0'+date;
         var day = days[a.getDay()];
         var hour = a.getHours();
+        if(hour < 10)
+            hour = '0'+hour;
         var min = a.getMinutes();
+        if(min < 10)
+            min = '0'+min;
         var sec = a.getSeconds();
+        if(sec < 10)
+            sec = '0'+sec;
         
         var res = "";
         
