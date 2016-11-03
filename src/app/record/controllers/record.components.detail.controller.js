@@ -10,9 +10,11 @@ export class RecordComponentsDetailController {
       this.$auth = $auth;
       this.NAN = -4096;
       this.ECG_3 = "Three Channels ECG";
+      this.currentPage = 1;
+      this.maxSize = 5;
+      this.itemsPerPage = 1000;
       
       this.display = 0;
-      this.lastIndex = 0;
       
       if(!this.$auth.isAuthenticated())
           this.$state.go('home');
@@ -161,26 +163,27 @@ export class RecordComponentsDetailController {
                 vm.three = vm.detail.chThree;
 
                 vm.isECG = (vm.detail.type.toUpperCase().indexOf("ECG") >= 0);
+                
+                vm.totalItems = vm.one.length;
+                vm.numPages = Math.ceil(vm.totalItems/vm.itemsPerPage);
             
                 vm.populateData();
             
             });
         }
     }
-    
+
     onReady(scope, el){
         chart = scope.chart;
     }
 
     populateData(){
-        if(this.lastIndex == this.one.length)
-            this.lastIndex = 0;
-        var rem = this.one.length - this.lastIndex;
-        var len = (rem < 1000)? rem : 1000;
-        len += this.lastIndex;
+        var index = (this.currentPage - 1) * this.itemsPerPage;
+        var len = (this.currentPage == this.numPages)? (this.one.length % 1000) : 1000;
+        len += index;
         var x1 = [], x2 = [], x3 = [];
-        
-        for(var i=this.lastIndex; i<len; i++){
+
+        for(var i = index; i < len; i++){
             if(this.one[i] == this.NAN){
                 x1.push({x: i*4, y: parseInt(NaN)});
                 x2.push({x: i*4, y: parseInt(NaN)});
@@ -190,7 +193,6 @@ export class RecordComponentsDetailController {
                 x2.push({x: i*4, y: parseInt(this.two[i])});
                 x3.push({x: i*4, y: parseInt(this.three[i])});
             }
-            this.lastIndex++;
         }
         this.chOne[0].values = x1;
         this.chTwo[0].values = x2;

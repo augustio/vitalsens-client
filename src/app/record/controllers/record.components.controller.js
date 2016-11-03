@@ -39,11 +39,18 @@ export class RecordComponentsController {
         var month_num = a.getMonth()+1;
         var month = months[(month_num -1)];
         var date = a.getDate();
+        if(date < 10)
+            date = '0'+date;
         var day = days[a.getDay()];
         var hour = a.getHours();
+        if(hour < 10)
+            hour = '0'+hour;
         var min = a.getMinutes();
+        if(min < 10)
+            min = '0'+min;
         var sec = a.getSeconds();
-        
+        if(sec < 10)
+            sec = '0'+sec;
         var res = "";
         
         switch (format){

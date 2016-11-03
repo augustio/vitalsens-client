@@ -5,7 +5,11 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-xs-3 text-center">
-                            {{rComponents.patientId}}
+                            <a ui-sref="patient.record({patientId: rComponents.patientId})" >
+                                <button type="button" class="pull-left btn btn-info">
+                                    {{rComponents.patientId}}
+                                </button>
+                            </a>
                         </div>
                         <div class="col-xs-3 text-center">
                             {{rComponents.timeConverter(rComponents.timeStamp, 1)}}

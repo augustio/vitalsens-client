@@ -9,7 +9,9 @@
                     <span class="text-center"><strong>{{rDetail.detail.type}}</strong></span>
                 </div>
                 <div class="panel-body xy-scroll">
-                    <button type="button" class="pull-right btn btn-info" ng-click="rDetail.populateData()">Next</button>
+                    <div class="text-center">
+                        <ul uib-pagination total-items="rDetail.totalItems" items-per-page="rDetail.itemsPerPage" ng-change="rDetail.populateData()" ng-model="rDetail.currentPage" max-size="rDetail.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+                    </div>
                     <div class="row">
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>

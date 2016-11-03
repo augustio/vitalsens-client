@@ -19,6 +19,7 @@ import { MalarkeyDirective } from '../app/components/malarkey/malarkey.directive
 
 angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer', 'nvd3'])
   .constant('API_URL', 'http://52.51.162.106:5000/')
+  //.constant('API_URL', 'http://localhost:5000/')
   .constant('malarkey', malarkey)
   .constant('moment', moment)
   .config(config)
