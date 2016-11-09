@@ -1,4 +1,4 @@
-<div ng-if="rComponents.$auth.isAuthenticated()" class="container">
+<div ng-if="rComponents.$auth.isAuthenticated()" class="container-fluid">
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-info">
@@ -6,19 +6,19 @@
                     <div class="row">
                         <div class="col-xs-3 text-center">
                             <a ui-sref="patient.record({patientId: rComponents.patientId})" >
-                                <button type="button" class="pull-left btn btn-info">
+                                <button type="button" class="pull-left btn btn-info btn-responsive font-size-responsive">
                                     {{rComponents.patientId}}
                                 </button>
                             </a>
                         </div>
-                        <div class="col-xs-3 text-center">
+                        <div class="col-xs-3 text-center font-size-responsive">
                             {{rComponents.timeConverter(rComponents.timeStamp, 1)}}
                         </div>
-                        <div class="col-xs-3 text-center">
+                        <div class="col-xs-3 text-center font-size-responsive">
                             {{rComponents.type}}
                         </div>
                         <div class="col-xs-3">
-                            <button type="button" class="pull-right btn btn-info" ng-click="rComponents.downloadData()">Download</button>
+                            <button type="button" class="pull-right btn btn-info btn-responsive font-size-responsive" ng-click="rComponents.downloadData()">Download</button>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                         <div class="col-md-2 text-center h-scroll">
                             <ul class="list-group">
                                 <li ng-repeat="rc in rComponents.components">
-                                    <a class="list-group-item" ui-sref-active="active" ui-sref="record-components.detail({_id: rc._id})" >
+                                    <a class="list-group-item font-size-responsive" ui-sref-active="active" ui-sref="record-components.detail({_id: rc._id})" >
                                             {{rComponents.timeConverter(rc.start, 3)}}<br>
                                             {{rComponents.getDuration(rc.end, rc.start)}} sec
                                     </a>

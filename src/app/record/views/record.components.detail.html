@@ -1,18 +1,18 @@
-<div ng-if="rDetail.$auth.isAuthenticated()" class="container">
-    <div class="col-xs-10">
+<div ng-if="rDetail.$auth.isAuthenticated()" class="container-fluid">
+    <div class="col-md-10">
         <div class="row" ng-if="rDetail.display == 0">
-            <button ng-show="rDetail.isECG" type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
+            <button ng-show="rDetail.isECG" type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
         </div>
         <div class="row" ng-if="rDetail.display == 0">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
-                    <span class="text-center"><strong>{{rDetail.detail.type}}</strong></span>
+                    <span class="text-center font-size-responsive"><strong>{{rDetail.detail.type}}</strong></span>
                 </div>
                 <div class="panel-body xy-scroll">
                     <div class="text-center">
                         <ul uib-pagination total-items="rDetail.totalItems" items-per-page="rDetail.itemsPerPage" ng-change="rDetail.populateData()" ng-model="rDetail.currentPage" max-size="rDetail.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
                     </div>
-                    <div class="row">
+                    <div class="row font-size-responsive">
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
                         <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree"></nvd3>
@@ -21,11 +21,11 @@
             </div>
         </div>
         <div class="row" ng-if="rDetail.display == 1">
-            <button type="button" class="pull-left btn btn-info" ng-click="rDetail.setDisplay(0)">Show Raw</button>
+            <button type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(0)">Show Raw</button>
         </div>
         <div class="row" ng-if="rDetail.display == 1">
             <div class="panel panel-default">
-                <div class="panel-heading text-center">
+                <div class="panel-heading text-center font-size-responsive">
                     <span class="text-center"><strong>PVC EVENT</strong></span>
                 </div>
                 <div class="panel-body">
@@ -33,7 +33,7 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading text-center">
-                    <span class="text-center"><strong>TACHOGRAM SIGNAL (RR INTERVAL SERIES)</strong></span>
+                    <span class="text-center font-size-responsive"><strong>TACHOGRAM SIGNAL (RR INTERVAL SERIES)</strong></span>
                 </div>
                 <div class="panel-body">
                     <nvd3 options="rDetail.rrOptions" data="rDetail.rr" on-ready="rDetail.onReady" class="with-3d-shadow with-transitions rrInt"></nvd3>
@@ -41,17 +41,17 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <div class="col-xs-6">
+                    <div class="col-md-6">
                         <div class="panel panel-default">
                             <div class="panel-heading text-center">
-                                <span class="text-center"><strong>POINCARE PLOT</strong></span>
+                                <span class="text-center font-size-responsive"><strong>POINCARE PLOT</strong></span>
                             </div>
-                            <div class="panel-body">
+                            <div class="panel-body font-size-responsive">
                                 <nvd3 options="rDetail.poincareOptions" data="rDetail.poincare" class="with-3d-shadow with-transitions poincarePlot"></nvd3>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-md-6 table-responsive font-size-responsive">
                         <table class="table">
                             <thead>
                                 <tr class="info">
@@ -105,7 +105,7 @@
                     </div>
                 </div>    
             </div>
-    </div>
+        </div>
     </div>
 </div>
 

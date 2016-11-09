@@ -76,6 +76,35 @@ ul {
 .pvc-points{
     fill: #ff0000;
 }
+
+@media (max-width: 768px) {
+  .btn-responsive {
+    padding:2px 4px;
+    font-size:80%;
+    line-height: 1;
+    border-radius:3px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .btn-responsive {
+    padding:4px 9px;
+    font-size:90%;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 768px) {
+  .font-size-responsive {
+    font-size:80%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .font-size-responsive {
+    font-size:90%;
+  }
+}
 /**
  *  Do not remove the comments below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically

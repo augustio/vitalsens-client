@@ -1,8 +1,8 @@
 
-<div ng-if="patient.$auth.isAuthenticated()" class="container">
+<div ng-if="patient.$auth.isAuthenticated()" class="container-fluid">
 <div class="row">
-    <div class="col-xs-2">
-        <div class="panel panel-info h-scroll">
+    <div class="col-xs-4 col-md-2">
+        <div class="panel panel-info h-scroll font-size-responsive">
             <div class="panel-heading text-center">Patients</div>
             <ul class="list-group">
                 <li ng-repeat="p in patient.patients">
