@@ -12,7 +12,7 @@ export class RecordComponentsDetailController {
       this.ECG_3 = "Three Channels ECG";
       this.currentPage = 1;
       this.maxSize = 5;
-      this.itemsPerPage = 1000;
+      this.itemsPerPage = 2000;
       
       this.display = 0;
       
@@ -179,7 +179,11 @@ export class RecordComponentsDetailController {
 
     populateData(){
         var index = (this.currentPage - 1) * this.itemsPerPage;
-        var len = (this.currentPage == this.numPages)? (this.one.length % 1000) : 1000;
+        var len;
+        if(this.currentPage == this.numPages && this.one.length != this.itemsPerPage)
+            len = this.one.length % this.itemsPerPage;
+        else
+            len = this.itemsPerPage;
         len += index;
         var x1 = [], x2 = [], x3 = [];
 

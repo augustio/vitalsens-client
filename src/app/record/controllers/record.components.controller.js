@@ -81,22 +81,9 @@ export class RecordComponentsController {
         vm.patientId = this.patientId;
         vm.type = this.type;
         if(vm.timeStamp != null && vm.patientId != null && vm.type != null){
-            this.$http.get(this.API_URL+'api/record-details?timeStamp='+vm.timeStamp+'&patientId='+vm.patientId+'&type='+vm.type+'&allFields='+"true")
+            this.$http.get(this.API_URL+'api/full-record-data?timeStamp='+vm.timeStamp+'&patientId='+vm.patientId+'&type='+vm.type+'&allFields='+"true")
                 .then(function(result){
                 var data = result.data;
-                var len = data.length;
-                vm.data = data[0];
-                for(var i = 1; i < len; i++){
-                    vm.data.chOne = vm.data.chOne.concat(data[i].chOne);
-                    vm.data.chTwo = vm.data.chTwo.concat(data[i].chTwo);
-                    vm.data.chThree = vm.data.chThree.concat(data[i].chThree);
-                }
-                vm.data.end = data[len-1].end;
-                vm.data.rPeaks = data[len-1].rPeaks;
-                vm.data.pvcEvents = data[len-1].pvcEvents;
-                vm.data.rrIntervals = data[len-1].rrIntervals;
-                vm.data.hrvFeatures = data[len-1].hrvFeatures;
-
                 var zip = new JSZip();
                 var fileName = vm.patientId+"_"+vm.timeConverter(vm.timeStamp, 4)+"_"+vm.type;
                 zip.file(fileName+".txt", JSON.stringify(data));
