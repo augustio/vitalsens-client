@@ -27,9 +27,11 @@
                         <div class="col-md-2 text-center h-scroll">
                             <ul class="list-group">
                                 <li ng-repeat="rc in rComponents.components">
-                                    <a class="list-group-item font-size-responsive" ui-sref-active="active" ui-sref="record-components.detail({_id: rc._id})" >
+                                    <a class="font-size-responsive list-group-item" ui-sref-active="active" ui-sref="record-components.detail({_id: rc._id})" >
+                                        <div ng-class="{'marked':rc.pEStart != -1 || rc.pEEnd != -1}">
                                             {{rComponents.timeConverter(rc.start, 3)}}<br>
                                             {{rComponents.getDuration(rc.end, rc.start)}} sec
+                                        </div>
                                     </a>
                                 </li>
                             </ul>
