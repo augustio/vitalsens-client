@@ -15,11 +15,9 @@ export class RecordComponentsDetailController {
       this.itemsPerPage = 2000;
       
       this.display = 0;
-      
+
       if(!this.$auth.isAuthenticated())
           this.$state.go('home');
-      
-      this.getDetail();
       
       this.rrOptions = {
           chart: {
@@ -128,6 +126,7 @@ export class RecordComponentsDetailController {
               duration: 500
           }
       };
+      this.getDetail();
   }
 
     getDetail(){
@@ -137,6 +136,20 @@ export class RecordComponentsDetailController {
             this.$http.get(this.API_URL+'api/record-details?_id='+vm._id)
                 .then(function(result){
                 vm.detail = result.data;
+                console.log(vm.detail);
+                var start = vm.detail.pEStart;
+                var end = vm.detail.pEEnd;
+                if(start > -1 || end > -1){
+                    if(start == -1)
+                        start = 0;
+                    if(end == -1)
+                        end = vm.detail.chOne.length;
+                    vm.detail.chOne = vm.detail.chOne.slice(start, end);
+                    vm.detail.chTwo = vm.detail.chTwo.slice(start, end);
+                    vm.detail.chThree = vm.detail.chThree.slice(start, end);
+
+                    vm.ecgOptions.chart.color = ['#ff0000'];
+                }
                 if(vm.detail.type.toUpperCase().indexOf("ECG") >= 0){
                     if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
                         vm.rr = [{key:"RR Series", values:[]}];
