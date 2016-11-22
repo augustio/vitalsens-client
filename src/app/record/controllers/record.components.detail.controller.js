@@ -136,7 +136,6 @@ export class RecordComponentsDetailController {
             this.$http.get(this.API_URL+'api/record-details?_id='+vm._id)
                 .then(function(result){
                 vm.detail = result.data;
-                console.log(vm.detail);
                 var start = vm.detail.pEStart;
                 var end = vm.detail.pEEnd;
                 if(start > -1 || end > -1){
