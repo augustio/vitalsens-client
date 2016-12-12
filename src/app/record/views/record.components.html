@@ -12,7 +12,7 @@
                             </a>
                         </div>
                         <div class="col-xs-3 text-center font-size-responsive">
-                            {{rComponents.timeConverter(rComponents.timeStamp, 1)}}
+                            {{rComponents.timeStamp | date:'EEE, dd.MM.yyyy HH:mm:ss'}}
                         </div>
                         <div class="col-xs-3 text-center font-size-responsive">
                             {{rComponents.type}}
@@ -29,7 +29,7 @@
                                 <li ng-repeat="rc in rComponents.components">
                                     <a class="font-size-responsive list-group-item" ui-sref-active="active" ui-sref="record-components.detail({_id: rc._id})" >
                                         <div ng-class="{'marked':rc.pEStart != -1 || rc.pEEnd != -1}">
-                                            {{rComponents.timeConverter(rc.start, 3)}}<br>
+                                            {{rc.start | date:'HH:mm:ss'}}<br>
                                             {{rComponents.getDuration(rc.end, rc.start)}} sec
                                         </div>
                                     </a>

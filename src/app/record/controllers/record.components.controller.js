@@ -31,46 +31,6 @@ export class RecordComponentsController {
         }
     }
     
-    timeConverter(ts, format){
-        var a = new Date(ts);
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
-        var year = a.getFullYear();
-        var month_num = a.getMonth()+1;
-        var month = months[(month_num -1)];
-        var date = a.getDate();
-        if(date < 10)
-            date = '0'+date;
-        var day = days[a.getDay()];
-        var hour = a.getHours();
-        if(hour < 10)
-            hour = '0'+hour;
-        var min = a.getMinutes();
-        if(min < 10)
-            min = '0'+min;
-        var sec = a.getSeconds();
-        if(sec < 10)
-            sec = '0'+sec;
-        var res = "";
-        
-        switch (format){
-            case 1:
-                res =  day + ", " + date + "." + month_num + "." + year + " " + hour + ":" + min + ":" + sec;
-                break;
-            case 2:
-                res =  date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
-                break;
-            case 3:
-                res =  hour + ":" + min + ":" + sec;
-                break;
-            case 4:
-                res = date + "_" + month + "_" + year + "_" + hour + "_" + min + "_" + sec;
-                break;
-        }
-        
-        return res;
-    }
-    
     getDuration(end, start){ 
         return Math.round((end - start) * 0.001);
     }

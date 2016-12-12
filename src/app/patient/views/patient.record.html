@@ -12,7 +12,7 @@
                     <li class="list-item-horizontal" ng-repeat="r in pRecord.pageContent">
                         <a class="list-group-item" ui-sref-active="active" ui-sref="record-components({timeStamp:        r.timeStamp, patientId: r.patientId, type: r.type})">
                             <button type="button" class="btn btn-info btn-md font-size-responsive">
-                                {{pRecord.timeConverter(r.timeStamp, 2)}}<br>
+                                {{r.timeStamp | date:'MMM dd, yyyy HH:mm:ss'}}<br>
                                 {{r.type}}
                             </button>
                         </a>
