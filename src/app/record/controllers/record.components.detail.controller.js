@@ -49,7 +49,7 @@ export class RecordComponentsDetailController {
               x: function(d){ return d.x; },
               y: function(d){ return d.y; },
               xAxis: {
-                  axisLabel: 'RR-Intervals (i = 0, 1,...n)',
+                  axisLabel: 'RR-Intervals (i = 1, 2,...n)',
                   axisLableDistance: 5
               },
               yAxis: {
@@ -161,7 +161,7 @@ export class RecordComponentsDetailController {
                             }else{
                                 vm.poincare[0].values.push({x: xValue, y: sample});
                             }
-                            vm.rr[0].values.push({x: i, y: sample});
+                            vm.rr[0].values.push({x: i+1, y: sample});
                         }
                         pvcLocs = vm.detail.pvcEvents.locs;
                     }
