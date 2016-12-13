@@ -12,7 +12,8 @@ export class RecordComponentsDetailController {
       this.ECG_3 = "Three Channels ECG";
       this.currentPage = 1;
       this.maxSize = 5;
-      this.itemsPerPage = 2000;
+      this.itemsPerPage = 1000;
+      this.animate = true;
       
       this.display = 0;
 
@@ -122,24 +123,31 @@ export class RecordComponentsDetailController {
       
       this.ecgOptions = {
           chart: {
-              type: 'lineWithFocusChart',
+              type: 'lineChart',
               height: 200,
-              useVoronoi: false,
-              useInteractiveGuideline: true,
+              useInteractiveGuideline: false,
+              tooltip: {
+                  contentGenerator: function (e) {
+                      var series = e.series[0];
+                      var rows =
+                              "<tr>" + "<td class='key'>" + 'T: ' + "</td>" +
+                              "<td class='x-value'>" + e.value + "</td>" +
+                              "</tr>" +
+                              "<tr>" + "<td class='key'>" + 'V: ' + "</td>" +
+                              "<td class='x-value'>" + series.value + "</td>" +
+                          "</tr>";
+                          return "<table style='background-color: " + series.color + "; color: #ffffff;'>" + "<tbody>" + rows + "</tbody>" + "</table>";
+                  }
+              },
               color: ['#0000ff'],
               x: function(d){ return d.x; },
               y: function(d){ return d.y; },
               xAxis: {
                   axisLabel: 'Time(ms)'
               },
-              x2Axis: {
-                  showMaxMin: false
-              },
               yAxis: {
                   axisLabel: 'Voltage(mv)'
-              },
-              y2Axis: {},
-              duration: 500
+              }
           }
       };
       this.getDetail();
@@ -196,6 +204,17 @@ export class RecordComponentsDetailController {
                 vm.numPages = Math.ceil(vm.totalItems/vm.itemsPerPage);
             
                 vm.populateData();
+
+                setInterval(function(){
+                    if(!vm.animate) return;
+                    if(vm.currentPage == vm.numPages){
+                        vm.currentPage = 1;
+                    }
+                    else
+                        vm.currentPage += 1;
+                    vm.populateData();
+                    vm.$scope.$apply();
+                }, 5000);
             
             });
         }
@@ -240,6 +259,10 @@ export class RecordComponentsDetailController {
             return value.toFixed(3);
         } 
         return value;
+    }
+
+    toggleAnimation(){
+        this.animate = !this.animate;
     }
 }
 
