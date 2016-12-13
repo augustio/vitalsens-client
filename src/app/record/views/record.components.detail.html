@@ -6,8 +6,13 @@
         </div>
         <div class="row" ng-if="rDetail.display == 0">
             <div class="panel panel-default">
-                <div class="panel-heading text-center">
-                    <span class="text-center font-size-responsive"><strong>{{rDetail.detail.type}}</strong></span>
+                <div class="panel-heading">
+                    <div class="pull-left">
+                        <span class="text-center font-size-responsive"><strong>Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp}}&deg;C</strong></span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-center font-size-responsive"><strong>{{rDetail.detail.type}}</strong></span>
+                    </div>
                 </div>
                 <div class="panel-body xy-scroll">
                     <div class="text-center">

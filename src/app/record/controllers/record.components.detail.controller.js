@@ -206,7 +206,7 @@ export class RecordComponentsDetailController {
             
                 vm.populateData();
 
-                setInterval(function(){
+                vm.$interval(function(){
                     if(!vm.animate) return;
                     if(vm.currentPage == vm.numPages){
                         vm.currentPage = 1;
