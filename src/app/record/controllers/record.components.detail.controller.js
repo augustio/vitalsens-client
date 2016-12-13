@@ -29,19 +29,35 @@ export class RecordComponentsDetailController {
                       var series = e.series[0];
                       if (isPVC(e.value)){
                           var rows = 
-                              "<tr>" + "<td class='key'>" + 'Location: ' + "</td>" +
+                              "<tr>" + "<td class='key'>" + 'Loc: ' + "</td>" +
                               "<td class='x-value'>" + e.value + "</td>" + 
+                              "</tr>" + 
+                              "<tr>" + "<td class='key'>" + 'RR-Int: ' + "</td>" +
+                              "<td class='x-value'>" + (series.value?series.value.toFixed(2):0) + "</td>" + 
                               "</tr>";
                           var header = 
                               "<thead>" + 
                               "<tr>" + 
-                              "<td class='legend-color-guide'><div style='background-color: " + series.color + ";'></div></td>" + 
+                              "<td class='legend-color-guide'><div style='background-color: " + "#00ff00" + ";'></div></td>" + 
                               "<td class='key'><strong>" + 'PVC' + "</strong></td>" + 
                               "</tr>" + 
                               "</thead>";
                           return "<table>" + header + "<tbody>" + rows + "</tbody>" + "</table>";
                       }else{
-                          series.tooltip = useVoronoi = false;
+                          var rows = 
+                              "<tr>" + "<td class='key'>" + 'Loc: ' + "</td>" +
+                              "<td class='x-value'>" + e.value + "</td>" + 
+                              "</tr>" + 
+                              "<tr>" + "<td class='key'>" + 'RR-Int: ' + "</td>" +
+                              "<td class='x-value'>" + (series.value?series.value.toFixed(2):0) + "</td>" + 
+                              "</tr>";
+                          var header = 
+                              "<thead>" + 
+                              "<tr>" + 
+                              "<td class='legend-color-guide'><div style='background-color: " + series.color + ";'></div></td>" + 
+                              "</tr>" + 
+                              "</thead>";
+                          return "<table>" + header + "<tbody>" + rows + "</tbody>" + "</table>";
                       }
                   }
               },
