@@ -24,6 +24,7 @@ export class RecordComponentsDetailController {
           chart: {
               type: 'lineChart',
               height: 200,
+              width: 1000,
               useInteractiveGuideline: false,
               tooltip: {
                   contentGenerator: function (e) {
@@ -245,6 +246,7 @@ export class RecordComponentsDetailController {
                 x3.push({x: i*4, y: parseInt(this.three[i])});
             }
         }
+        this.ecgOptions.chart.width = x1.length;
         this.chOne[0].values = x1;
         this.chTwo[0].values = x2;
         this.chThree[0].values = x3;
