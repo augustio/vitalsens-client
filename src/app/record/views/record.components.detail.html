@@ -8,7 +8,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="pull-left">
-                        <span class="text-center font-size-responsive"><strong>Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp}}&deg;C</strong></span>
+                        <span class="text-center font-size-responsive"><strong>Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp | number:2}}&deg;C</strong></span>
                     </div>
                     <div class="text-center">
                         <span class="text-center font-size-responsive"><strong>{{rDetail.detail.type}}</strong></span>
