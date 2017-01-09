@@ -1,10 +1,11 @@
 export class RecordComponentsController {
-  constructor ($http, $state, $auth, API_URL) {
+  constructor ($http, $state, $auth, $filter, API_URL) {
       'ngInject';
 
       this.$http = $http;
       this.$state = $state;
       this.$auth = $auth;
+      this.$filter = $filter;
       this.API_URL = API_URL;
       
       if(!this.$auth.isAuthenticated())
@@ -41,11 +42,11 @@ export class RecordComponentsController {
         vm.patientId = this.patientId;
         vm.type = this.type;
         if(vm.timeStamp != null && vm.patientId != null && vm.type != null){
-            this.$http.get(this.API_URL+'api/full-record-data?timeStamp='+vm.timeStamp+'&patientId='+vm.patientId+'&type='+vm.type+'&allFields='+"true")
+            this.$http.get(this.API_URL+'api/full-record-data?timeStamp='+vm.timeStamp+'&patientId='+vm.patientId+'&type='+vm.type)
                 .then(function(result){
                 var data = result.data;
                 var zip = new JSZip();
-                var fileName = vm.patientId+"_"+vm.timeConverter(vm.timeStamp, 4)+"_"+vm.type;
+                var fileName = vm.patientId+"_"+vm.$filter('date')(vm.timeStamp, "ddMMyy")+"_"+vm.type;
                 zip.file(fileName+".txt", JSON.stringify(data));
                 zip.generateAsync({type:"blob"})
                 .then(function(content){
