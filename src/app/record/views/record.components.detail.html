@@ -6,21 +6,21 @@
         <div class="row" ng-if="rDetail.display == 0">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <div class="pull-left">
-                        <span class="text-center font-size-responsive"><strong>Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp | number:2}}&deg;C</strong></span>
-                    </div>
-                    <div class="text-center">
-                        <span class="text-center font-size-responsive"><strong>{{rDetail.detail.type}}</strong></span>
-                    </div>
+
                 </div>
                 <div class="panel-body xy-scroll">
-                    <div class="text-center">
-                        <ul uib-pagination total-items="rDetail.totalItems" items-per-page="rDetail.itemsPerPage" ng-change="rDetail.populateData()" ng-model="rDetail.currentPage" max-size="rDetail.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+                    <div class="pull-left">
+                        <div class="text-center">
+                            <ul uib-pagination total-items="rDetail.totalItems" items-per-page="rDetail.itemsPerPage" ng-change="rDetail.populateData()" ng-model="rDetail.currentPage" max-size="rDetail.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
+                        </div>
+                        <div class="row font-size-responsive">
+                            <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
+                            <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
+                            <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree"></nvd3>
+                        </div>
                     </div>
-                    <div class="row font-size-responsive">
-                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
-                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
-                        <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree"></nvd3>
+                    <div class="pull-right">
+                        <span ng-if="rDetail.detail.temp != undefined" class="text-center font-size-responsive"><strong>Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp | number:2}}&deg;C</strong></span>
                     </div>
                 </div>
             </div>

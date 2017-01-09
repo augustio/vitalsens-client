@@ -206,6 +206,8 @@ export class RecordComponentsDetailController {
                 vm.populateData();
             
             });
+        }else{
+            vm.$state.go('patient');
         }
     }
 
