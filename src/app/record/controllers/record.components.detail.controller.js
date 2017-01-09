@@ -13,7 +13,6 @@ export class RecordComponentsDetailController {
       this.currentPage = 1;
       this.maxSize = 5;
       this.itemsPerPage = 1000;
-      this.animate = true;
       
       this.display = 0;
 
@@ -205,17 +204,6 @@ export class RecordComponentsDetailController {
                 vm.numPages = Math.ceil(vm.totalItems/vm.itemsPerPage);
             
                 vm.populateData();
-
-                vm.$interval(function(){
-                    if(!vm.animate) return;
-                    if(vm.currentPage == vm.numPages){
-                        vm.currentPage = 1;
-                    }
-                    else
-                        vm.currentPage += 1;
-                    vm.populateData();
-                    vm.$scope.$apply();
-                }, 5000);
             
             });
         }
