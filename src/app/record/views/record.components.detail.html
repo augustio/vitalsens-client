@@ -1,32 +1,36 @@
 <div ng-if="rDetail.$auth.isAuthenticated()" class="container-fluid">
     <div class="col-md-10">
         <div class="row" ng-if="rDetail.display == 0">
-            <button ng-show="rDetail.isECG" type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(1)">Show Analysis</button>
+            
         </div>
         <div class="row" ng-if="rDetail.display == 0">
             <div class="panel panel-default">
-                <div class="panel-heading">
-
-                </div>
                 <div class="panel-body xy-scroll">
-                    <div class="pull-left">
-                        <div class="text-center">
+                    <div >
+                        <span ng-if="rDetail.detail.temp != undefined" class="pull-left font-size-responsive">
+                            <strong>
+                                Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp | number:2}}&deg;C
+                            </strong>
+                        </span>
+                        <button ng-if="rDetail.display == 0" ng-show="rDetail.isECG" type="button" class="pull-right btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(1)">
+                            Show Analysis
+                        </button>
+                    </div>
+                    <div>
+                        <div class="text-center" ng-if="rDetail.numPages != undefined">
                             <ul uib-pagination total-items="rDetail.totalItems" items-per-page="rDetail.itemsPerPage" ng-change="rDetail.populateData()" ng-model="rDetail.currentPage" max-size="rDetail.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
                         </div>
-                        <div class="row font-size-responsive">
+                        <div class="text-center row font-size-responsive">
                             <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
                             <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
                             <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree"></nvd3>
                         </div>
                     </div>
-                    <div class="pull-right">
-                        <span ng-if="rDetail.detail.temp != undefined" class="text-center font-size-responsive"><strong>Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp | number:2}}&deg;C</strong></span>
-                    </div>
                 </div>
             </div>
         </div>
         <div class="row" ng-if="rDetail.display == 1">
-            <button type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(0)">Show Raw</button>
+            <button type="button" class="pull-right btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(0)">Show Raw</button>
         </div>
         <div class="row" ng-if="rDetail.display == 1">
             <div class="panel panel-default">

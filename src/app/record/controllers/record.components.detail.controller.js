@@ -12,7 +12,7 @@ export class RecordComponentsDetailController {
       this.ECG_3 = "Three Channels ECG";
       this.currentPage = 1;
       this.maxSize = 5;
-      this.itemsPerPage = 1000;
+      this.itemsPerPage = 1200;
       
       this.display = 0;
 
@@ -23,7 +23,7 @@ export class RecordComponentsDetailController {
           chart: {
               type: 'lineChart',
               height: 200,
-              width: 1000,
+              width: 1200,
               useInteractiveGuideline: false,
               tooltip: {
                   contentGenerator: function (e) {
@@ -236,7 +236,7 @@ export class RecordComponentsDetailController {
                 x3.push({x: i*4, y: parseInt(this.three[i])});
             }
         }
-        this.ecgOptions.chart.width = x1.length;
+        this.ecgOptions.chart.width = x1.length*1.2;
         this.chOne[0].values = x1;
         this.chTwo[0].values = x2;
         this.chThree[0].values = x3;

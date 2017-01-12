@@ -3,9 +3,11 @@
 <div class="row">
     <div class="col-xs-4 col-md-2">
         <div class="panel panel-info h-scroll font-size-responsive">
-            <div class="panel-heading text-center">Patients</div>
+            <div class="panel-heading">
+                <input class="text-center form-control" type="text" placeholder="Patients" ng-model="patient.selected" uib-typeahead="p as p.patientId for p in patient.patients | filter:$viewValue" typeahead-on-select="patient.onSelectPatient($item)" typeahead-min-length="3" typeahead-select-on-exact="true">
+            </div>
             <ul class="list-group">
-                <li ng-repeat="p in patient.patients">
+                <li ng-repeat="p in patient.patients" ng-click="patient.onSelectPatient(p)">
                     <a ui-sref-active="active" ui-sref="patient.record({
                                                         patientId: p.patientId
                                                         })" class="list-group-item" >

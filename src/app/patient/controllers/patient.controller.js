@@ -10,6 +10,8 @@ export class PatientController {
       if(!this.$auth.isAuthenticated())
           this.$state.go('home');
       
+      this.selected = undefined;
+      
       this.getPatients();
   }
 
@@ -29,5 +31,12 @@ export class PatientController {
                 vm.$state.go('patient.record', patient);
             }
         });
+    }
+    
+    onSelectPatient($item){
+        this.patients.splice(this.patients.indexOf($item), 1);
+        this.patients.unshift($item);
+        var patient = {patientId: $item.patientId};
+        this.$state.go('patient.record', patient);
     }
 }
