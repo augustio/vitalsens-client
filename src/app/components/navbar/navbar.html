@@ -6,7 +6,7 @@
           </li>
           <ul ng-show="nav.isAuthenticated()" class="nav navbar-nav">
               <li><a ui-sref="record">Records</a></li>
-              <li><a ui-sref="patient">Patients</a></li>
+              <li><a ui-sref="patient" ui-sref-opts="{reload: true}">Patients</a></li>
           </ul>
       </ul>
 

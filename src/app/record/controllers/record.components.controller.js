@@ -55,4 +55,8 @@ export class RecordComponentsController {
             });
         }
     }
+
+    reloadComponents(){
+        this.$state.reload("record-components");
+    }
 }

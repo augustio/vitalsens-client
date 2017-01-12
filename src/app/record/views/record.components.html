@@ -12,10 +12,14 @@
                             </a>
                         </div>
                         <div class="col-xs-3 text-center font-size-responsive">
-                            {{rComponents.timeStamp | date:'EEE, dd.MM.yyyy HH:mm:ss'}}
+                            <button type="button" ng-click="rComponents.reloadComponents()" class="text-center btn btn-info btn-responsive font-size-responsive">
+                                {{rComponents.timeStamp | date:'EEE, dd.MM.yyyy HH:mm:ss'}}
+                            </button>
                         </div>
                         <div class="col-xs-3 text-center font-size-responsive">
-                            {{rComponents.type}}
+                            <button type="button" ng-click="rComponents.reloadComponents()" class="text-center btn btn-info btn-responsive font-size-responsive">
+                                {{rComponents.type}}
+                            </button>
                         </div>
                         <div class="col-xs-3">
                             <button type="button" class="pull-right btn btn-info btn-responsive font-size-responsive" ng-click="rComponents.downloadData()">Download</button>
