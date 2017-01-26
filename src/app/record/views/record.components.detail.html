@@ -20,10 +20,24 @@
                         <div class="text-center" ng-if="rDetail.numPages != undefined">
                             <ul uib-pagination total-items="rDetail.totalItems" items-per-page="rDetail.itemsPerPage" ng-change="rDetail.populateData()" ng-model="rDetail.currentPage" max-size="rDetail.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
                         </div>
-                        <div class="text-center row font-size-responsive">
-                            <nvd3 options="rDetail.ecgOptions" data="rDetail.chOne"></nvd3>
-                            <nvd3 options="rDetail.ecgOptions" data="rDetail.chTwo"></nvd3>
-                            <nvd3 options="rDetail.ecgOptions" data="rDetail.chThree"></nvd3>
+                        <div>
+                            <canvas id="channel-1" width="1000" height="200"></canvas>
+                            <button  ng-if="rDetail.numPages != undefined" type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart(1)">
+                                Save Chart
+                            </button>
+                        </div>
+                        <div>
+                            <canvas id="channel-2" width="1000" height="200"></canvas>
+                            <button ng-if="rDetail.numPages != undefined"  type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart(2)">
+                                Save Chart
+                            </button>
+                        </div>
+                        <div>
+                            <canvas id="channel-3" width="1000" height="200"></canvas>
+                            <button ng-if="rDetail.numPages != undefined"  type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart(3)">
+                                Save Chart
+                            </button>
+                        </div>
                         </div>
                     </div>
                 </div>

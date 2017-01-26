@@ -223,7 +223,7 @@ export class RecordComponentsDetailController {
         else
             len = this.itemsPerPage;
         len += index;
-        var x1 = [], x2 = [], x3 = [];
+        /*var x1 = [], x2 = [], x3 = [];
 
         for(var i = index; i < len; i++){
             if(this.one[i] == this.NAN){
@@ -239,7 +239,193 @@ export class RecordComponentsDetailController {
         this.ecgOptions.chart.width = x1.length*1.2;
         this.chOne[0].values = x1;
         this.chTwo[0].values = x2;
-        this.chThree[0].values = x3;
+        this.chThree[0].values = x3;*/
+        
+        var yOne = this.one.slice(index, len);
+        var xOne = Array(yOne.length).fill(" ");
+        var yTwo = this.two.slice(index, len);
+        var xTwo = Array(yTwo.length).fill(" ");
+        var yThree = this.three.slice(index, len);
+        var xThree = Array(yThree.length).fill(" ");
+        
+        Chart.defaults.global.tooltips.enabled = false;
+        
+        var c1 = document.getElementById("channel-1");
+        c1.style.width = yOne.length + "px";
+        var c2 = document.getElementById("channel-2");
+        c2.style.width = yTwo.length + "px";
+        var c3 = document.getElementById("channel-3");
+        c3.style.width = yThree.length + "px";
+        
+        var data1 = {
+            labels: xOne,
+            datasets: [
+                {
+                    label: "CH I",
+                    fill: false,
+                    lineTension: 0,
+                    backgroundColor: "rgb(0,0,255)",
+                    borderWidth: 1,
+                    borderColor: "rgb(0,0,255)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgb(0,0,255)",
+                    pointBackgroundColor: "rgb(0,0,255)",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgb(255, 204, 204)",
+                    pointHoverBorderColor: "rgb(0,0,255)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 0,
+                    pointHitRadius: 10,
+                    data: yOne,
+                    spanGaps: false,
+                }
+            ]
+        };
+        var data2 = {
+            labels: xTwo,
+            datasets: [
+                {
+                    label: "CH II",
+                    fill: false,
+                    lineTension: 0,
+                    backgroundColor: "rgb(0,0,255)",
+                    borderWidth: 1,
+                    borderColor: "rgb(0,0,255)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgb(0,0,255)",
+                    pointBackgroundColor: "rgb(0,0,255)",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgb(255, 204, 204)",
+                    pointHoverBorderColor: "rgb(0,0,255)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 0,
+                    pointHitRadius: 10,
+                    data: yTwo,
+                    spanGaps: false,
+                }
+            ]
+        };
+        var data3 = {
+            labels: xThree,
+            datasets: [
+                {
+                    label: "CH III",
+                    fill: false,
+                    lineTension: 0,
+                    backgroundColor: "rgb(0,0,255)",
+                    borderWidth: 1,
+                    borderColor: "rgb(0,0,255)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgb(0,0,255)",
+                    pointBackgroundColor: "rgb(0,0,255)",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgb(255, 204, 204)",
+                    pointHoverBorderColor: "rgb(0,0,255)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 0,
+                    pointHitRadius: 10,
+                    data: yThree,
+                    spanGaps: false,
+                }
+            ]
+        };
+        
+        var chartOne = new Chart(c1, {
+            type: 'line',
+            data: data1,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:false
+                        },
+                        gridLines: {
+                            color: "rgb(255, 204, 204)"
+                        }
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgb(255, 204, 204)"
+                        }
+                    }]
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontColor: 'rgb(0,0,0)',
+                        usePointStyle: true
+                    }
+                }
+            }
+        });
+        var chartTwo = new Chart(c2, {
+            type: 'line',
+            data: data2,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:false
+                        },
+                        gridLines: {
+                            color: "rgb(255, 204, 204)"
+                        }
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgb(255, 204, 204)"
+                        }
+                    }]
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontColor: 'rgb(0,0,0)',
+                        usePointStyle: true
+                    }
+                }
+            }
+        });
+        var chartThree = new Chart(c3, {
+            type: 'line',
+            data: data3,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:false
+                        },
+                        gridLines: {
+                            color: "rgb(255, 204, 204)"
+                        }
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgb(255, 204, 204)"
+                        }
+                    }]
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontColor: 'rgb(0,0,0)',
+                        usePointStyle: true
+                    }
+                }
+            }
+        });
     }
     
     setDisplay(option){
@@ -255,6 +441,19 @@ export class RecordComponentsDetailController {
 
     toggleAnimation(){
         this.animate = !this.animate;
+    }
+    
+    saveChart(ch){
+        var chart;
+        if(ch == 1)
+            chart = document.getElementById("channel-1");
+        else if(ch == 2)
+            chart = document.getElementById("channel-2");
+        else if(ch == 3)
+            chart = document.getElementById("channel-3");
+        chart.toBlob(function(blob){
+            saveAs(blob, "chart.png");
+        });
     }
 }
 

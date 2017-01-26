@@ -1,7 +1,9 @@
 {
   "name": "vitalsens",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "canvas-to-blob": "0.0.0"
+  },
   "scripts": {
     "test": "gulp test"
   },
