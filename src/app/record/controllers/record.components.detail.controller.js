@@ -348,7 +348,7 @@ export class RecordComponentsDetailController {
                     display: true,
                     labels: {
                         fontColor: 'rgb(0,0,0)',
-                        usePointStyle: true
+                        boxWidth: 0
                     }
                 }
             }
@@ -376,7 +376,7 @@ export class RecordComponentsDetailController {
                     display: true,
                     labels: {
                         fontColor: 'rgb(0,0,0)',
-                        usePointStyle: true
+                        boxWidth: 0
                     }
                 }
             }
@@ -404,7 +404,7 @@ export class RecordComponentsDetailController {
                     display: true,
                     labels: {
                         fontColor: 'rgb(0,0,0)',
-                        usePointStyle: true
+                        boxWidth: 0
                     }
                 }
             }
@@ -426,16 +426,17 @@ export class RecordComponentsDetailController {
         this.animate = !this.animate;
     }
     
-    saveChart(ch){
-        var chart;
-        if(ch == 1)
-            chart = document.getElementById("channel-1");
-        else if(ch == 2)
-            chart = document.getElementById("channel-2");
-        else if(ch == 3)
-            chart = document.getElementById("channel-3");
+    saveChart(){
+        chart = document.getElementById("chart");
+        var ctx = chart.getContext("2d");
+        var img1 = document.getElementById("channel-1");
+        var img2 = document.getElementById("channel-2");
+        var img3 = document.getElementById("channel-3");
+        ctx.drawImage(img1,0,0);
+        ctx.drawImage(img2,0,200);
+        ctx.drawImage(img3,0,400);
         chart.toBlob(function(blob){
-            saveAs(blob, "chart.png");
+            saveAs(blob, "ECG_Chart.png");
         });
     }
 }

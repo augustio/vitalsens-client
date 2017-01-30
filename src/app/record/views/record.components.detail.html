@@ -22,22 +22,20 @@
                         </div>
                         <div>
                             <canvas id="channel-1" width="1000" height="200"></canvas>
-                            <button  ng-if="rDetail.numPages != undefined" type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart(1)">
-                                Save Chart
-                            </button>
                         </div>
                         <div>
                             <canvas id="channel-2" width="1000" height="200"></canvas>
-                            <button ng-if="rDetail.numPages != undefined"  type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart(2)">
+                        </div>
+                        <div>
+                            <canvas id="channel-3" width="1000" height="200"></canvas>
+                        </div>
+                        <div>
+                            <button ng-if="rDetail.numPages != undefined"  type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart()">
                                 Save Chart
                             </button>
                         </div>
                         <div>
-                            <canvas id="channel-3" width="1000" height="200"></canvas>
-                            <button ng-if="rDetail.numPages != undefined"  type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart(3)">
-                                Save Chart
-                            </button>
-                        </div>
+                            <canvas id="chart" width="1000" height="600" style="display:none;"></canvas>
                         </div>
                     </div>
                 </div>
