@@ -223,23 +223,6 @@ export class RecordComponentsDetailController {
         else
             len = this.itemsPerPage;
         len += index;
-        /*var x1 = [], x2 = [], x3 = [];
-
-        for(var i = index; i < len; i++){
-            if(this.one[i] == this.NAN){
-                x1.push({x: i*4, y: parseInt(NaN)});
-                x2.push({x: i*4, y: parseInt(NaN)});
-                x3.push({x: i*4, y: parseInt(NaN)});
-            }else{
-                x1.push({x: i*4, y: parseInt(this.one[i])});
-                x2.push({x: i*4, y: parseInt(this.two[i])});
-                x3.push({x: i*4, y: parseInt(this.three[i])});
-            }
-        }
-        this.ecgOptions.chart.width = x1.length*1.2;
-        this.chOne[0].values = x1;
-        this.chTwo[0].values = x2;
-        this.chThree[0].values = x3;*/
         
         var yOne = this.one.slice(index, len);
         var xOne = Array(yOne.length).fill(" ");
