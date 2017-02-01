@@ -13,12 +13,12 @@ export class RecordComponentsDetailController {
       this.currentPage = 1;
       this.maxSize = 5;
       this.itemsPerPage = 1200;
-      
+
       this.display = 0;
 
       if(!this.$auth.isAuthenticated())
           this.$state.go('home');
-      
+
       this.rrOptions = {
           chart: {
               type: 'lineChart',
@@ -29,34 +29,34 @@ export class RecordComponentsDetailController {
                   contentGenerator: function (e) {
                       var series = e.series[0];
                       if (isPVC(e.value)){
-                          var rows = 
+                          var rows =
                               "<tr>" + "<td class='key'>" + 'Loc: ' + "</td>" +
-                              "<td class='x-value'>" + e.value + "</td>" + 
-                              "</tr>" + 
+                              "<td class='x-value'>" + e.value + "</td>" +
+                              "</tr>" +
                               "<tr>" + "<td class='key'>" + 'RR-Int: ' + "</td>" +
-                              "<td class='x-value'>" + (series.value?series.value.toFixed(2):0) + "</td>" + 
+                              "<td class='x-value'>" + (series.value?series.value.toFixed(2):0) + "</td>" +
                               "</tr>";
-                          var header = 
-                              "<thead>" + 
-                              "<tr>" + 
-                              "<td class='legend-color-guide'><div style='background-color: " + "#00ff00" + ";'></div></td>" + 
-                              "<td class='key'><strong>" + 'PVC' + "</strong></td>" + 
-                              "</tr>" + 
+                          var header =
+                              "<thead>" +
+                              "<tr>" +
+                              "<td class='legend-color-guide'><div style='background-color: " + "#00ff00" + ";'></div></td>" +
+                              "<td class='key'><strong>" + 'PVC' + "</strong></td>" +
+                              "</tr>" +
                               "</thead>";
                           return "<table>" + header + "<tbody>" + rows + "</tbody>" + "</table>";
                       }else{
-                          var rows = 
+                          var rows =
                               "<tr>" + "<td class='key'>" + 'Loc: ' + "</td>" +
-                              "<td class='x-value'>" + e.value + "</td>" + 
-                              "</tr>" + 
+                              "<td class='x-value'>" + e.value + "</td>" +
+                              "</tr>" +
                               "<tr>" + "<td class='key'>" + 'RR-Int: ' + "</td>" +
-                              "<td class='x-value'>" + (series.value?series.value.toFixed(2):0) + "</td>" + 
+                              "<td class='x-value'>" + (series.value?series.value.toFixed(2):0) + "</td>" +
                               "</tr>";
-                          var header = 
-                              "<thead>" + 
-                              "<tr>" + 
-                              "<td class='legend-color-guide'><div style='background-color: " + series.color + ";'></div></td>" + 
-                              "</tr>" + 
+                          var header =
+                              "<thead>" +
+                              "<tr>" +
+                              "<td class='legend-color-guide'><div style='background-color: " + series.color + ";'></div></td>" +
+                              "</tr>" +
                               "</thead>";
                           return "<table>" + header + "<tbody>" + rows + "</tbody>" + "</table>";
                       }
@@ -85,7 +85,7 @@ export class RecordComponentsDetailController {
               }
           }
       };
-      
+
       this.poincareOptions = {
           chart: {
               type: 'scatterChart',
@@ -120,7 +120,7 @@ export class RecordComponentsDetailController {
               }
           }
       };
-      
+
       this.ecgOptions = {
           chart: {
               type: 'lineChart',
@@ -199,12 +199,12 @@ export class RecordComponentsDetailController {
                 vm.three = vm.detail.chThree;
 
                 vm.isECG = (vm.detail.type.toUpperCase().indexOf("ECG") >= 0);
-                
+
                 vm.totalItems = vm.one.length;
                 vm.numPages = Math.ceil(vm.totalItems/vm.itemsPerPage);
-            
+
                 vm.populateData();
-            
+
             });
         }else{
             vm.$state.go('patient');
@@ -223,23 +223,23 @@ export class RecordComponentsDetailController {
         else
             len = this.itemsPerPage;
         len += index;
-        
+
         var yOne = this.one.slice(index, len);
         var xOne = Array(yOne.length).fill(" ");
         var yTwo = this.two.slice(index, len);
         var xTwo = Array(yTwo.length).fill(" ");
         var yThree = this.three.slice(index, len);
         var xThree = Array(yThree.length).fill(" ");
-        
+
         Chart.defaults.global.tooltips.enabled = false;
-        
+
         var c1 = document.getElementById("channel-1");
         c1.style.width = yOne.length + "px";
         var c2 = document.getElementById("channel-2");
         c2.style.width = yTwo.length + "px";
         var c3 = document.getElementById("channel-3");
         c3.style.width = yThree.length + "px";
-        
+
         var data1 = {
             labels: xOne,
             datasets: [
@@ -324,7 +324,7 @@ export class RecordComponentsDetailController {
                 }
             ]
         };
-        
+
         var chartOne = new Chart(c1, {
             type: 'line',
             data: data1,
@@ -410,22 +410,22 @@ export class RecordComponentsDetailController {
             }
         });
     }
-    
+
     setDisplay(option){
         this.display = option;
     }
-    
+
     formatValue(value){
         if(typeof value == "number"){
             return value.toFixed(3);
-        } 
+        }
         return value;
     }
 
     toggleAnimation(){
         this.animate = !this.animate;
     }
-    
+
     saveChart(){
         chart = document.getElementById("chart");
         var ctx = chart.getContext("2d");
@@ -433,8 +433,8 @@ export class RecordComponentsDetailController {
         var img2 = document.getElementById("channel-2");
         var img3 = document.getElementById("channel-3");
         ctx.drawImage(img1,0,0);
-        ctx.drawImage(img2,0,200);
-        ctx.drawImage(img3,0,400);
+        ctx.drawImage(img2,0,300);
+        ctx.drawImage(img3,0,600);
         chart.toBlob(function(blob){
             saveAs(blob, "ECG_Chart.png");
         });

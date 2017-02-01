@@ -1,7 +1,7 @@
 <div ng-if="rDetail.$auth.isAuthenticated()" class="container-fluid">
     <div class="col-md-10">
         <div class="row" ng-if="rDetail.display == 0">
-            
+
         </div>
         <div class="row" ng-if="rDetail.display == 0">
             <div class="panel panel-default">
@@ -31,11 +31,11 @@
                         </div>
                         <div>
                             <button ng-if="rDetail.numPages != undefined"  type="button" class="pull-left btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.saveChart()">
-                                Save Chart
+                                Print Chart
                             </button>
                         </div>
                         <div>
-                            <canvas id="chart" width="1000" height="600" style="display:none;"></canvas>
+                            <canvas id="chart" width="1000" height="900" style="display:none;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -124,11 +124,8 @@
                             </tbody>
                         </table>
                     </div>
-                </div>    
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
