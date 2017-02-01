@@ -12,7 +12,10 @@ export class RecordComponentsDetailController {
       this.ECG_3 = "Three Channels ECG";
       this.currentPage = 1;
       this.maxSize = 5;
-      this.itemsPerPage = 1200;
+      this.itemsPerPage = 2000;
+      this.samplingRate = 250;
+      this.ADC_TO_MV_COEFFICIENT = 0.01465;
+      this.yStepSize = 0.5;
 
       this.display = 0;
 
@@ -190,6 +193,9 @@ export class RecordComponentsDetailController {
                         pvcLocs = vm.detail.pvcEvents.locs;
                     }
                 }
+                else {
+                  vm.yStepSize = 1;
+                }
 
                 vm.chOne = [{key:"chOne", values:[]}];
                 vm.one = vm.detail.chOne;
@@ -224,190 +230,142 @@ export class RecordComponentsDetailController {
             len = this.itemsPerPage;
         len += index;
 
-        var yOne = this.one.slice(index, len);
-        var xOne = Array(yOne.length).fill(" ");
-        var yTwo = this.two.slice(index, len);
-        var xTwo = Array(yTwo.length).fill(" ");
-        var yThree = this.three.slice(index, len);
-        var xThree = Array(yThree.length).fill(" ");
+        var durationPerSample = 1/this.samplingRate; //In seconds
+        var chOneArr = this.one.slice(index, len);
+        var chTwoArr = this.two.slice(index, len);
+        var chThreeArr = this.three.slice(index, len);
+        var chOneData = chOneArr.map((e, i) =>{
+            return {
+                x: i*durationPerSample,
+                y: (e == null) ? e : (chThreeArr[i] - e) *this.ADC_TO_MV_COEFFICIENT
+            };
+        });
+        var chTwoData = chTwoArr.map((e, i) => {
+          return {
+              x: i*durationPerSample,
+              y: (e == null) ? e : (chOneArr[i] - e) *this.ADC_TO_MV_COEFFICIENT
+          };
+        });
+        var chThreeData = chThreeArr.map((e, i) => {
+          return {
+              x: i*durationPerSample,
+              y: (e == null) ? e : (chOneArr[i] - e) *this.ADC_TO_MV_COEFFICIENT
+          };
+        });
 
         Chart.defaults.global.tooltips.enabled = false;
 
         var c1 = document.getElementById("channel-1");
-        c1.style.width = yOne.length + "px";
         var c2 = document.getElementById("channel-2");
-        c2.style.width = yTwo.length + "px";
         var c3 = document.getElementById("channel-3");
-        c3.style.width = yThree.length + "px";
 
+        var datasetsConfig = {
+            label: "",
+            data: [],
+            fill: false,
+            lineTension: 0,
+            backgroundColor: "rgb(0,0,255)",
+            borderWidth: 1,
+            borderColor: "rgb(0,0,255)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgb(0,0,255)",
+            pointBackgroundColor: "rgb(0,0,255)",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgb(255, 204, 204)",
+            pointHoverBorderColor: "rgb(0,0,255)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 10,
+            spanGaps: false
+        };
+
+        var chOneDataSet = JSON.parse(JSON.stringify(datasetsConfig));
+        chOneDataSet.label = "CH I";
+        chOneDataSet.data = chTwoData;
+        var chTwoDataSet = JSON.parse(JSON.stringify(datasetsConfig));
+        chTwoDataSet.label = "CH II";
+        chTwoDataSet.data = chTwoData;
+        var chThreeDataSet = JSON.parse(JSON.stringify(datasetsConfig));
+        chThreeDataSet.label = "CH III";
+        chThreeDataSet.data = chThreeData;
         var data1 = {
-            labels: xOne,
             datasets: [
-                {
-                    label: "CH I",
-                    fill: false,
-                    lineTension: 0,
-                    backgroundColor: "rgb(0,0,255)",
-                    borderWidth: 1,
-                    borderColor: "rgb(0,0,255)",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgb(0,0,255)",
-                    pointBackgroundColor: "rgb(0,0,255)",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgb(255, 204, 204)",
-                    pointHoverBorderColor: "rgb(0,0,255)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 0,
-                    pointHitRadius: 10,
-                    data: yOne,
-                    spanGaps: false,
-                }
+                chOneDataSet
             ]
         };
         var data2 = {
-            labels: xTwo,
             datasets: [
-                {
-                    label: "CH II",
-                    fill: false,
-                    lineTension: 0,
-                    backgroundColor: "rgb(0,0,255)",
-                    borderWidth: 1,
-                    borderColor: "rgb(0,0,255)",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgb(0,0,255)",
-                    pointBackgroundColor: "rgb(0,0,255)",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgb(255, 204, 204)",
-                    pointHoverBorderColor: "rgb(0,0,255)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 0,
-                    pointHitRadius: 10,
-                    data: yTwo,
-                    spanGaps: false,
-                }
+                chTwoDataSet
             ]
         };
         var data3 = {
-            labels: xThree,
             datasets: [
-                {
-                    label: "CH III",
-                    fill: false,
-                    lineTension: 0,
-                    backgroundColor: "rgb(0,0,255)",
-                    borderWidth: 1,
-                    borderColor: "rgb(0,0,255)",
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
-                    pointBorderColor: "rgb(0,0,255)",
-                    pointBackgroundColor: "rgb(0,0,255)",
-                    pointBorderWidth: 1,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgb(255, 204, 204)",
-                    pointHoverBorderColor: "rgb(0,0,255)",
-                    pointHoverBorderWidth: 2,
-                    pointRadius: 0,
-                    pointHitRadius: 10,
-                    data: yThree,
-                    spanGaps: false,
-                }
+                chThreeDataSet
             ]
         };
+
+        var opt = {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Amplitude(mV)",
+                        fontColor: "rgb(0, 0, 255)"
+                    },
+                    ticks: {
+                        beginAtZero:false,
+                        autoSkip: true,
+                        stepSize: this.yStepSize
+                    },
+                    gridLines: {
+                        color: "rgb(255, 150, 150)"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Time(Seconds)",
+                        fontColor: "rgb(0, 0, 255)"
+                    },
+                    ticks: {
+                        beginAtZero:false,
+                        autoSkip: true,
+                        stepSize: 0.2
+                    },
+                    gridLines: {
+                        color: "rgb(255, 150, 150)"
+                    },
+                    type: 'linear',
+                    position: 'bottom'
+                }]
+            },
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: 'rgb(0,0,0)',
+                    boxWidth: 0
+                }
+            }
+        }
 
         var chartOne = new Chart(c1, {
             type: 'line',
             data: data1,
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:false
-                        },
-                        gridLines: {
-                            color: "rgb(255, 204, 204)"
-                        }
-                    }],
-                    xAxes: [{
-                        gridLines: {
-                            color: "rgb(255, 204, 204)"
-                        }
-                    }]
-                },
-                legend: {
-                    display: true,
-                    labels: {
-                        fontColor: 'rgb(0,0,0)',
-                        boxWidth: 0
-                    }
-                }
-            }
+            options: opt
         });
         var chartTwo = new Chart(c2, {
             type: 'line',
             data: data2,
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:false
-                        },
-                        gridLines: {
-                            color: "rgb(255, 204, 204)"
-                        }
-                    }],
-                    xAxes: [{
-                        gridLines: {
-                            color: "rgb(255, 204, 204)"
-                        }
-                    }]
-                },
-                legend: {
-                    display: true,
-                    labels: {
-                        fontColor: 'rgb(0,0,0)',
-                        boxWidth: 0
-                    }
-                }
-            }
+            options: opt
         });
         var chartThree = new Chart(c3, {
             type: 'line',
             data: data3,
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:false
-                        },
-                        gridLines: {
-                            color: "rgb(255, 204, 204)"
-                        }
-                    }],
-                    xAxes: [{
-                        gridLines: {
-                            color: "rgb(255, 204, 204)"
-                        }
-                    }]
-                },
-                legend: {
-                    display: true,
-                    labels: {
-                        fontColor: 'rgb(0,0,0)',
-                        boxWidth: 0
-                    }
-                }
-            }
+            options: opt
         });
     }
 
@@ -427,7 +385,7 @@ export class RecordComponentsDetailController {
     }
 
     saveChart(){
-        chart = document.getElementById("chart");
+        chart = document.getElementById("print-chart-context");
         var ctx = chart.getContext("2d");
         var img1 = document.getElementById("channel-1");
         var img2 = document.getElementById("channel-2");
