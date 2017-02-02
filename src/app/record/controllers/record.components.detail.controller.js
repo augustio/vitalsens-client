@@ -8,14 +8,12 @@ export class RecordComponentsDetailController {
       this.$interval = $interval;
       this.$scope = $scope;
       this.$auth = $auth;
-      this.NAN = -4096;
       this.ECG_3 = "Three Channels ECG";
       this.currentPage = 1;
       this.maxSize = 5;
       this.itemsPerPage = 2000;
       this.samplingRate = 250;
       this.ADC_TO_MV_COEFFICIENT = 0.01465;
-      this.yStepSize = 0.5;
 
       this.display = 0;
 
@@ -124,35 +122,6 @@ export class RecordComponentsDetailController {
           }
       };
 
-      this.ecgOptions = {
-          chart: {
-              type: 'lineChart',
-              height: 200,
-              useInteractiveGuideline: false,
-              tooltip: {
-                  contentGenerator: function (e) {
-                      var series = e.series[0];
-                      var rows =
-                              "<tr>" + "<td class='key'>" + 'T: ' + "</td>" +
-                              "<td class='x-value'>" + e.value + "</td>" +
-                              "</tr>" +
-                              "<tr>" + "<td class='key'>" + 'V: ' + "</td>" +
-                              "<td class='x-value'>" + series.value + "</td>" +
-                          "</tr>";
-                          return "<table style='background-color: " + series.color + "; color: #ffffff;'>" + "<tbody>" + rows + "</tbody>" + "</table>";
-                  }
-              },
-              color: ['#0000ff'],
-              x: function(d){ return d.x; },
-              y: function(d){ return d.y; },
-              xAxis: {
-                  axisLabel: 'Time(ms)'
-              },
-              yAxis: {
-                  axisLabel: 'Voltage(mv)'
-              }
-          }
-      };
       this.getDetail();
   }
 
@@ -163,6 +132,7 @@ export class RecordComponentsDetailController {
             this.$http.get(this.API_URL+'api/record-details?_id='+vm._id)
                 .then(function(result){
                 vm.detail = result.data;
+                vm.dataType = vm.detail.type;
                 var start = vm.detail.pEStart;
                 var end = vm.detail.pEEnd;
                 if(start > -1 || end > -1){
@@ -192,9 +162,6 @@ export class RecordComponentsDetailController {
                         }
                         pvcLocs = vm.detail.pvcEvents.locs;
                     }
-                }
-                else {
-                  vm.yStepSize = 1;
                 }
 
                 vm.chOne = [{key:"chOne", values:[]}];
@@ -255,9 +222,13 @@ export class RecordComponentsDetailController {
 
         Chart.defaults.global.tooltips.enabled = false;
 
-        var c1 = document.getElementById("channel-1");
-        var c2 = document.getElementById("channel-2");
-        var c3 = document.getElementById("channel-3");
+
+        var canvas1 = document.getElementById("channel-1");
+        var ctx1 = canvas1.getContext('2d');
+        var canvas2 = document.getElementById("channel-2");
+        var ctx2 = canvas2.getContext('2d');
+        var canvas3 = document.getElementById("channel-3");
+        var ctx3 = canvas3.getContext('2d');
 
         var datasetsConfig = {
             label: "",
@@ -309,6 +280,10 @@ export class RecordComponentsDetailController {
         };
 
         var opt = {
+            hover: {
+                intersect: false,
+                onHover: null
+            },
             scales: {
                 yAxes: [{
                     scaleLabel: {
@@ -317,9 +292,7 @@ export class RecordComponentsDetailController {
                         fontColor: "rgb(0, 0, 255)"
                     },
                     ticks: {
-                        beginAtZero:false,
-                        autoSkip: true,
-                        stepSize: this.yStepSize
+                        beginAtZero:false
                     },
                     gridLines: {
                         color: "rgb(255, 150, 150)"
@@ -333,7 +306,7 @@ export class RecordComponentsDetailController {
                     },
                     ticks: {
                         beginAtZero:false,
-                        autoSkip: true,
+                        autoSkip: false,
                         stepSize: 0.2
                     },
                     gridLines: {
@@ -352,17 +325,25 @@ export class RecordComponentsDetailController {
             }
         }
 
-        var chartOne = new Chart(c1, {
+        if(this.chartOne != undefined)
+            this.chartOne.destroy();
+        if(this.chartTwo != undefined)
+            this.chartTwo.destroy();
+        if(this.chartThree != undefined)
+            this.chartThree.destroy();
+
+
+        this.chartOne = new Chart(ctx1, {
             type: 'line',
             data: data1,
             options: opt
         });
-        var chartTwo = new Chart(c2, {
+        this.chartTwo = new Chart(ctx2, {
             type: 'line',
             data: data2,
             options: opt
         });
-        var chartThree = new Chart(c3, {
+        this.chartThree = new Chart(ctx3, {
             type: 'line',
             data: data3,
             options: opt
@@ -385,7 +366,7 @@ export class RecordComponentsDetailController {
     }
 
     saveChart(){
-        chart = document.getElementById("print-chart-context");
+        var chart = document.getElementById("print-chart-context");
         var ctx = chart.getContext("2d");
         var img1 = document.getElementById("channel-1");
         var img2 = document.getElementById("channel-2");
