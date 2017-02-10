@@ -1,11 +1,10 @@
 export class RecordComponentsDetailController {
-  constructor ($http, $state, API_URL, $interval, $scope, $auth) {
+  constructor ($http, $state, API_URL, $scope, $auth) {
       'ngInject';
 
       this.$http = $http;
       this.$state = $state;
       this.API_URL = API_URL;
-      this.$interval = $interval;
       this.$scope = $scope;
       this.$auth = $auth;
       this.ECG_3 = "Three Channels ECG";
@@ -133,18 +132,20 @@ export class RecordComponentsDetailController {
                 .then(function(result){
                 vm.detail = result.data;
                 vm.dataType = vm.detail.type;
-                var start = vm.detail.pEStart;
-                var end = vm.detail.pEEnd;
-                if(start > -1 || end > -1){
-                    if(start == -1)
-                        start = 0;
-                    if(end == -1)
-                        end = vm.detail.chOne.length;
-                    vm.detail.chOne = vm.detail.chOne.slice(start, end);
-                    vm.detail.chTwo = vm.detail.chTwo.slice(start, end);
-                    vm.detail.chThree = vm.detail.chThree.slice(start, end);
+                vm.start = vm.detail.pEStart;
+                vm.end = vm.detail.pEEnd;
+                vm.marked = Array(vm.detail.chOne.length).fill(null);
+                if(vm.start > -1 || vm.end > -1){
+                    if(vm.start == -1)
+                        vm.start = 0;
+                    if(vm.end == -1)
+                        vm.end = vm.detail.chOne.length;
 
-                    vm.ecgOptions.chart.color = ['#ff0000'];
+                    vm.marked = [
+                      ...vm.marked.slice(0, vm.start),
+                      ...vm.detail.chOne.slice(vm.start, vm.end),
+                      ...vm.marked.slice(vm.end)
+                    ];
                 }
                 if(vm.detail.type.toUpperCase().indexOf("ECG") >= 0){
                     if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
@@ -164,11 +165,8 @@ export class RecordComponentsDetailController {
                     }
                 }
 
-                vm.chOne = [{key:"chOne", values:[]}];
                 vm.one = vm.detail.chOne;
-                vm.chTwo = [{key:"chTwo", values:[]}];
                 vm.two = vm.detail.chTwo;
-                vm.chThree = [{key:"chThree", values:[]}];
                 vm.three = vm.detail.chThree;
 
                 vm.isECG = (vm.detail.type.toUpperCase().indexOf("ECG") >= 0);
@@ -199,9 +197,16 @@ export class RecordComponentsDetailController {
 
         var durationPerSample = 1/this.samplingRate; //In seconds
         var chOneArr = this.one.slice(index, len);
+        var markedArr = this.marked.slice(index, len);
         var chTwoArr = this.two.slice(index, len);
         var chThreeArr = this.three.slice(index, len);
         var chOneData = chOneArr.map((e, i) =>{
+            return {
+                x: i*durationPerSample,
+                y: (e == null) ? e : (chThreeArr[i] - e) *this.ADC_TO_MV_COEFFICIENT
+            };
+        });
+        var markedData = markedArr.map((e, i) =>{
             return {
                 x: i*durationPerSample,
                 y: (e == null) ? e : (chThreeArr[i] - e) *this.ADC_TO_MV_COEFFICIENT
@@ -254,18 +259,39 @@ export class RecordComponentsDetailController {
             spanGaps: false
         };
 
-        var chOneDataSet = JSON.parse(JSON.stringify(datasetsConfig));
-        chOneDataSet.label = "CH I";
-        chOneDataSet.data = chTwoData;
-        var chTwoDataSet = JSON.parse(JSON.stringify(datasetsConfig));
-        chTwoDataSet.label = "CH II";
-        chTwoDataSet.data = chTwoData;
-        var chThreeDataSet = JSON.parse(JSON.stringify(datasetsConfig));
-        chThreeDataSet.label = "CH III";
-        chThreeDataSet.data = chThreeData;
+        var markedDataSet =
+        {
+            label: "",
+            data: markedData,
+            fill: false,
+            lineTension: 0,
+            backgroundColor: "rgb(255,0,0)",
+            borderWidth: 3,
+            borderColor: "rgb(255,0,0)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgb(255,0,0)",
+            pointBackgroundColor: "rgb(255,0,0)",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgb(255, 204, 204)",
+            pointHoverBorderColor: "rgb(255,0,0)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 10,
+            spanGaps: false
+        };
+
+        var chOneDataSet = Object.assign({}, datasetsConfig, {label: "CH I", data: chOneData});
+        var chTwoDataSet = Object.assign({}, datasetsConfig, {label: "CH II", data: chTwoData});
+        var chThreeDataSet = Object.assign({}, datasetsConfig, {label: "CH III", data: chThreeData});
+
         var data1 = {
             datasets: [
-                chOneDataSet
+                chOneDataSet,
+                markedDataSet
             ]
         };
         var data2 = {
@@ -359,10 +385,6 @@ export class RecordComponentsDetailController {
             return value.toFixed(3);
         }
         return value;
-    }
-
-    toggleAnimation(){
-        this.animate = !this.animate;
     }
 
     saveChart(){
