@@ -9,13 +9,12 @@ export class AuthController{
     register(){
         var vm = this;
         this.$auth.signup(this.user).then(function(response){
-            vm.$auth.setToken(response.data.token);
             vm.$state.go('home');
         }).catch(function(response){
             vm.message = response.data.message;
         });
     }
-    
+
     login(){
         var vm = this;
         this.$auth.login(this.login.user).then(function(response){
@@ -25,5 +24,5 @@ export class AuthController{
             vm.message = response.data.message;
         });
     }
-        
+
 }

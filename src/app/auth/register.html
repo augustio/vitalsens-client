@@ -20,9 +20,13 @@
                         </div>
                         <div class="form-group">
                             <label>Role</label>
-                            <input type="text" class="form-control" name="role" ng-model="auth.user.role">
+                            <select class="form-control" name="role" ng-model="auth.user.role">
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
                         </div>
                         <button ng-disabled="register.pwdConfirm.$invalid" type="submit" class="btn btn-default">Register</button>
+                        <br><br><span class="alert-danger">{{auth.message}}</span>
                     </form>
                 </div>
             </div>
