@@ -19,7 +19,7 @@ export class RecordComponentsDetailController {
       if(!this.$auth.isAuthenticated())
           this.$state.go('home');
 
-      this.rrOptions = {
+      /*this.rrOptions = {
           chart: {
               type: 'lineChart',
               height: 200,
@@ -84,9 +84,9 @@ export class RecordComponentsDetailController {
                   }
               }
           }
-      };
+      };*/
 
-      this.poincareOptions = {
+      /*this.poincareOptions = {
           chart: {
               type: 'scatterChart',
               height: 350,
@@ -119,7 +119,7 @@ export class RecordComponentsDetailController {
                   unzoomEventType: 'dblclick.zoom'
               }
           }
-      };
+      };*/
 
       this.getDetail();
   }
@@ -147,7 +147,7 @@ export class RecordComponentsDetailController {
                       ...vm.marked.slice(vm.end)
                     ];
                 }
-                if(vm.detail.type.toUpperCase().indexOf("ECG") >= 0){
+                /*if(vm.detail.type.toUpperCase().indexOf("ECG") >= 0){
                     if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
                         vm.rr = [{key:"RR Series", values:[]}];
                         vm.poincare = [{key:"Poincare", values:[]}];
@@ -163,7 +163,7 @@ export class RecordComponentsDetailController {
                         }
                         pvcLocs = vm.detail.pvcEvents.locs;
                     }
-                }
+                }*/
 
                 vm.one = vm.detail.chOne;
                 vm.two = vm.detail.chTwo;
@@ -413,7 +413,7 @@ function isPVC(value){
     return false;
 }
 
-function highlightPoints(ch){
+/*function highlightPoints(ch){
     var data = d3.select('.rrInt')
                 .select('svg').datum();
 
@@ -432,4 +432,4 @@ function highlightPoints(ch){
         .attr("cx", function(d) { return ch.xAxis.scale()(d.x); })
         .attr("cy", function(d) { return ch.yAxis.scale()(d.y); })
         .attr("r", 5);
-}
+}*/

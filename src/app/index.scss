@@ -113,8 +113,59 @@ ul {
   }
 }
 
-.chart{
-  margin-bottom: 20px
+body{
+  height: 100vh;
+}
+
+/*Raw data chat*/
+line{
+  stroke: black;
+  stroke-width: 2;
+}
+
+.panel{
+  background-color: #E1EEF2;
+  margin: -15px;
+  height: 100vh;
+}
+
+.chart-bg{
+  fill: url(#grid);
+  stroke: red;
+  stroke-width: 1px;
+}
+
+.chart-header{
+  padding: 10px;
+}
+
+.chart-header-label a:hover{
+  text-decoration: none;
+  font-weight: bolder;
+  color: gray;
+}
+
+.vertical-line{
+  color: blue;
+}
+
+#chart-container{
+  height: 500px;
+}
+
+g.group0 path,
+g.group0 circle {
+  stroke: red;
+  fill: none;
+}
+
+g.tick line{
+  stroke: red;
+  stroke-width: 0.5;
+}
+
+g.tick text {
+  font-size: 12px;
 }
 
 

@@ -11,7 +11,10 @@ export class AuthController{
         this.$auth.signup(this.user).then(function(response){
             vm.$state.go('home');
         }).catch(function(response){
-            vm.message = response.data.message;
+            const data = response.data;
+            if(data){
+              vm.message = response.data.message;
+            }
         });
     }
 
@@ -21,7 +24,10 @@ export class AuthController{
             vm.$auth.setToken(response.data.token);
             vm.$state.go('home');
         }).catch(function(response){
+          const data = response.data;
+          if(data){
             vm.message = response.data.message;
+          }
         });
     }
 

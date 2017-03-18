@@ -39,8 +39,8 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
       controller: 'RecordComponentsController',
       controllerAs: 'rComponents'
     })
-    .state('record-components.detail', {
-      url: '/record-components.detail',
+    .state('record-components-detail', {
+      url: '/record-components-detail',
       params:{
           _id: null
       },

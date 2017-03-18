@@ -9,10 +9,10 @@ export class RecordController {
       this.maxSize = 5;
       this.itemsPerPage = 100;
       this.pageContent = [];
-      
+
       if(!this.$auth.isAuthenticated())
           this.$state.go('home');
-      
+
       this.getRecords();
   }
 
@@ -24,9 +24,9 @@ export class RecordController {
             vm.numPages = Math.floor(vm.totalItems/vm.itemsPerPage);
             if(vm.totalItems % vm.itemsPerPage > 0)
                 vm.numPages++;
-            
+
             vm.getPageContent();
-            
+
         });
     }
 

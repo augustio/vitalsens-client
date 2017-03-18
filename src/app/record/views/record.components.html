@@ -1,50 +1,43 @@
 <div ng-if="rComponents.$auth.isAuthenticated()" class="container-fluid">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3 text-center">
-                            <a ui-sref="patient.record({patientId: rComponents.patientId})" >
-                                <button type="button" class="pull-left btn btn-info btn-responsive font-size-responsive">
-                                    {{rComponents.patientId}}
-                                </button>
-                            </a>
-                        </div>
-                        <div class="col-xs-3 text-center font-size-responsive">
-                            <button type="button" ng-click="rComponents.reloadComponents()" class="text-center btn btn-info btn-responsive font-size-responsive">
-                                {{rComponents.timeStamp | date:'EEE, dd.MM.yyyy HH:mm:ss'}}
-                            </button>
-                        </div>
-                        <div class="col-xs-3 text-center font-size-responsive">
-                            <button type="button" ng-click="rComponents.reloadComponents()" class="text-center btn btn-info btn-responsive font-size-responsive">
-                                {{rComponents.type}}
-                            </button>
-                        </div>
-                        <div class="col-xs-3">
-                            <button type="button" class="pull-right btn btn-info btn-responsive font-size-responsive glyphicon glyphicon-download"
-                            aria-label="download" ng-click="rComponents.downloadData()"></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-2 text-center h-scroll">
-                            <ul class="list-group">
-                                <li ng-repeat="rc in rComponents.components">
-                                    <a class="font-size-responsive list-group-item" ui-sref-active="active" ui-sref="record-components.detail({_id: rc._id})" >
-                                        <div ng-class="{'marked':rc.pEStart != -1 || rc.pEEnd != -1}">
-                                            {{rc.start | date:'HH:mm:ss'}}<br>
-                                            {{rComponents.getDuration(rc.end, rc.start)}} sec
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div ui-view></div>
-                    </div>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-info">
+        <div class="panel-body">
+          <div ng-if="rComponents.data" class="font-size-responsive row chart-header">
+            <span class="pull-left chart-header-label">
+              <a ui-sref="patient.record({patientId: rComponents.patientId})" >
+                Patient id: {{rComponents.patientId}}
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </a>
+            </span>
+            <span class="pull-left chart-header-label">
+              <a ui-sref="#" >
+                Time: {{rComponents.timeStamp | date:'EEE, dd.MM.yyyy HH:mm:ss'}}
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </a>
+            </span>
+            <span class="pull-left chart-header-label">
+              <a <a ui-sref="#" >
+                Type: {{rComponents.type}}
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </a>
+            </span>
+            <span class="btn-group pull-right font-size-responsive">
+              <button class="btn btn-primary btn-responsive glyphicon glyphicon-print" aria-label="Print Chart"></button>
+              <button class="btn btn-primary btn-responsive glyphicon glyphicon-download" aria-label="download" ng-click="rComponents.downloadData()"></button>
+            </span>
+          </div>
+          <div id="chart-container" class="font-size-responsive"></div>
+          <div class="pull-right">
+            <button class="btn btn-info btn-sm">
+              <span class="glyphicon glyphicon-backward"></span>
+            </button>
+            <button class="btn btn-info btn-sm">
+              <span class="glyphicon glyphicon-forward" ng-click="rComponents.handleForwardBtn()"></span>
+            </button>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
