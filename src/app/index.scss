@@ -90,6 +90,9 @@ ul {
     font-size:80%;
     line-height: 1;
     border-radius:3px;
+  },
+  .font-size-responsive {
+    font-size:80%;
   }
 }
 
@@ -98,23 +101,10 @@ ul {
     padding:4px 9px;
     font-size:90%;
     line-height: 1.2;
-  }
-}
-
-@media (max-width: 768px) {
-  .font-size-responsive {
-    font-size:80%;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 992px) {
+  },
   .font-size-responsive {
     font-size:90%;
   }
-}
-
-body{
-  height: 100vh;
 }
 
 /*Raw data chat*/
@@ -123,10 +113,11 @@ line{
   stroke-width: 2;
 }
 
+
 .panel{
   background-color: #E1EEF2;
   margin: -15px;
-  height: 100vh;
+  height: 800px;
 }
 
 .chart-bg{
@@ -150,7 +141,7 @@ line{
 }
 
 #chart-container{
-  height: 500px;
+  height: 100%;
 }
 
 g.group0 path,
@@ -166,6 +157,14 @@ g.tick line{
 
 g.tick text {
   font-size: 12px;
+}
+
+.back-btn{
+  padding: 0px 10px;
+}
+
+.forward-btn{
+  padding: 0px 10px;
 }
 
 

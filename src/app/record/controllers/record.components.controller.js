@@ -39,6 +39,7 @@ export class RecordComponentsController {
         this.components = result.data;
         if(this.components.length > 0){
           this.componentIndex = 0;
+          this.selectedComponent = this.components[this.componentIndex];
           this.getRecordDetail();
         }
       });
@@ -53,23 +54,10 @@ export class RecordComponentsController {
       this.$http.get(`${this.API_URL}api/record-details?_id=${this._id}`)
       .then(result => {
         this.isECG = (result.data.type.toUpperCase() === "ECG");
-        this.data = {};
-        this.data.chOne = result.data.chOne;
-        this.data.chTwo = result.data.chTwo
-        /*.map((e, i) =>{
-          return {
-            x: i*durationPerSample,
-            y: (e == null) ? e : (result.data.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
-          };
-        });*/
-        this.data.chThree = result.data.chThree;
-        /*.map((e, i) => {
-          return {
-            x: i*durationPerSample,
-            y: (e == null) ? e : (result.data.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
-          };
-        });*/
-        this.dataLength = this.data.chOne.length;
+        this.chOne = result.data.chOne;
+        this.chTwo = result.data.chTwo
+        this.chThree = result.data.chThree;
+        this.dataLength = this.chOne.length;
         this.drawChart();
         d3.select(window).on('resize', () => this.drawChart())
       });
@@ -85,25 +73,53 @@ export class RecordComponentsController {
       d3.select('#chart-container').select('svg').remove();
     }
     const options = setOptions();
+    this.pageSize = options.itemsPerPage;
     const end = this.pageStart + options.itemsPerPage;
     this.pageEnd = end < this.dataLength ? end : this.dataLength;
     if(this.pageEnd <= this.pageStart){
       return;
     }
     const durationPerSample = 1/this.samplingRate; //In seconds
-    let data = this.data.chOne.slice(this.pageStart, this.pageEnd);
-    if(data.length < options.itemsPerPage){
-      data = [
-        ...data,
-        ...(Array(options.itemsPerPage - data.length).fill(null))
+    let data1 = this.chOne.slice(this.pageStart, this.pageEnd);
+    let data2 = this.chTwo.slice(this.pageStart, this.pageEnd);
+    let data3 = this.chThree.slice(this.pageStart, this.pageEnd);
+    if(data1.length < options.itemsPerPage){
+      data1 = [
+        ...data1,
+        ...(Array(options.itemsPerPage - data1.length).fill(null))
       ];
     }
-    const chOneData = data.map((e, i) =>{
+    if(data2.length < options.itemsPerPage){
+      data2 = [
+        ...data2,
+        ...(Array(options.itemsPerPage - data2.length).fill(null))
+      ];
+    }
+    if(data3.length < options.itemsPerPage){
+      data3 = [
+        ...data3,
+        ...(Array(options.itemsPerPage - data3.length).fill(null))
+      ];
+    }
+    options.data.chOne = data1.map((e, i) =>{
       return {
         x: i*durationPerSample,
-        y: (e == null) ? e : (this.data.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
+        y: (e == null) ? e : (this.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
       };
     });
+    options.data.chTwo = data2.map((e, i) =>{
+      return {
+        x: i*durationPerSample,
+        y: (e == null) ? e : (this.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
+      };
+    });
+    options.data.chThree = data3.map((e, i) => {
+      return {
+        x: i*durationPerSample,
+        y: (e == null) ? e : (this.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
+      };
+    });
+
     const svg = d3.select('#chart-container').append('svg')
       .attr('height', options.outerHeight)
       .attr('width', options.outerWidth);
@@ -139,10 +155,10 @@ export class RecordComponentsController {
 
     //x-y scale generators
     const y = d3.scaleLinear()
-      .domain([d3.min(chOneData, d => d.y), d3.max(chOneData, d => d.y)])
+      .domain([d3.min(options.data.chTwo, d => d.y), d3.max(options.data.chTwo, d => d.y)])
       .range([options.innerHeight, 0]);
     const x = d3.scaleLinear()
-      .domain([0, d3.max(chOneData, d => d.x)])
+      .domain([0, d3.max(options.data.chTwo, d => d.x)])
       .range([0, options.innerWidth]);
 
     //x-y axis generators
@@ -162,7 +178,7 @@ export class RecordComponentsController {
     chartGroup.append('path')
       .attr('fill', 'none')
       .attr('stroke', 'black')
-      .attr('d', line(chOneData));
+      .attr('d', line(options.data.chTwo));
 
     chartGroup.append('g')
       .attr('class', 'axis y')
@@ -173,7 +189,7 @@ export class RecordComponentsController {
       .call(xAxis);
 
     chartGroup.selectAll('circle')
-      .data(chOneData)
+      .data(options.data.chTwo)
       .enter().append('circle')
       .attr('cx',(d,i) => x(d.x))
       .attr('cy',(d,i) => y(d.y))
@@ -223,12 +239,31 @@ export class RecordComponentsController {
       this.drawChart();
     }
   }
+
+  handleBackwardBtn(){
+    const start = this.pageStart - this.pageSize;
+    this.pageStart = start > 0 ? start : 0;
+    this.drawChart();
+  }
+
+  handleRecordComponentSelect(index){
+    this.selectedComponent = this.components[index];
+    this.componentIndex = index;
+    this.pageStart = this.pageEnd = 0;
+    this.getRecordDetail();
+  }
+
 }
 
 const setOptions = () => {
   const options = {
-    innerHeight: 200,
-    outerHeight: 500,
+    data: {
+      chOne: [],
+      chTwo: [],
+      chThree: []
+    },
+    innerHeight: 150,
+    outerHeight: 700,
     smallGridSize: 5,
     largeGridSize: 25,
     outerMargin: {
