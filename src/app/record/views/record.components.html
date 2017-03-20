@@ -5,11 +5,11 @@
         <div class="panel-body">
           <div ng-if="rComponents.chOne" class="font-size-responsive row chart-header">
             <span class="pull-left chart-header-label">
-              <button type="button" class="btn btn-sm btn-default btn-responsive" >
-                <a ui-sref="patient.record({patientId: rComponents.patientId})" >
+              <a ui-sref="patient.record({patientId: rComponents.patientId})" >
+                <button type="button" class="btn btn-sm btn-default btn-responsive" >
                   Patient id: {{rComponents.patientId}}
-                </a>
-              </button>
+                </button>
+              </a>
               <span class="vertical-line">&ensp;&ensp;</span>
             </span>
             <span class="pull-left chart-header-label">
@@ -49,12 +49,12 @@
           </div>
           <div id="chart-container" class="font-size-responsive"></div>
           <button ng-if="rComponents.chOne"
-            class="btn btn-info btn-sm back-btn pull-left"
+            class="btn btn-info btn-sm back-btn btn-responsive pull-left"
             ng-click="rComponents.handleBackwardBtn()">
             <span class="glyphicon glyphicon-backward"></span>
           </button>
           <button ng-if="rComponents.chOne"
-            class="btn btn-info btn-sm forward-btn pull-right"
+            class="btn btn-info btn-sm forward-btn btn-responsive pull-right"
             ng-click="rComponents.handleForwardBtn()">
             <span class="glyphicon glyphicon-forward"></span>
           </button>

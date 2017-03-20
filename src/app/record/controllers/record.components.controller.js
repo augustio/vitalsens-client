@@ -101,19 +101,19 @@ export class RecordComponentsController {
         ...(Array(options.itemsPerPage - data3.length).fill(null))
       ];
     }
-    options.data.chOne = data1.map((e, i) =>{
+    options.data.ES = data2.map((e, i) =>{
       return {
         x: i*durationPerSample,
         y: (e == null) ? e : (this.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
       };
     });
-    options.data.chTwo = data2.map((e, i) =>{
+    options.data.AS = data2.map((e, i) =>{
       return {
         x: i*durationPerSample,
-        y: (e == null) ? e : (this.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
+        y: (e == null) ? e : (this.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
       };
     });
-    options.data.chThree = data3.map((e, i) => {
+    options.data.AE = data3.map((e, i) => {
       return {
         x: i*durationPerSample,
         y: (e == null) ? e : (this.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
@@ -123,6 +123,8 @@ export class RecordComponentsController {
     const svg = d3.select('#chart-container').append('svg')
       .attr('height', options.outerHeight)
       .attr('width', options.outerWidth);
+
+    //Background grid definition
     const defs = svg.append('defs');
     const smallGrid = defs.append('pattern')
       .attr('id', 'small-grid')
@@ -153,60 +155,78 @@ export class RecordComponentsController {
       .attr('width', '100%')
       .attr('class', 'chart-bg');
 
-    //x-y scale generators
-    const y = d3.scaleLinear()
-      .domain([d3.min(options.data.chTwo, d => d.y), d3.max(options.data.chTwo, d => d.y)])
-      .range([options.innerHeight, 0]);
-    const x = d3.scaleLinear()
-      .domain([0, d3.max(options.data.chTwo, d => d.x)])
-      .range([0, options.innerWidth]);
+    const dataKeys = Object.keys(options.data);
+    dataKeys.forEach( (key, index) => {
+      const height = index * (options.innerMargin.bottom*2 + options.innerHeight)
+      const titleYPos = options.innerMargin.top + height;
+      
+      //Add the title
+      svg.append("text")
+          .attr("x", options.innerWidth - options.innerMargin.right*2)
+          .attr("y", titleYPos)
+          .attr("text-anchor", "middle")
+          .style("font-size", "14px")
+          .style("text-decoration", "underline")
+          .text(dataKeys[index]);
 
-    //x-y axis generators
-    const yAxis = d3.axisLeft(y).ticks(options.y.ticks);
-    const xAxis = d3.axisBottom(x).ticks(options.x.ticks);
+      //x-y scale generators
+      const y = d3.scaleLinear()
+        .domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
+        .range([options.innerHeight, 0]);
+      const x = d3.scaleLinear()
+        .domain([0, d3.max(options.data[key], d => d.x)])
+        .range([0, options.innerWidth]);
 
-    //Line generator (used to draw chart path)
-    let line = d3.line()
-      .defined(d => d.y !== null)
-      .x((d,i) => x(d.x))
-      .y((d,i) => y(d.y))
-      .curve(d3.curveNatural);
+      //x-y axis generators
+      const yAxis = d3.axisLeft(y)
+                      .ticks(options.y.ticks);
+      const xAxis = d3.axisBottom(x)
+                      .ticks(options.x.ticks);
 
-    const chartGroup = svg.append('g')
-      .attr('transform', 'translate('+options.innerMargin.left+','+options.innerMargin.top+')');
+      //Line generator (used to draw chart path)
+      let line = d3.line()
+        .defined(d => d.y !== null)
+        .x((d,i) => x(d.x))
+        .y((d,i) => y(d.y))
+        .curve(d3.curveNatural);
 
-    chartGroup.append('path')
-      .attr('fill', 'none')
-      .attr('stroke', 'black')
-      .attr('d', line(options.data.chTwo));
+      const chartGroup = svg.append('g')
+        .attr('transform', 'translate('+options.innerMargin.left+','+(options.innerMargin.top +  height)+')');
 
-    chartGroup.append('g')
-      .attr('class', 'axis y')
-      .call(yAxis);
-    chartGroup.append('g')
-      .attr('class', 'axis x')
-      .attr('transform', 'translate(0,' +options.innerHeight+')')
-      .call(xAxis);
-
-    chartGroup.selectAll('circle')
-      .data(options.data.chTwo)
-      .enter().append('circle')
-      .attr('cx',(d,i) => x(d.x))
-      .attr('cy',(d,i) => y(d.y))
-      .attr('r','5')
-      .attr('stroke', 'red')
-      .attr('stroke-width', '0')
-      .attr('fill', 'transparent')
-      .on('mouseover', function(){
-        d3.select(this)
+      chartGroup.append('path')
+        .attr('fill', 'none')
+        .attr('stroke', 'black')
         .attr('stroke-width', '1')
-        .attr('fill', 'blue')
-      })
-      .on('mouseout', function(){
-        d3.select(this)
+        .attr('d', line(options.data[key]));
+
+      chartGroup.append('g')
+        .attr('class', 'axis y')
+        .call(yAxis);
+      chartGroup.append('g')
+        .attr('class', 'axis x')
+        .attr('transform', 'translate(0,' + options.innerHeight +')')
+        .call(xAxis);
+
+      chartGroup.selectAll('circle')
+        .data(options.data[key])
+        .enter().append('circle')
+        .attr('cx',(d,i) => x(d.x))
+        .attr('cy',(d,i) => y(d.y))
+        .attr('r','5')
+        .attr('stroke', 'red')
         .attr('stroke-width', '0')
         .attr('fill', 'transparent')
-      });
+        .on('mouseover', function(){
+          d3.select(this)
+          .attr('stroke-width', '1')
+          .attr('fill', 'blue')
+        })
+        .on('mouseout', function(){
+          d3.select(this)
+          .attr('stroke-width', '0')
+          .attr('fill', 'transparent')
+        });
+    });
   }
 
   downloadData(){
@@ -257,11 +277,7 @@ export class RecordComponentsController {
 
 const setOptions = () => {
   const options = {
-    data: {
-      chOne: [],
-      chTwo: [],
-      chThree: []
-    },
+    data: {},
     innerHeight: 150,
     outerHeight: 700,
     smallGridSize: 5,
@@ -276,7 +292,7 @@ const setOptions = () => {
       left: 25,
       right: 25,
       top: 25,
-      bottom: 0
+      bottom: 25
     },
     x: {
       ticks: 30
@@ -291,16 +307,16 @@ const setOptions = () => {
   }
   if(options.outerWidth < 750){
     options.innerWidth = 500;
-    options.itemsPerPage = 500;
-    options.x.ticks = 20;
+    options.itemsPerPage = 1000;
+    options.x.ticks = 5;
     let margin = (options.outerWidth - options.innerWidth)/2;
     margin = margin - (margin%options.largeGridSize);
     options.innerMargin.left = margin;
     options.innerMargin.right = margin;
   }else if(options.outerWidth > 750 && options.outerWidth <= 1000){
     options.innerWidth = 750;
-    options.itemsPerPage = 750;
-    options.x.ticks = 25;
+    options.itemsPerPage = 1500;
+    options.x.ticks = 5;
     let margin = (options.outerWidth - options.innerWidth)/2;
     options.innerMargin.left = margin > options.largeGridSize
      ? margin - (margin%options.largeGridSize)
@@ -308,8 +324,8 @@ const setOptions = () => {
     options.innerMargin.right = options.innerMargin.left;
   }else if(options.outerWidth > 1000 && options.outerWidth <=1250){
     options.innerWidth = 1000;
-    options.itemsPerPage = 1000;
-    options.x.ticks = 30;
+    options.itemsPerPage = 2000;
+    options.x.ticks = 10;
     let margin = (options.outerWidth - options.innerWidth)/2;
     options.innerMargin.left = margin > options.largeGridSize
      ? margin - (margin%options.largeGridSize)
@@ -317,8 +333,8 @@ const setOptions = () => {
     options.innerMargin.right = options.innerMargin.left;
   }else if(options.outerWidth > 1250 && options.outerWidth <=1500){
     options.innerWidth = 1250;
-    options.itemsPerPage = 1250;
-    options.x.ticks = 35;
+    options.itemsPerPage = 2500;
+    options.x.ticks = 10;
     let margin = (options.outerWidth - options.innerWidth)/2;
     options.innerMargin.left = margin > options.largeGridSize
      ? margin - (margin%options.largeGridSize)
@@ -326,8 +342,8 @@ const setOptions = () => {
     options.innerMargin.right = options.innerMargin.left;
   }else{
     options.innerWidth = 1500;
-    options.itemsPerPage = 1500;
-    options.x.ticks = 40;
+    options.itemsPerPage = 3000;
+    options.x.ticks = 15;
     let margin = (options.outerWidth - options.innerWidth)/2;
     options.innerMargin.left = margin > options.largeGridSize
      ? margin - (margin%options.largeGridSize)
