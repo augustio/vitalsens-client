@@ -113,12 +113,11 @@ line{
   stroke-width: 2;
 }
 
-
-.panel{
+/*.panel{
   background-color: #E1EEF2;
   margin: -15px;
   height: 100%;
-}
+}*/
 
 .chart-bg{
   fill: url(#grid);
@@ -166,6 +165,49 @@ g.tick text {
 .forward-btn{
   padding: 0px 10px;
 }
+
+/*record view*/
+.records-view{
+  margin: 0px -15px;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+}
+.rec-view-type{
+  background-color: #E1EEF2;
+  padding: 10px 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+.rec-view-type h1{
+  font-size: 18px;
+}
+#raw-header{
+  border-top-left-radius: 0.5em;
+}
+#analysis-header{
+  border-top-right-radius: 0.5em;
+}
+.records-view-body{
+  padding: 0px 10px;
+}
+
+/*record-raw, record-analysis view*/
+.control-panel{
+  margin: 5px 10px;
+}
+.patient-id{
+  background-color: #dce3ef;
+  color: #224D91;
+  margin: 10px 0px;
+}
+.record-date{
+  margin: 10px 0px;
+}
+.record-date input{
+  background-color: #dce3ef;
+  color: #224D91;
+}
+
 
 
 /**

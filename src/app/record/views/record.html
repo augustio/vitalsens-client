@@ -1,31 +1,19 @@
 <div ng-if="record.$auth.isAuthenticated()" class="container-fluid">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel panel-info">
-                <div class="panel-heading text-center font-size-responsive">
-                    Records
-                </div>
-                <div class="panel-body">
-                    <div class="text-center">
-                        <ul uib-pagination total-items="record.totalItems" items-per-page="record.itemsPerPage" ng-change="record.getPageContent()" ng-model="record.currentPage" max-size="record.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
-                    </div>
-                    <ul>
-                        <li class="list-group-item list-item-horizontal" ng-repeat="r in record.pageContent">
-                            <a ui-sref="record-components({
-                                        timeStamp: r.timeStamp,
-                                        patientId: r.patientId,
-                                        type: r.type
-                                        })">
-                                <button type="button" class="btn btn-info btn-md font-size-responsive">
-                                    {{r.timeStamp | date:'dd MMM yyyy HH:mm:ss'}}<br>
-                                    {{r.patientId}}<br>
-                                    {{r.type}}
-                                </button>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel-body records-view-body">
+        <div class="row">
+          <div id="raw-header" class="col-xs-6 text-center rec-view-type" role="button" ng-click="record.showRawView()" ng-style="record.rawSelected">
+            <h1 class="font-size-responsive">Raw Data</h1>
+          </div>
+          <div id="analysis-header" class="col-xs-6 text-center rec-view-type" role="button" ng-click="record.showAnalysisView()" ng-style="record.analysisSelected">
+            <h1 class="font-size-responsive">Analysis</h1>
+          </div>
         </div>
+        <div class="row">
+          <div ui-view></div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

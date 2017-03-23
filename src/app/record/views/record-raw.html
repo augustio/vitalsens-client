@@ -1,0 +1,85 @@
+<div ng-if="raw.$auth.isAuthenticated()" class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-info records-view">
+        <div class="panel-body">
+          <div class="col-xs-10">
+            <div ng-if="raw.chOne" class="font-size-responsive row chart-header">
+              <span class="pull-left chart-header-label">
+                Patient id: {{raw.patientId}}
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </span>
+              <span class="pull-left chart-header-label">
+                Type: {{raw.type}}
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </span>
+              <span class="pull-left chart-header-label">
+                Duration: {{raw.getDuration(
+                  raw.selectedComponent.end, raw.selectedComponent.start
+                )}} Seconds
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </span>
+              <span class="pull-left chart-header-label">
+                <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                  <button id="btn-append-to-body" type="button" class="btn btn-sm btn-info btn-responsive" uib-dropdown-toggle>
+                    {{raw.selectedComponent.start | date:'EEE, dd.MM.yyyy HH:mm:ss'}}
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" uib-dropdown-menu role="menu"           aria-labelledby="btn-append-to-body">
+                    <li role="menuitem" ng-repeat="c in raw.components">
+                      <button ng-click="raw.handleRecordComponentSelect($index)">
+                        {{c.start | date:'EEE, dd.MM.yyyy HH:mm:ss'}}
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </span>
+              <span class="btn-group pull-right font-size-responsive">
+                <button class="btn btn-info btn-responsive glyphicon glyphicon-print" aria-label="Print Chart"></button>
+                <button class="btn btn-info btn-responsive glyphicon glyphicon-download" aria-label="download" ng-click="raw.downloadData()"></button>
+              </span>
+            </div>
+            <div id="chart-container" class="font-size-responsive"></div>
+            <button ng-if="raw.chOne"
+              class="btn btn-info btn-sm back-btn btn-responsive pull-left"
+              ng-click="raw.handleBackwardBtn()">
+              <span class="glyphicon glyphicon-backward"></span>
+            </button>
+            <button ng-if="raw.chOne"
+              class="btn btn-info btn-sm forward-btn btn-responsive pull-right"
+              ng-click="raw.handleForwardBtn()">
+              <span class="glyphicon glyphicon-forward"></span>
+            </button>
+          </div>
+          <div class="col-xs-2">
+            <div class="control-panel">
+              <input class="text-center form-control font-size-responsive patient-id" type="text"
+              placeholder="Patient Id"
+              ng-model="raw.selectedPId"
+              uib-typeahead="p as p.patientId for p in raw.patients | filter:$viewValue" typeahead-on-select="raw.onSelectPatient($item.patientId)"
+              typeahead-select-on-exact="true"
+              typeahead-min-length="3" >
+              <div class=" record-date">
+                <p class="input-group">
+                  <input type="text"
+                    class="form-control text-center font-size-responsive" uib-datepicker-popup="{{raw.format}}"
+                    ng-model="raw.selectedDate"
+                    is-open="raw.opened"
+                    datepicker-options="raw.dateOptions"
+                    popup-placement="auto bottom"
+                    ng-required="true"
+                    alt-input-formats="raw.formats"
+                    ng-change="raw.handleDateChanged()" />
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-primary" ng-click="raw.open()"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

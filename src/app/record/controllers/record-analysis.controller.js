@@ -1,4 +1,4 @@
-export class RecordComponentsDetailController {
+export class RecordAnalysisController {
   constructor ($http, $state, API_URL, $scope, $auth) {
       'ngInject';
 
@@ -121,7 +121,7 @@ export class RecordComponentsDetailController {
           }
       };*/
 
-      this.getDetail();
+      //this.getDetail();
   }
 
     getDetail(){

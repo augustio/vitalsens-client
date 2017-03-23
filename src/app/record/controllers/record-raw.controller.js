@@ -1,22 +1,84 @@
-export class RecordComponentsController {
+export class RecordRawController {
   constructor ($http, $state, $auth, $filter, API_URL) {
     'ngInject';
 
+    this.$auth = $auth;
+    if(!this.$auth.isAuthenticated())
+      this.$state.go('home');
+
     this.$http = $http;
     this.$state = $state;
-    this.$auth = $auth;
     this.$filter = $filter;
     this.API_URL = API_URL;
     this.samplingRate = 250;
     this.ADC_TO_MV_COEFFICIENT = 0.01465;
+    this.MILLIS_IN_ONE_DAY = 8.64e+7;
     this.pageStart = 0;
     this.pageEnd = 0;
     this.dataLength = 0;
 
-    if(!this.$auth.isAuthenticated())
-      this.$state.go('home');
 
-    this.getRecordComponents();
+    this.selectedDate = new Date();
+    this.formats = [
+      'M!/d!/yyyy',
+      'dd-MMMM-yyyy',
+      'yyyy/MM/dd',
+      'dd.MM.yyyy',
+      'shortDate'
+    ];
+    this.format = this.formats[3];
+    this.dateOptions = {
+      maxDate: new Date(2038, 1, 19),
+      minDate: new Date(1970, 1, 1),
+      startingDay: 1
+    };
+    this.opened = false;
+
+    this.getPatients();
+    //this.getRecordComponents();
+  }
+
+  getPatients(){
+    this.$http.get(this.API_URL+'api/patients')
+      .then(result => {
+        this.patients = result.data;
+        if(this.patients.length > 0){
+          this.selectedPId = this.patients[0].patientId;
+          this.getRecordsByPatientId();
+        }
+      });
+  }
+
+  getRecordsByPatientId(){
+    const pId = this.selectedPId;
+    if(pId != null){
+      this.$http.get(this.API_URL+'api/records?patientId='+pId)
+      .then(result => {
+        this.records = result.data || [];
+        if(this.records.length > 0){
+          this.recordsForSelectedDay = this.filterRecords();
+        }
+      });
+    }
+  }
+
+  onSelectPatient(pId){
+    this.selectedPId = pId;
+    this.getRecordsByPatientId();
+  }
+
+  filterRecords(){
+    const date = new Date(
+      this.selectedDate.getFullYear(),
+      this.selectedDate.getMonth(),
+      this.selectedDate.getDate()
+    );
+    const start = date.valueOf();
+    const end = start + this.MILLIS_IN_ONE_DAY;
+    const filtered = this.records.filter(value => {
+      return value.timeStamp >= start && value.timeStamp < end
+    });
+    return filtered.sort((a,b) => a.timeStamp - b.timeStamp);
   }
 
   getRecordComponents(){
@@ -159,7 +221,7 @@ export class RecordComponentsController {
     dataKeys.forEach( (key, index) => {
       const height = index * (options.innerMargin.bottom*2 + options.innerHeight)
       const titleYPos = options.innerMargin.top + height;
-      
+
       //Add the title
       svg.append("text")
           .attr("x", options.innerWidth - options.innerMargin.right*2)
@@ -273,6 +335,19 @@ export class RecordComponentsController {
     this.getRecordDetail();
   }
 
+  /*Functions for date picker widget*/
+  clear() {
+    this.selectedDate = null;
+  };
+  open() {
+    this.opened = true;
+  }
+  setDate(year, month, day) {
+    this.selectedDate = new Date(year, month, day);
+  }
+  handleDateChanged(){
+    this.recordsForSelectedDay = this.filterRecords();
+  }
 }
 
 const setOptions = () => {
