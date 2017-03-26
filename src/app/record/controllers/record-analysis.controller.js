@@ -19,7 +19,8 @@ export class RecordAnalysisController {
       this.records = null;
       this.selectedRecord = null;
       this.filteredRecords = null;
-      this.analysis = null
+      this.analysis = null;
+      this.reData = null;
 
       this.selectedDate = new Date();
       this.formats = [
@@ -220,6 +221,23 @@ export class RecordAnalysisController {
       .then(result => {
         this.analysis = result.data;
         console.log(this.analysis);
+        if(this.analysis){
+          this.isECG = (this.analysis.type.toUpperCase() === "ECG");
+          this.rrIntervals = this.analysis.rrIntervals.signal;
+          this.pvcLocations = this.analysis.pvcEvents.locs;
+          this.pvcMarkers = this.analysis.pvcEvents.markers;
+          this.formatChartData();
+          this.makePoincarePlot();
+        }
+        this.$http.get(`${this.API_URL}api/full-record-data?timeStamp=${timeStamp}
+        &patientId=${patientId}&type=${type}`)
+        .then(res => {
+          this.recData = res.data;
+          if(this.recData){
+            this.duration = this.getDuration(this.recData.endTimeStamp,
+                                            this.recData.startTimeStamp);
+          }
+        });
       });
     }
   }
@@ -241,6 +259,96 @@ export class RecordAnalysisController {
   handleDateChanged(){
     this.getFilteredRecords();
   }
+
+  formatChartData(){
+    if(!this.rrIntervals){
+      return;
+    }
+    this.pData = [];
+    this.rrData = [];
+    this.pvc = [];
+    let xValue;
+    for(let i=0; i < this.rrIntervals.length; i++){
+      let sample = this.rrIntervals[i];
+      let loc = i+1;
+      if((i % 2) == 0){
+        xValue = sample;
+      }else{
+        if(this.pvcLocations.indexOf(loc) >= 0){
+          this.pvc.push({x: xValue, y: sample});
+        }else{
+          this.pData.push({x: xValue, y: sample});
+        }
+      }
+      this.rrData.push({x: i+1, y: sample});
+    }
+  }
+
+  makePoincarePlot(){
+    const node = d3.select("#poincare-chart").node();
+    let width, height;
+    if(node){
+      height = node.offsetHeight;
+      width = node.offsetWidth;
+    }
+    const svg = d3.select('#poincare-chart').append('svg')
+      .attr('height', 400)
+      .attr('width', '100%')
+      .attr('class', 'poincare-chart-svg');
+
+    //x-y scale generators
+    const y = d3.scaleLinear()
+      .domain([d3.min(this.pData, d => d.y), d3.max(this.pData, d => d.y)])
+      .range([260, 20]);
+    const x = d3.scaleLinear()
+      .domain([0, d3.max(this.pData, d => d.x)])
+      .range([0, width - 40]);
+
+    //x-y axis generators
+    const yAxis = d3.axisLeft(y)
+                    .ticks(10);
+    const xAxis = d3.axisBottom(x)
+                    .ticks(10);
+
+    const chartGroup = svg.append('g').attr('transform', 'translate(20, 20)');
+
+    chartGroup.append('g')
+      .attr('class', 'axis y')
+      .call(yAxis);
+    chartGroup.append('g')
+      .attr('class', 'axis x')
+      .attr('transform', 'translate(0, 260)')
+      .call(xAxis);
+
+    chartGroup.selectAll('circle')
+      .data(this.pData)
+      .enter().append('circle')
+      .attr('cx',(d,i) => x(d.x))
+      .attr('cy',(d,i) => y(d.y))
+      .attr('r','5')
+      .attr('fill', 'blue');
+
+    const data = [
+      ...this.pData,
+      ...this.pvc
+    ];
+    chartGroup.selectAll('circle')
+      .data(data)
+      .enter().append('circle')
+      .attr('cx',(d,i) => x(d.x))
+      .attr('cy',(d,i) => y(d.y))
+      .attr('r','5')
+      .attr('fill', 'red');
+  }
+}
+
+const isPVC = value => {
+  for(var i = 0; i < pvcLocs.length; i++){
+    if(value == pvcLocs[i]){
+      return true;
+    }
+  }
+  return false;
 }
 
     /*getDetail(){

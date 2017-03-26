@@ -92,8 +92,15 @@
                 Type: {{analysis.analysis.type}}
                 <span class="vertical-line">&ensp;&vert;&ensp;</span>
               </span>
+              <span class="pull-left chart-header-label">
+                Duration: {{analysis.duration}} Seconds
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </span>
             </div>
             <div class="row">
+              <div class="col-md-6">
+                <div id="poincare-chart" class="font-size-responsive"></div>
+              </div>
               <div class="col-md-6 table-responsive font-size-responsive">
                 <table class="table">
                   <thead>

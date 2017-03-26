@@ -145,6 +145,14 @@ line{
 #chart-container{
   height: 100%;
 }
+#poincare-chart{
+  height: 100%;
+  width: 100%;
+}
+
+.poincare-chart-svg{
+  background-color: #ffffff;
+}
 
 g.group0 path,
 g.group0 circle {
