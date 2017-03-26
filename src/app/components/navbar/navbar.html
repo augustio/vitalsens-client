@@ -11,7 +11,7 @@
 
       <ul class="nav navbar-nav navbar-right">
           <li ng-show="nav.isAuthenticated() && nav.getUser()">
-              <a uref="#">{{nav.userEmail}}</a>
+              <a role="button">{{nav.userEmail}}</a>
           </li>
           <li ng-show="nav.isAuthenticated() && nav.isAdmin()">
               <a ui-sref="register">Register</a>
@@ -19,7 +19,7 @@
           <li ng-hide="nav.isAuthenticated()">
               <a ui-sref="login">Login</a>
           </li>
-          <li ng-show="nav.isAuthenticated()"><a ng-click="nav.logout()" >Logout</a></li>
+          <li ng-show="nav.isAuthenticated()"><a role="button" ng-click="nav.logout()" >Logout</a></li>
       </ul>
     </div>
 </nav>

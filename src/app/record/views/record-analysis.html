@@ -1,4 +1,4 @@
-<div ng-if="rDetail.$auth.isAuthenticated()" class="container-fluid">
+<!--div ng-if="rDetail.$auth.isAuthenticated()" class="container-fluid">
     <div class="col-md-10">
         <div class="row" ng-show="rDetail.display == 0">
             <div class="panel panel-default">
@@ -55,7 +55,7 @@
                     <span class="text-center font-size-responsive"><strong>TACHOGRAM SIGNAL (RR INTERVAL SERIES)</strong></span>
                 </div>
                 <div class="panel-body">
-                    <!--nvd3 options="rDetail.rrOptions" data="rDetail.rr" on-ready="rDetail.onReady" class="with-3d-shadow with-transitions rrInt"></nvd3-->
+                    <nvd3 options="rDetail.rrOptions" data="rDetail.rr" on-ready="rDetail.onReady" class="with-3d-shadow with-transitions rrInt"></nvd3>
                 </div>
             </div>
             <div class="panel panel-default">
@@ -66,64 +66,124 @@
                                 <span class="text-center font-size-responsive"><strong>POINCARE PLOT</strong></span>
                             </div>
                             <div class="panel-body font-size-responsive">
-                                <!--nvd3 options="rDetail.poincareOptions" data="rDetail.poincare" class="with-3d-shadow with-transitions poincarePlot"></nvd3-->
+                                <!nvd3 options="rDetail.poincareOptions" data="rDetail.poincare" class="with-3d-shadow with-transitions poincarePlot"></nvd3>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 table-responsive font-size-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr class="info">
-                                    <th>Feature</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="success">
-                                    <td>Mean</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.mean | number:3}}</td>
-                                </tr>
-                                <tr class="info">
-                                    <td>Standard Deviation</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.sdnn | number:3}}</td>
-                                </tr>
-                                <tr class="success">
-                                    <td>Ratio of Powers (LF/HF)</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.LFHF | number:3}}</td>
-                                </tr>
-                                <tr class="info">
-                                    <td>Spectral Entropy</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.SPentr | number:3}}</td>
-                                </tr>
-                                <tr class="success">
-                                    <td>Dominant Frequency</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.DF | number:3}}</td>
-                                </tr>
-                                <tr class="info">
-                                    <td>Standard Deviation (Nearest RR Intervals)</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.stdrr | number:3}}</td>
-                                </tr>
-                                <tr class="success">
-                                    <td>Root Mean Square(Standard Deviation)</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.rmssd | number:3}}</td>
-                                </tr>
-                                <tr class="info">
-                                    <td>SD1</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.SD1 | number:3}}</td>
-                                </tr>
-                                <tr class="success">
-                                    <td>SD2</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.SD2 | number:3}}</td>
-                                </tr>
-                                <tr class="info">
-                                    <td>SD1/SD2</td>
-                                    <td>{{rDetail.detail.hrvFeatures.features.SD1_SD2 | number:3}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+</div-->
+
+<div ng-if="analysis.$auth.isAuthenticated()" class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-info records-view">
+        <div class="panel-body rec-raw-analysis-panel-body">
+          <div class="col-xs-10">
+            <div class="font-size-responsive row chart-header">
+              <span class="pull-left chart-header-label">
+                Patient id: {{analysis.analysis.patientId}}
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </span>
+              <span class="pull-left chart-header-label">
+                Type: {{analysis.analysis.type}}
+                <span class="vertical-line">&ensp;&vert;&ensp;</span>
+              </span>
+            </div>
+            <div class="row">
+              <div class="col-md-6 table-responsive font-size-responsive">
+                <table class="table">
+                  <thead>
+                    <tr class="info">
+                      <th>Feature</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="success">
+                      <td>Mean</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.mean | number:3}}</td>
+                    </tr>
+                    <tr class="info">
+                      <td>Standard Deviation</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.sdnn | number:3}}</td>
+                    </tr>
+                    <tr class="success">
+                      <td>Ratio of Powers (LF/HF)</td>
+                      <td>{{analysis.hrvFeatures.features.LFHF | number:3}}</td>
+                    </tr>
+                    <tr class="info">
+                      <td>Spectral Entropy</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.SPentr | number:3}}</td>
+                    </tr>
+                    <tr class="success">
+                      <td>Dominant Frequency</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.DF | number:3}}</td>
+                    </tr>
+                    <tr class="info">
+                      <td>Standard Deviation (Nearest RR Intervals)</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.stdrr | number:3}}</td>
+                    </tr>
+                    <tr class="success">
+                      <td>Root Mean Square(Standard Deviation)</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.rmssd | number:3}}</td>
+                    </tr>
+                    <tr class="info">
+                      <td>SD1</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.SD1 | number:3}}</td>
+                    </tr>
+                    <tr class="success">
+                      <td>SD2</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.SD2 | number:3}}</td>
+                    </tr>
+                    <tr class="info">
+                      <td>SD1/SD2</td>
+                      <td>{{analysis.analysis.hrvFeatures.features.SD1_SD2 | number:3}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="control-panel">
+              <input class="text-center form-control font-size-responsive patient-id" type="text"
+              placeholder="Patient Id"
+              ng-model="analysis.selectedPId"
+              uib-typeahead="p as p.patientId for p in analysis.patients | filter:$viewValue" typeahead-on-select="analysis.onSelectPatient($item.patientId)"
+              typeahead-select-on-exact="true"
+              typeahead-min-length="4" >
+              <div class=" record-date">
+                <p class="input-group">
+                  <input type="text"
+                    class="form-control text-center font-size-responsive" uib-datepicker-popup="{{analysis.format}}"
+                    ng-model="analysis.selectedDate"
+                    is-open="analysis.opened"
+                    datepicker-options="analysis.dateOptions"
+                    popup-placement="auto bottom"
+                    ng-required="true"
+                    alt-input-formats="anlaysis.formats"
+                    ng-change="analysis.handleDateChanged()" />
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-primary" ng-click="analysis.open()"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </p>
+              </div>
+              <select class="filtered-records font-size-responsive text-center form-control"
+              ng-model="analysis.selectedRecord"
+              ng-change="analysis.onRecordSelected()">
+                <option ng-repeat="a in analysis.filteredRecords"value="{{a}}">
+                 {{a.type}}&ensp;&ensp;&vert;&ensp;&ensp;
+                 Time: {{a.timeStamp | date:'HH:mm:ss'}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

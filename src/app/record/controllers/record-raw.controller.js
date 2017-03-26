@@ -1,5 +1,5 @@
 export class RecordRawController {
-  constructor ($http, $state, $auth, $filter, API_URL) {
+  constructor ($http, $state, $auth, $timeout, API_URL) {
     'ngInject';
 
     this.$auth = $auth;
@@ -8,7 +8,7 @@ export class RecordRawController {
 
     this.$http = $http;
     this.$state = $state;
-    this.$filter = $filter;
+    this.$timeout = $timeout;
     this.API_URL = API_URL;
     this.samplingRate = 250;
     this.ADC_TO_MV_COEFFICIENT = 0.01465;
@@ -16,6 +16,17 @@ export class RecordRawController {
     this.pageStart = 0;
     this.pageEnd = 0;
     this.dataLength = 0;
+    this.selectedPId = null;
+    this.records = null;
+    this.selectedRecord = null;
+    this.selectedRecordComponent = null;
+    this.selectedRecordComponentsParams = null;
+    this.filteredRecords = null;
+    this.recordComponentIndex = 0;
+    this.currentTemp = null;
+    this.progressValue = 0;
+    this.progressType = null;
+    this.printing = false;
 
 
     this.selectedDate = new Date();
@@ -35,7 +46,7 @@ export class RecordRawController {
     this.opened = false;
 
     this.getPatients();
-    //this.getRecordComponents();
+    d3.select(window).on('resize', () => this.drawChart());
   }
 
   getPatients(){
@@ -56,7 +67,7 @@ export class RecordRawController {
       .then(result => {
         this.records = result.data || [];
         if(this.records.length > 0){
-          this.recordsForSelectedDay = this.filterRecords();
+          this.getFilteredRecords();
         }
       });
     }
@@ -67,7 +78,7 @@ export class RecordRawController {
     this.getRecordsByPatientId();
   }
 
-  filterRecords(){
+  getFilteredRecords(){
     const date = new Date(
       this.selectedDate.getFullYear(),
       this.selectedDate.getMonth(),
@@ -78,50 +89,72 @@ export class RecordRawController {
     const filtered = this.records.filter(value => {
       return value.timeStamp >= start && value.timeStamp < end
     });
-    return filtered.sort((a,b) => a.timeStamp - b.timeStamp);
+    const sorted = filtered.sort((a,b) => a.timeStamp - b.timeStamp);
+    const formatted = sorted.map(rec => {
+      let type = rec.type.toUpperCase();
+      return {
+        patientId: rec.patientId,
+        timeStamp: rec.timeStamp,
+        type: type.substr(0, 3)
+      }
+    });
+    this.filteredRecords =  formatted;
+    this.selectedRecord = formatted[0];
   }
 
-  getRecordComponents(){
-    if(this.$auth.record === undefined ||
-    !this.$auth.record.timeStamp && !this.$auth.record.patientId && !this.$auth.record.type){
-      this.$auth.record = {
-        timeStamp: this.$state.params.timeStamp,
-        patientId: this.$state.params.patientId,
-        type: this.$state.params.type
+  onRecordSelected(){
+    let record = angular.fromJson(this.selectedRecord);
+    if(record){
+      this.chOne = this.chTwo = this.chThree = null;
+      if(
+        record.patientId != this.selectedRecord.patientId
+        && record.type != this.selectedRecord.type
+        && record.timeStamp != this.selectedRecord.timeStamp
+      ){
+        this.clearChart();
       }
+      this.getRecordComponents(record);
     }
-    this.timeStamp = this.$state.params.timeStamp || this.$auth.record.timeStamp;
-    this.patientId = this.$state.params.patientId || this.$auth.record.patientId;
-    this.type = this.$state.params.type || this.$auth.record.type;
-    if(this.timeStamp != null && this.patientId != null && this.type != null){
-      this.$http.get(
-        `${this.API_URL}api/record-details?timeStamp=
-        ${this.timeStamp}&patientId=${this.patientId}&type=${this.type}`
-      ).then(result => {
-        this.components = result.data;
-        if(this.components.length > 0){
-          this.componentIndex = 0;
-          this.selectedComponent = this.components[this.componentIndex];
-          this.getRecordDetail();
-        }
-      });
-    }else{
-      this.$state.go('patient');
-    }
+  }
+
+  getRecordComponents(record){
+    const timeStamp = record.timeStamp;
+    const patientId = record.patientId;
+    const type = record.type;
+    this.selectedRecordComponentsParams = {timeStamp, patientId, type};
+    this.$http.get(
+      `${this.API_URL}api/record-details?timeStamp=${timeStamp}
+      &patientId=${patientId}&type=${type}`
+    ).then(result => {
+      this.recordComponents = result.data;
+      if(this.recordComponents.length > 0){
+        this.recordComponentIndex = 0;
+        this.selectedRecordComponent = this.recordComponents[this.recordComponentIndex];
+        this.getRecordDetail();
+      }
+    });
+  }
+
+  onrecordComponentSelected(component){
+    this.selectedRecordComponent = component;
+    this.getRecordDetail();
   }
 
   getRecordDetail(){
-    this._id = this.components[this.componentIndex]._id;
-    if(this._id != null){
-      this.$http.get(`${this.API_URL}api/record-details?_id=${this._id}`)
+    if(this.selectedRecordComponent == null){
+      return;
+    }
+    const _id = this.selectedRecordComponent._id;
+    if(_id != null){
+      this.$http.get(`${this.API_URL}api/record-details?_id=${_id}`)
       .then(result => {
         this.isECG = (result.data.type.toUpperCase() === "ECG");
         this.chOne = result.data.chOne;
         this.chTwo = result.data.chTwo
         this.chThree = result.data.chThree;
         this.dataLength = this.chOne.length;
+        this.currentTemp = result.data.temp;
         this.drawChart();
-        d3.select(window).on('resize', () => this.drawChart())
       });
     }
   }
@@ -130,9 +163,22 @@ export class RecordRawController {
     return Math.round((end - start) * 0.001);
   }
 
+  printChart(){
+    this.printing = true;
+    this.drawChart();
+    this.$timeout(() => {window.print();}, 1000);
+  }
+
+  printViewBackBtnHandler(){
+    this.printing = false;
+    this.drawChart();
+  }
+
   drawChart(){
-    if(d3.select('#chart-container').select('svg')){
-      d3.select('#chart-container').select('svg').remove();
+    this.clearChart();
+    if(this.chOne === null){
+      console.log("chOne is null");
+      return;
     }
     const options = setOptions();
     this.pageSize = options.itemsPerPage;
@@ -214,7 +260,11 @@ export class RecordRawController {
       .attr('stroke-width', '1');
     svg.append('rect')
       .attr('height', '100%')
-      .attr('width', '100%')
+      .attr('width', options.outerWidth)
+      .attr('class', 'chart-box');
+    svg.append('rect')
+      .attr('height', '100%')
+      .attr('width', options.outerWidth)
       .attr('class', 'chart-bg');
 
     const dataKeys = Object.keys(options.data);
@@ -233,11 +283,26 @@ export class RecordRawController {
 
       //x-y scale generators
       const y = d3.scaleLinear()
-        .domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
+        .domain([-8, 8])
+        //.domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
         .range([options.innerHeight, 0]);
       const x = d3.scaleLinear()
         .domain([0, d3.max(options.data[key], d => d.x)])
         .range([0, options.innerWidth]);
+
+      //Progress bar calculations
+      const progress = d3.scaleLinear()
+        .domain([0, this.dataLength])
+        .range([0, 100]);
+      this.progressValue = Math.round(progress(this.pageEnd));
+      if(this.progressValue == 100){
+        this.progressType = "success";
+      }else if(this.pageStart == 0){
+        this.progressType = "danger";
+      }
+      else{
+        this.progressType = null;
+      }
 
       //x-y axis generators
       const yAxis = d3.axisLeft(y)
@@ -291,17 +356,23 @@ export class RecordRawController {
     });
   }
 
+  clearChart(){
+    if(d3.select('#chart-container').select('svg')){
+      d3.select('#chart-container').select('svg').remove();
+    }
+  }
+
   downloadData(){
-    var vm = this;
-    vm.timeStamp = this.timeStamp;
-    vm.patientId = this.patientId;
-    vm.type = this.type;
-    if(vm.timeStamp != null && vm.patientId != null && vm.type != null){
-      this.$http.get(this.API_URL+'api/full-record-data?timeStamp='+vm.timeStamp+'&patientId='+vm.patientId+'&type='+vm.type)
-        .then(function(result){
-        var data = result.data;
-        var zip = new JSZip();
-        var fileName = vm.patientId+"_"+vm.$filter('date')(vm.timeStamp, "ddMMyy")+"_"+vm.type;
+    const record = angular.fromJson(this.selectedRecord);
+    const timeStamp = record.timeStamp;
+    const patientId = record.patientId;
+    const type = record.type;
+    if(timeStamp != null && patientId != null && type != null){
+      this.$http.get(this.API_URL+'api/full-record-data?timeStamp='+timeStamp+'&patientId='+patientId+'&type='+type)
+        .then(result => {
+        let data = result.data;
+        let zip = new JSZip();
+        let fileName = patientId+"_"+timeStamp+"_"+type;
         zip.file(fileName+".txt", JSON.stringify(data));
         zip.generateAsync({type:"blob"})
         .then(function(content){
@@ -329,8 +400,8 @@ export class RecordRawController {
   }
 
   handleRecordComponentSelect(index){
-    this.selectedComponent = this.components[index];
-    this.componentIndex = index;
+    this.selectedRecordComponent = this.recordComponents[this.recordComponentIndex];
+    this.recordComponentIndex = index;
     this.pageStart = this.pageEnd = 0;
     this.getRecordDetail();
   }
@@ -346,15 +417,15 @@ export class RecordRawController {
     this.selectedDate = new Date(year, month, day);
   }
   handleDateChanged(){
-    this.recordsForSelectedDay = this.filterRecords();
+    this.getFilteredRecords();
   }
 }
 
 const setOptions = () => {
   const options = {
     data: {},
-    innerHeight: 150,
-    outerHeight: 700,
+    innerHeight: 200,
+    outerHeight: 800,
     smallGridSize: 5,
     largeGridSize: 25,
     outerMargin: {
@@ -373,7 +444,7 @@ const setOptions = () => {
       ticks: 30
     },
     y: {
-      ticks: 5
+      ticks: 8
     }
   };
   const node = d3.select("#chart-container").node();

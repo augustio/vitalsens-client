@@ -124,6 +124,9 @@ line{
   stroke: red;
   stroke-width: 1px;
 }
+.chart-box{
+  fill: #ffffff;
+}
 
 .chart-header{
   padding: 10px;
@@ -187,11 +190,14 @@ g.tick text {
 #analysis-header{
   border-top-right-radius: 0.5em;
 }
-.records-view-body{
+.records-panel-body{
   padding: 0px 10px;
 }
 
 /*record-raw, record-analysis view*/
+.rec-raw-analysis-panel-body{
+  background-color:#c0eddb;
+}
 .control-panel{
   margin: 5px 10px;
 }
@@ -207,6 +213,19 @@ g.tick text {
   background-color: #dce3ef;
   color: #224D91;
 }
+.filtered-records{
+  background-color: #dce3ef;
+  color: #224D91;
+}
+.filtered-records-btn{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.record-components-list-group li:hover{
+  background-color: #004d99;
+  color: #f2f2f2;
+}
+
 
 
 

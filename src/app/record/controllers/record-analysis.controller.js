@@ -2,22 +2,42 @@ export class RecordAnalysisController {
   constructor ($http, $state, API_URL, $scope, $auth) {
       'ngInject';
 
+      this.$auth = $auth;
+      if(!this.$auth.isAuthenticated())
+        this.$state.go('home');
+
       this.$http = $http;
       this.$state = $state;
       this.API_URL = API_URL;
-      this.$scope = $scope;
-      this.$auth = $auth;
-      this.ECG_3 = "Three Channels ECG";
-      this.currentPage = 1;
-      this.maxSize = 5;
-      this.itemsPerPage = 2000;
       this.samplingRate = 250;
       this.ADC_TO_MV_COEFFICIENT = 0.01465;
+      this.MILLIS_IN_ONE_DAY = 8.64e+7;
+      this.pageStart = 0;
+      this.pageEnd = 0;
+      this.dataLength = 0;
+      this.selectedPId = null;
+      this.records = null;
+      this.selectedRecord = null;
+      this.filteredRecords = null;
+      this.analysis = null
 
-      this.display = 0;
+      this.selectedDate = new Date();
+      this.formats = [
+        'M!/d!/yyyy',
+        'dd-MMMM-yyyy',
+        'yyyy/MM/dd',
+        'dd.MM.yyyy',
+        'shortDate'
+      ];
+      this.format = this.formats[3];
+      this.dateOptions = {
+        maxDate: new Date(2038, 1, 19),
+        minDate: new Date(1970, 1, 1),
+        startingDay: 1
+      };
+      this.opened = false;
 
-      if(!this.$auth.isAuthenticated())
-          this.$state.go('home');
+      this.getPatients();
 
       /*this.rrOptions = {
           chart: {
@@ -124,7 +144,106 @@ export class RecordAnalysisController {
       //this.getDetail();
   }
 
-    getDetail(){
+  getPatients(){
+    this.$http.get(this.API_URL+'api/patients')
+      .then(result => {
+        this.patients = result.data;
+        if(this.patients.length > 0){
+          this.selectedPId = this.patients[0].patientId;
+          this.getRecordsByPatientId();
+        }
+      });
+  }
+
+  getRecordsByPatientId(){
+    const pId = this.selectedPId;
+    if(pId != null){
+      this.$http.get(this.API_URL+'api/records?patientId='+pId)
+      .then(result => {
+        this.records = result.data || [];
+        if(this.records.length > 0){
+          this.getFilteredRecords();
+        }
+      });
+    }
+  }
+
+  onSelectPatient(pId){
+    this.selectedPId = pId;
+    this.getRecordsByPatientId();
+  }
+
+  getFilteredRecords(){
+    const date = new Date(
+      this.selectedDate.getFullYear(),
+      this.selectedDate.getMonth(),
+      this.selectedDate.getDate()
+    );
+    const start = date.valueOf();
+    const end = start + this.MILLIS_IN_ONE_DAY;
+    const filtered = this.records.filter(value => {
+      return value.timeStamp >= start && value.timeStamp < end
+    });
+    const sorted = filtered.sort((a,b) => a.timeStamp - b.timeStamp);
+    const formatted = sorted.map(rec => {
+      let type = rec.type.toUpperCase();
+      return {
+        patientId: rec.patientId,
+        timeStamp: rec.timeStamp,
+        type: type.substr(0, 3)
+      }
+    });
+    this.filteredRecords =  formatted;
+    this.selectedRecord = formatted[0];
+  }
+
+  onRecordSelected(){
+    let record = JSON.parse(this.selectedRecord);
+    if(record){
+      this.chOne = this.chTwo = this.chThree = null;
+      this.selectedRecordParams = {
+        timeStamp: record.timeStamp,
+        patientId: record.patientId,
+        type: record.type
+      };
+      this.getRecordData(record);
+    }
+  }
+
+  getRecordData(record){
+    const patientId = record.patientId,
+          timeStamp = record.timeStamp,
+          type = record.type;
+    if(patientId && timeStamp && type){
+      this.$http.get(`${this.API_URL}api/record-analysis?timeStamp=${timeStamp}
+      &patientId=${patientId}&type=${type}`)
+      .then(result => {
+        this.analysis = result.data;
+        console.log(this.analysis);
+      });
+    }
+  }
+
+  getDuration(end, start){
+    return Math.round((end - start) * 0.001);
+  }
+
+  /*Functions for date picker widget*/
+  clear() {
+    this.selectedDate = null;
+  };
+  open() {
+    this.opened = true;
+  }
+  setDate(year, month, day) {
+    this.selectedDate = new Date(year, month, day);
+  }
+  handleDateChanged(){
+    this.getFilteredRecords();
+  }
+}
+
+    /*getDetail(){
         var vm = this;
         vm._id = this.$state.params._id;
         if(vm._id != null){
@@ -147,7 +266,7 @@ export class RecordAnalysisController {
                       ...vm.marked.slice(vm.end)
                     ];
                 }
-                /*if(vm.detail.type.toUpperCase().indexOf("ECG") >= 0){
+                if(vm.detail.type.toUpperCase().indexOf("ECG") >= 0){
                     if(vm.detail.rrIntervals && vm.detail.rPeaks && vm.detail.hrvFeatures){
                         vm.rr = [{key:"RR Series", values:[]}];
                         vm.poincare = [{key:"Poincare", values:[]}];
@@ -163,7 +282,7 @@ export class RecordAnalysisController {
                         }
                         pvcLocs = vm.detail.pvcEvents.locs;
                     }
-                }*/
+                }
 
                 vm.one = vm.detail.chOne;
                 vm.two = vm.detail.chTwo;
@@ -413,7 +532,7 @@ function isPVC(value){
     return false;
 }
 
-/*function highlightPoints(ch){
+function highlightPoints(ch){
     var data = d3.select('.rrInt')
                 .select('svg').datum();
 
