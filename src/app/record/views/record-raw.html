@@ -55,8 +55,20 @@
               ng-model="raw.selectedPId"
               uib-typeahead="p as p.patientId for p in raw.patients | filter:$viewValue" typeahead-on-select="raw.onSelectPatient($item.patientId)"
               typeahead-select-on-exact="true"
-              typeahead-min-length="4" />
-              <div class=" record-date">
+              typeahead-min-length="0" />
+              <div class="full-filtered-display-choice">
+                <label>
+                  <input ng-change="raw.handleDisplayChoiceSelection()"
+                  type="radio" ng-model="raw.displayChoice" value="all">
+                  All Records
+                </label>
+                <label>
+                  <input ng-change="raw.handleDisplayChoiceSelection()"
+                  type="radio" ng-model="raw.displayChoice" value="filtered">
+                  Records By Date
+                </label>
+              </div>
+              <div ng-if="raw.displayChoice != 'all'" class="record-date">
                 <p class="input-group">
                   <input type="text"
                     class="form-control text-center font-size-responsive" uib-datepicker-popup="{{raw.format}}"
@@ -72,30 +84,19 @@
                   </span>
                 </p>
               </div>
-              <div ng-if="raw.filteredRecords.length" class="info-label font-size-responsive">
-                <span>Records Found: </span>&ensp;<strong>{{raw.filteredRecords.length}}</strong>
+              <div ng-if="raw.recordsToDisplay.length" class="info-label font-size-responsive">
+                <span>Records Found: </span>&ensp;<strong>{{raw.recordsToDisplay.length}}</strong>
               </div>
-              <select class="filtered-records font-size-responsive text-center form-control"
+              <input class="text-center form-control font-size-responsive patient-id" type="text"
+              placeholder="Record"
               ng-model="raw.selectedRecord"
-              ng-change="raw.onRecordSelected()">
-                <option ng-repeat="r in raw.filteredRecords"value="{{r}}">
-                 {{r.type}}&ensp;&ensp;&vert;&ensp;&ensp;
-                 Time: {{r.timeStamp | date:'HH:mm:ss'}}
-                </option>
-              </select>
-              <ul class="list-group">
-                  <li ng-repeat="p in patient.patients" ng-click="patient.onSelectPatient(p)">
-                      <a ui-sref-active="active" ui-sref="patient.record({
-                                                          patientId: p.patientId
-                                                          })" class="list-group-item" >
-                          {{p.patientId}}
-                      </a>
-                  </li>
-              </ul>
-              <div class="record-components text-center">
+              uib-typeahead="r as r.recStr for r in raw.recordsToDisplay | filter:$viewValue" typeahead-on-select="raw.onRecordSelected()"
+              typeahead-select-on-exact="true"
+              typeahead-min-length="0" />
+              <div ng-if="raw.recordComponents" class="record-components text-center">
                 <ul class="list-group record-components-list-group">
                   <li role="button" class="list-group-item" ng-repeat="c in raw.recordComponents"
-                  ng-click="raw.onrecordComponentSelected(c)">
+                  ng-click="raw.onRecordComponentSelected(c)">
                     {{c.start | date:'HH:mm:ss'}} - {{c.end | date:'HH:mm:ss'}}
                   </li>
                 </ul>

@@ -1,5 +1,5 @@
 export class RecordRawController {
-  constructor ($http, $state, $auth, $timeout, API_URL) {
+  constructor ($http, $state, $auth, $filter, $timeout, API_URL) {
     'ngInject';
 
     this.$auth = $auth;
@@ -9,6 +9,7 @@ export class RecordRawController {
     this.$http = $http;
     this.$state = $state;
     this.$timeout = $timeout;
+    this.$filter = $filter;
     this.API_URL = API_URL;
     this.samplingRate = 250;
     this.ADC_TO_MV_COEFFICIENT = 0.01465;
@@ -17,16 +18,18 @@ export class RecordRawController {
     this.pageEnd = 0;
     this.dataLength = 0;
     this.selectedPId = null;
-    this.records = null;
+    this.allRecords = null;
+    this.recordsToDisplay = null
     this.selectedRecord = null;
+    this.selectedRecordStr = null;
+    this.recordComponents = null;
     this.selectedRecordComponent = null;
     this.selectedRecordComponentsParams = null;
-    this.filteredRecords = null;
-    this.recordComponentIndex = 0;
     this.currentTemp = null;
     this.progressValue = 0;
     this.progressType = null;
     this.printing = false;
+    this.displayChoice = "all";
 
 
     this.selectedDate = new Date();
@@ -54,7 +57,7 @@ export class RecordRawController {
       .then(result => {
         this.patients = result.data;
         if(this.patients.length > 0){
-          this.selectedPId = this.patients[0].patientId;
+          this.selectedPId = (this.patients[0]).patientId;
           this.getRecordsByPatientId();
         }
       });
@@ -65,9 +68,22 @@ export class RecordRawController {
     if(pId != null){
       this.$http.get(this.API_URL+'api/records?patientId='+pId)
       .then(result => {
-        this.records = result.data || [];
-        if(this.records.length > 0){
-          this.getFilteredRecords();
+        const records = result.data || [];
+        if(records.length > 0){
+          const sorted = records.sort((a,b) => a.timeStamp - b.timeStamp);
+          const formatted = sorted.map(rec => {
+            let type = rec.type.toUpperCase();
+            return {
+              patientId: rec.patientId,
+              timeStamp: rec.timeStamp,
+              type: type.substr(0, 3)
+            }
+          });
+          this.allRecords = formatted.map(r => {
+            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy');
+            return Object.assign(r, {recStr: `${r.type}_${date}`});
+          });
+          this.handleDisplayChoiceSelection();
         }
       });
     }
@@ -78,6 +94,23 @@ export class RecordRawController {
     this.getRecordsByPatientId();
   }
 
+  handleDisplayChoiceSelection(){
+    this.recordComponents = null;
+    this.selectedRecord = null;
+    this.selectedRecordComponent = null;
+    this.selectedRecordComponentsParams = null;
+    this.recordsToDisplay = null;
+    this.clearChart();
+    this.chOne = null;
+    if(this.displayChoice == "all"){
+      this.recordsToDisplay = this.allRecords;
+    }else if(this.displayChoice == "filtered"){
+      this.recordsToDisplay = this.getFilteredRecords();
+    }
+    this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
+    this.getRecordComponents();
+  }
+
   getFilteredRecords(){
     const date = new Date(
       this.selectedDate.getFullYear(),
@@ -86,76 +119,58 @@ export class RecordRawController {
     );
     const start = date.valueOf();
     const end = start + this.MILLIS_IN_ONE_DAY;
-    const filtered = this.records.filter(value => {
+    const filtered = this.allRecords.filter(value => {
       return value.timeStamp >= start && value.timeStamp < end
     });
-    const sorted = filtered.sort((a,b) => a.timeStamp - b.timeStamp);
-    const formatted = sorted.map(rec => {
-      let type = rec.type.toUpperCase();
-      return {
-        patientId: rec.patientId,
-        timeStamp: rec.timeStamp,
-        type: type.substr(0, 3)
-      }
-    });
-    this.filteredRecords =  formatted;
-    this.selectedRecord = formatted[0];
+    return filtered;
   }
 
   onRecordSelected(){
-    let record = angular.fromJson(this.selectedRecord);
-    if(record){
-      this.chOne = this.chTwo = this.chThree = null;
-      if(
-        record.patientId != this.selectedRecord.patientId
-        && record.type != this.selectedRecord.type
-        && record.timeStamp != this.selectedRecord.timeStamp
-      ){
-        this.clearChart();
-      }
-      this.getRecordComponents(record);
+    this.chOne = this.chTwo = this.chThree = null;
+    this.clearChart();
+    this.chOne = null;
+    this.getRecordComponents();
+  }
+
+  getRecordComponents(){
+    if(this.selectedRecord){
+      let {timeStamp, patientId, type} = this.selectedRecord;
+      this.$http.get(
+        `${this.API_URL}api/record-details?timeStamp=${timeStamp}
+        &patientId=${patientId}&type=${type}`
+      ).then(result => {
+        this.recordComponents = result.data;
+        if(this.recordComponents.length > 0){
+          this.selectedRecordComponent = this.recordComponents[0];
+          this.getRecordDetail();
+        }
+      });
     }
   }
 
-  getRecordComponents(record){
-    const timeStamp = record.timeStamp;
-    const patientId = record.patientId;
-    const type = record.type;
-    this.selectedRecordComponentsParams = {timeStamp, patientId, type};
-    this.$http.get(
-      `${this.API_URL}api/record-details?timeStamp=${timeStamp}
-      &patientId=${patientId}&type=${type}`
-    ).then(result => {
-      this.recordComponents = result.data;
-      if(this.recordComponents.length > 0){
-        this.recordComponentIndex = 0;
-        this.selectedRecordComponent = this.recordComponents[this.recordComponentIndex];
-        this.getRecordDetail();
-      }
-    });
-  }
-
-  onrecordComponentSelected(component){
+  onRecordComponentSelected(component){
+    this.clearChart();
+    this.chOne = null;
     this.selectedRecordComponent = component;
+    this.pageStart = this.pageEnd = 0;
     this.getRecordDetail();
   }
 
   getRecordDetail(){
-    if(this.selectedRecordComponent == null){
-      return;
-    }
-    const _id = this.selectedRecordComponent._id;
-    if(_id != null){
-      this.$http.get(`${this.API_URL}api/record-details?_id=${_id}`)
-      .then(result => {
-        this.isECG = (result.data.type.toUpperCase() === "ECG");
-        this.chOne = result.data.chOne;
-        this.chTwo = result.data.chTwo
-        this.chThree = result.data.chThree;
-        this.dataLength = this.chOne.length;
-        this.currentTemp = result.data.temp;
-        this.drawChart();
-      });
+    if(this.selectedRecordComponent){
+      const _id = this.selectedRecordComponent._id;
+      if(_id != null){
+        this.$http.get(`${this.API_URL}api/record-details?_id=${_id}`)
+        .then(result => {
+          this.isECG = (result.data.type.toUpperCase() === "ECG");
+          this.chOne = result.data.chOne;
+          this.chTwo = result.data.chTwo
+          this.chThree = result.data.chThree;
+          this.dataLength = this.chOne.length;
+          this.currentTemp = result.data.temp;
+          this.drawChart();
+        });
+      }
     }
   }
 
@@ -399,13 +414,6 @@ export class RecordRawController {
     this.drawChart();
   }
 
-  handleRecordComponentSelect(index){
-    this.selectedRecordComponent = this.recordComponents[this.recordComponentIndex];
-    this.recordComponentIndex = index;
-    this.pageStart = this.pageEnd = 0;
-    this.getRecordDetail();
-  }
-
   /*Functions for date picker widget*/
   clear() {
     this.selectedDate = null;
@@ -417,7 +425,12 @@ export class RecordRawController {
     this.selectedDate = new Date(year, month, day);
   }
   handleDateChanged(){
-    this.getFilteredRecords();
+    this.clearChart();
+    this.chOne = null;
+    this.recordsToDisplay = this.getFilteredRecords();
+    this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
+    this.getRecordComponents();
+    console.log(this.recordsToDisplay);
   }
 }
 
