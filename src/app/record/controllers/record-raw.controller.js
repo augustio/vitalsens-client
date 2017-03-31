@@ -199,7 +199,6 @@ export class RecordRawController {
       console.log("chOne is null");
       return;
     }
-    clearChart();
     const options = setOptions();
     this.pageSize = options.itemsPerPage;
     const end = this.pageStart + options.itemsPerPage;
@@ -409,6 +408,7 @@ export class RecordRawController {
   handleForwardBtn(){
     if(this.pageEnd < this.dataLength){
       this.pageStart = this.pageEnd;
+      this.clearChart();
       this.drawChart();
     }
   }
@@ -416,6 +416,7 @@ export class RecordRawController {
   handleBackwardBtn(){
     const start = this.pageStart - this.pageSize;
     this.pageStart = start > 0 ? start : 0;
+    this.clearChart();
     this.drawChart();
   }
 
