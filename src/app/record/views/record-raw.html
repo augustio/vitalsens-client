@@ -87,7 +87,7 @@
               <div ng-if="raw.recordsToDisplay.length" class="info-label font-size-responsive">
                 <span>Records Found: </span>&ensp;<strong>{{raw.recordsToDisplay.length}}</strong>
               </div>
-              <input class="text-center form-control font-size-responsive patient-id" type="text"
+              <input class="text-center form-control font-size-responsive filtered-records" type="text"
               placeholder="Record"
               ng-model="raw.selectedRecord"
               uib-typeahead="r as r.recStr for r in raw.recordsToDisplay | filter:$viewValue" typeahead-on-select="raw.onRecordSelected()"

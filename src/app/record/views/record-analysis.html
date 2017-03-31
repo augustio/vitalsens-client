@@ -162,8 +162,20 @@
               ng-model="analysis.selectedPId"
               uib-typeahead="p as p.patientId for p in analysis.patients | filter:$viewValue" typeahead-on-select="analysis.onSelectPatient($item.patientId)"
               typeahead-select-on-exact="true"
-              typeahead-min-length="4" >
-              <div class=" record-date">
+              typeahead-min-length="0" >
+              <div class="full-filtered-display-choice">
+                <label>
+                  <input ng-change="analysis.handleDisplayChoiceSelection()"
+                  type="radio" ng-model="analysis.displayChoice" value="all">
+                  All Records
+                </label>
+                <label>
+                  <input ng-change="analysis.handleDisplayChoiceSelection()"
+                  type="radio" ng-model="analysis.displayChoice" value="filtered">
+                  Records By Date
+                </label>
+              </div>
+              <div ng-if="analysis.displayChoice != 'all'" class=" record-date">
                 <p class="input-group">
                   <input type="text"
                     class="form-control text-center font-size-responsive" uib-datepicker-popup="{{analysis.format}}"
@@ -179,14 +191,15 @@
                   </span>
                 </p>
               </div>
-              <select class="filtered-records font-size-responsive text-center form-control"
+              <div ng-if="analysis.recordsToDisplay.length" class="info-label font-size-responsive">
+                <span>Records Found: </span>&ensp;<strong>{{analysis.recordsToDisplay.length}}</strong>
+              </div>
+              <input class="text-center form-control font-size-responsive filtered-records" type="text"
+              placeholder="Record"
               ng-model="analysis.selectedRecord"
-              ng-change="analysis.onRecordSelected()">
-                <option ng-repeat="a in analysis.filteredRecords"value="{{a}}">
-                 {{a.type}}&ensp;&ensp;&vert;&ensp;&ensp;
-                 Time: {{a.timeStamp | date:'HH:mm:ss'}}
-                </option>
-              </select>
+              uib-typeahead="a as a.recStr for a in analysis.recordsToDisplay | filter:$viewValue" typeahead-on-select="analysis.onRecordSelected()"
+              typeahead-select-on-exact="true"
+              typeahead-min-length="0" />
             </div>
           </div>
         </div>

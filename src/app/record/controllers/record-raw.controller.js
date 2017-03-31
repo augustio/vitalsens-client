@@ -100,8 +100,6 @@ export class RecordRawController {
     this.selectedRecordComponent = null;
     this.selectedRecordComponentsParams = null;
     this.recordsToDisplay = null;
-    this.clearChart();
-    this.chOne = null;
     if(this.displayChoice == "all"){
       this.recordsToDisplay = this.allRecords;
     }else if(this.displayChoice == "filtered"){
@@ -112,6 +110,10 @@ export class RecordRawController {
   }
 
   getFilteredRecords(){
+    this.chOne = null;
+    this.chTwo = null;
+    this.chThree = null;
+    this.clearChart();
     const date = new Date(
       this.selectedDate.getFullYear(),
       this.selectedDate.getMonth(),
@@ -126,13 +128,14 @@ export class RecordRawController {
   }
 
   onRecordSelected(){
-    this.chOne = this.chTwo = this.chThree = null;
-    this.clearChart();
-    this.chOne = null;
     this.getRecordComponents();
   }
 
   getRecordComponents(){
+    this.chOne = null;
+    this.chTwo = null;
+    this.chThree = null;
+    this.clearChart();
     if(this.selectedRecord){
       let {timeStamp, patientId, type} = this.selectedRecord;
       this.$http.get(
@@ -149,14 +152,16 @@ export class RecordRawController {
   }
 
   onRecordComponentSelected(component){
-    this.clearChart();
-    this.chOne = null;
     this.selectedRecordComponent = component;
     this.pageStart = this.pageEnd = 0;
     this.getRecordDetail();
   }
 
   getRecordDetail(){
+    this.chOne = null;
+    this.chTwo = null;
+    this.chThree = null;
+    this.clearChart();
     if(this.selectedRecordComponent){
       const _id = this.selectedRecordComponent._id;
       if(_id != null){
@@ -190,7 +195,6 @@ export class RecordRawController {
   }
 
   drawChart(){
-    this.clearChart();
     if(this.chOne === null){
       console.log("chOne is null");
       return;
@@ -425,12 +429,9 @@ export class RecordRawController {
     this.selectedDate = new Date(year, month, day);
   }
   handleDateChanged(){
-    this.clearChart();
-    this.chOne = null;
     this.recordsToDisplay = this.getFilteredRecords();
     this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
     this.getRecordComponents();
-    console.log(this.recordsToDisplay);
   }
 }
 

@@ -1,5 +1,5 @@
 export class RecordAnalysisController {
-  constructor ($http, $state, API_URL, $scope, $auth) {
+  constructor ($http, $state, API_URL, $scope, $filter, $auth) {
       'ngInject';
 
       this.$auth = $auth;
@@ -8,6 +8,7 @@ export class RecordAnalysisController {
 
       this.$http = $http;
       this.$state = $state;
+      this.$filter = $filter;
       this.API_URL = API_URL;
       this.samplingRate = 250;
       this.ADC_TO_MV_COEFFICIENT = 0.01465;
@@ -16,11 +17,15 @@ export class RecordAnalysisController {
       this.pageEnd = 0;
       this.dataLength = 0;
       this.selectedPId = null;
-      this.records = null;
-      this.selectedRecord = null;
-      this.filteredRecords = null;
       this.analysis = null;
-      this.reData = null;
+      this.allRecords = null;
+      this.recordsToDisplay = null
+      this.selectedRecord = null;
+      this.selectedRecordStr = null;
+      this.displayChoice = "all";
+      this.pData = [];
+      this.rrData = [];
+      this.pvc = [];
 
       this.selectedDate = new Date();
       this.formats = [
@@ -161,9 +166,22 @@ export class RecordAnalysisController {
     if(pId != null){
       this.$http.get(this.API_URL+'api/records?patientId='+pId)
       .then(result => {
-        this.records = result.data || [];
-        if(this.records.length > 0){
-          this.getFilteredRecords();
+        const records = result.data || [];
+        if(records.length > 0){
+          const sorted = records.sort((a,b) => a.timeStamp - b.timeStamp);
+          const formatted = sorted.map(rec => {
+            let type = rec.type.toUpperCase();
+            return {
+              patientId: rec.patientId,
+              timeStamp: rec.timeStamp,
+              type: type.substr(0, 3)
+            }
+          });
+          this.allRecords = formatted.map(r => {
+            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy');
+            return Object.assign(r, {recStr: `${r.type}_${date}`});
+          });
+          this.handleDisplayChoiceSelection();
         }
       });
     }
@@ -174,7 +192,23 @@ export class RecordAnalysisController {
     this.getRecordsByPatientId();
   }
 
+  handleDisplayChoiceSelection(){
+    this.selectedRecord = null;
+    this.recordsToDisplay = null;
+    if(this.displayChoice == "all"){
+      this.recordsToDisplay = this.allRecords;
+    }else if(this.displayChoice == "filtered"){
+      this.recordsToDisplay = this.getFilteredRecords();
+    }
+    this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
+    this.getRecordData();
+  }
+
   getFilteredRecords(){
+    this.pData = [];
+    this.rrData = [];
+    this.pvc = [];
+    this.clearChart();
     const date = new Date(
       this.selectedDate.getFullYear(),
       this.selectedDate.getMonth(),
@@ -182,46 +216,30 @@ export class RecordAnalysisController {
     );
     const start = date.valueOf();
     const end = start + this.MILLIS_IN_ONE_DAY;
-    const filtered = this.records.filter(value => {
+    const filtered = this.allRecords.filter(value => {
       return value.timeStamp >= start && value.timeStamp < end
     });
-    const sorted = filtered.sort((a,b) => a.timeStamp - b.timeStamp);
-    const formatted = sorted.map(rec => {
-      let type = rec.type.toUpperCase();
-      return {
-        patientId: rec.patientId,
-        timeStamp: rec.timeStamp,
-        type: type.substr(0, 3)
-      }
-    });
-    this.filteredRecords =  formatted;
-    this.selectedRecord = formatted[0];
+    return filtered;
   }
 
   onRecordSelected(){
-    let record = JSON.parse(this.selectedRecord);
-    if(record){
-      this.chOne = this.chTwo = this.chThree = null;
-      this.selectedRecordParams = {
-        timeStamp: record.timeStamp,
-        patientId: record.patientId,
-        type: record.type
-      };
-      this.getRecordData(record);
-    }
+    this.getRecordData();
   }
 
-  getRecordData(record){
-    const patientId = record.patientId,
-          timeStamp = record.timeStamp,
-          type = record.type;
-    if(patientId && timeStamp && type){
+  getRecordData(){
+    this.pData = [];
+    this.rrData = [];
+    this.pvc = [];
+    this.clearChart();
+    if(this.selectedRecord){
+      const patientId = this.selectedRecord.patientId,
+            timeStamp = this.selectedRecord.timeStamp,
+            type = this.selectedRecord.type;
       this.$http.get(`${this.API_URL}api/record-analysis?timeStamp=${timeStamp}
       &patientId=${patientId}&type=${type}`)
       .then(result => {
         this.analysis = result.data;
-        console.log(this.analysis);
-        if(this.analysis){
+        if(this.analysis && this.hasProperties(this.analysis)){
           this.isECG = (this.analysis.type.toUpperCase() === "ECG");
           this.rrIntervals = this.analysis.rrIntervals.signal;
           this.pvcLocations = this.analysis.pvcEvents.locs;
@@ -233,13 +251,18 @@ export class RecordAnalysisController {
         &patientId=${patientId}&type=${type}`)
         .then(res => {
           this.recData = res.data;
-          if(this.recData){
+          if(this.recData && this.hasProperties(this.recData)){
             this.duration = this.getDuration(this.recData.endTimeStamp,
                                             this.recData.startTimeStamp);
           }
         });
       });
     }
+  }
+
+  hasProperties(obj){
+    let len = Object.getOwnPropertyNames(obj).length;
+    return len > 0;
   }
 
   getDuration(end, start){
@@ -257,7 +280,9 @@ export class RecordAnalysisController {
     this.selectedDate = new Date(year, month, day);
   }
   handleDateChanged(){
-    this.getFilteredRecords();
+    this.recordsToDisplay = this.getFilteredRecords();
+    this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
+    this.getRecordData();
   }
 
   formatChartData(){
@@ -285,60 +310,98 @@ export class RecordAnalysisController {
   }
 
   makePoincarePlot(){
+    this.clearChart();
+    if(this.pData === null){
+      return;
+    }
     const node = d3.select("#poincare-chart").node();
-    let width, height;
+    let width,
+        height,
+        margin = {},
+        yRange = {},
+        xRange = {},
+        data = {
+          pData: this.pData || [],
+          rrData: this.rrData || [],
+          pvc: this.pvc || []
+        };
     if(node){
-      height = node.offsetHeight;
+      height = 400;
       width = node.offsetWidth;
+      margin.top = 20;
+      margin.right = 25;
+      margin.bottom = 40;
+      margin.left = 40;
+      yRange.min = margin.top;
+      yRange.max = height - margin.bottom;
+      xRange.min = margin.left;
+      xRange.max = width - margin.right;
     }
     const svg = d3.select('#poincare-chart').append('svg')
-      .attr('height', 400)
-      .attr('width', '100%')
+      .attr('height', height)
+      .attr('width', width)
       .attr('class', 'poincare-chart-svg');
 
-    //x-y scale generators
+    //x-y scale generators for axis
+    const yA = d3.scaleLinear()
+      .domain([d3.min(this.pData, d => d.y), d3.max(this.pData, d => d.y)])
+      .range([yRange.max, yRange.min]);
+    const xA = d3.scaleLinear()
+      .domain([0, d3.max(this.pData, d => d.x)])
+      .range([xRange.min, xRange.max]);
+
+    //x-y scale generators for chart
     const y = d3.scaleLinear()
       .domain([d3.min(this.pData, d => d.y), d3.max(this.pData, d => d.y)])
-      .range([260, 20]);
+      .range([yRange.max - (margin.bottom*3), yRange.min + (margin.top*3)]);
     const x = d3.scaleLinear()
       .domain([0, d3.max(this.pData, d => d.x)])
-      .range([0, width - 40]);
+      .range([xRange.min + (margin.left), xRange.max - (margin.right*4)]);
 
     //x-y axis generators
-    const yAxis = d3.axisLeft(y)
+    const yAxis = d3.axisLeft(yA)
                     .ticks(10);
-    const xAxis = d3.axisBottom(x)
+    const xAxis = d3.axisBottom(xA)
                     .ticks(10);
 
-    const chartGroup = svg.append('g').attr('transform', 'translate(20, 20)');
+    const chartGroup = svg.append('g').attr('transform', 'translate('+margin.left+',0)');
+
+    let tx = margin.left*-1;
+    let ty = height - margin.bottom;
 
     chartGroup.append('g')
       .attr('class', 'axis y')
       .call(yAxis);
     chartGroup.append('g')
       .attr('class', 'axis x')
-      .attr('transform', 'translate(0, 260)')
+      .attr('transform', 'translate('+tx+','+ty+')')
       .call(xAxis);
 
     chartGroup.selectAll('circle')
-      .data(this.pData)
+      .data(data.pData)
       .enter().append('circle')
       .attr('cx',(d,i) => x(d.x))
       .attr('cy',(d,i) => y(d.y))
       .attr('r','5')
       .attr('fill', 'blue');
 
-    const data = [
-      ...this.pData,
-      ...this.pvc
+    const d = [
+      ...data.pData,
+      ...data.pvc
     ];
     chartGroup.selectAll('circle')
-      .data(data)
+      .data(d)
       .enter().append('circle')
       .attr('cx',(d,i) => x(d.x))
       .attr('cy',(d,i) => y(d.y))
       .attr('r','5')
       .attr('fill', 'red');
+  }
+
+  clearChart(){
+    if(d3.select('#poincare-chart').select('svg')){
+      d3.select('#poincare-chart').select('svg').remove();
+    }
   }
 }
 
