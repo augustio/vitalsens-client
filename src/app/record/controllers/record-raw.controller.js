@@ -199,6 +199,7 @@ export class RecordRawController {
       console.log("chOne is null");
       return;
     }
+    clearChart();
     const options = setOptions();
     this.pageSize = options.itemsPerPage;
     const end = this.pageStart + options.itemsPerPage;
