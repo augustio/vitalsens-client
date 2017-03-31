@@ -93,13 +93,13 @@
               uib-typeahead="r as r.recStr for r in raw.recordsToDisplay | filter:$viewValue" typeahead-on-select="raw.onRecordSelected()"
               typeahead-select-on-exact="true"
               typeahead-min-length="0" />
-              <div ng-if="raw.recordComponents" class="font-size-responsive record-components text-center">
-                <ul class="list-group record-components-list-group">
-                  <li role="button" class="list-group-item" ng-repeat="c in raw.recordComponents"
-                  ng-click="raw.onRecordComponentSelected(c)">
-                    {{c.start | date:'HH:mm:ss'}} - {{c.end | date:'HH:mm:ss'}}
-                  </li>
-                </ul>
+              <div ng-if="raw.recordComponents" class="font-size-responsive record-components text-center list-group">
+                <a href=""
+                class="list-group-item list-group-item-action list-group-item-info"
+                ng-repeat="c in raw.recordComponents"
+                ng-click="raw.onRecordComponentSelected(c)">
+                  {{c.start | date:'HH:mm:ss'}} - {{c.end | date:'HH:mm:ss'}}
+                </a>
               </div>
             </div>
           </div>
