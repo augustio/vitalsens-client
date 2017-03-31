@@ -82,7 +82,7 @@ export class RecordRawController {
             }
           });
           this.allRecords = formatted.map(r => {
-            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy_hh:mm:ss');
+            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy_HH:mm:ss');
             return Object.assign(r, {recStr: `${r.type}_${date}`});
           });
           this.handleDisplayChoiceSelection();
