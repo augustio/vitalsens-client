@@ -44,6 +44,10 @@ export class RecordAnalysisController {
       this.opened = false;
 
       this.getPatients();
+      d3.select(window).on('resize', () => {
+        this.clearChart();
+        this.makePoincarePlot();
+      });
 
       /*this.rrOptions = {
           chart: {
