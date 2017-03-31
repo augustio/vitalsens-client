@@ -155,7 +155,6 @@ export class RecordRawController {
 
   onRecordComponentSelected(component){
     this.selectedRecordComponent = component;
-    this.pageStart = this.pageEnd = 0;
     this.getRecordDetail();
   }
 
@@ -163,6 +162,7 @@ export class RecordRawController {
     this.chOne = null;
     this.chTwo = null;
     this.chThree = null;
+    this.pageStart = this.pageEnd = 0;
     this.clearChart();
     if(this.selectedRecordComponent){
       const _id = this.selectedRecordComponent._id;
@@ -292,12 +292,12 @@ export class RecordRawController {
 
     const dataKeys = Object.keys(options.data);
     dataKeys.forEach( (key, index) => {
-      const height = index * (options.innerMargin.bottom*2 + options.innerHeight)
-      const titleYPos = options.innerMargin.top + height;
+      const height = index * (options.margin.bottom + options.innerHeight)
+      const titleYPos = options.margin.top + height;
 
       //Add the title
       svg.append("text")
-          .attr("x", options.innerWidth - options.innerMargin.right*2)
+          .attr("x", options.innerWidth - options.margin.right*2)
           .attr("y", titleYPos)
           .attr("text-anchor", "middle")
           .style("font-size", "14px")
@@ -306,12 +306,11 @@ export class RecordRawController {
 
       //x-y scale generators
       const y = d3.scaleLinear()
-        .domain([-8, 8])
-        //.domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
+        .domain([-4, 8])
         .range([options.innerHeight, 0]);
       const x = d3.scaleLinear()
-        .domain([0, d3.max(options.data[key], d => d.x)])
-        .range([0, options.innerWidth]);
+        .domain([0, options.maxXDomain])
+        .range([0, options.outerWidth]);
 
       //Progress bar calculations
       const progress = d3.scaleLinear()
@@ -341,7 +340,7 @@ export class RecordRawController {
         .curve(d3.curveNatural);
 
       const chartGroup = svg.append('g')
-        .attr('transform', 'translate('+options.innerMargin.left+','+(options.innerMargin.top +  height)+')');
+        .attr('transform', 'translate('+options.margin.left+','+(options.margin.top +  height)+')');
 
       chartGroup.append('path')
         .attr('fill', 'none')
@@ -444,77 +443,38 @@ export class RecordRawController {
 const setOptions = () => {
   const options = {
     data: {},
+    innerWidth: 1250,
+    outerWidth: 1300,
     innerHeight: 200,
     outerHeight: 800,
     smallGridSize: 5,
     largeGridSize: 25,
-    outerMargin: {
-      left: 20,
-      right: 20,
-      top: 20,
-      bottom: 20
-    },
-    innerMargin: {
+    margin: {
       left: 25,
       right: 25,
       top: 25,
       bottom: 25
     },
     x: {
-      ticks: 30
+      ticks: 10
     },
     y: {
       ticks: 8
-    }
+    },
+    itemsPerPage: 2300*0.8,
+    maxXDomain: 8
   };
   const node = d3.select("#chart-container").node();
   if(node){
     options.outerWidth = node.offsetWidth;
-  }
-  if(options.outerWidth < 750){
-    options.innerWidth = 500;
-    options.itemsPerPage = 1000;
-    options.x.ticks = 5;
-    let margin = (options.outerWidth - options.innerWidth)/2;
-    margin = margin - (margin%options.largeGridSize);
-    options.innerMargin.left = margin;
-    options.innerMargin.right = margin;
-  }else if(options.outerWidth > 750 && options.outerWidth <= 1000){
-    options.innerWidth = 750;
-    options.itemsPerPage = 1500;
-    options.x.ticks = 5;
-    let margin = (options.outerWidth - options.innerWidth)/2;
-    options.innerMargin.left = margin > options.largeGridSize
-     ? margin - (margin%options.largeGridSize)
-     : options.largeGridSize;
-    options.innerMargin.right = options.innerMargin.left;
-  }else if(options.outerWidth > 1000 && options.outerWidth <=1250){
-    options.innerWidth = 1000;
-    options.itemsPerPage = 2000;
-    options.x.ticks = 10;
-    let margin = (options.outerWidth - options.innerWidth)/2;
-    options.innerMargin.left = margin > options.largeGridSize
-     ? margin - (margin%options.largeGridSize)
-     : options.largeGridSize;
-    options.innerMargin.right = options.innerMargin.left;
-  }else if(options.outerWidth > 1250 && options.outerWidth <=1500){
-    options.innerWidth = 1250;
-    options.itemsPerPage = 2500;
-    options.x.ticks = 10;
-    let margin = (options.outerWidth - options.innerWidth)/2;
-    options.innerMargin.left = margin > options.largeGridSize
-     ? margin - (margin%options.largeGridSize)
-     : options.largeGridSize;
-    options.innerMargin.right = options.innerMargin.left;
-  }else{
-    options.innerWidth = 1500;
-    options.itemsPerPage = 3000;
-    options.x.ticks = 15;
-    let margin = (options.outerWidth - options.innerWidth)/2;
-    options.innerMargin.left = margin > options.largeGridSize
-     ? margin - (margin%options.largeGridSize)
-     : options.largeGridSize;
-    options.innerMargin.right = options.innerMargin.left;
+    const scale = d3.scaleLinear()
+                    .domain([0, options.maxXDomain])
+                    .range([0, options.outerWidth]);
+    options.smallGridSize = scale(0.04);
+    options.largeGridSize = scale(0.2);
+    options.margin.left = options.margin.right = options.margin.top = options.margin.bottom = options.largeGridSize*2;
+    options.innerHeight = options.largeGridSize * 6;
+    options.outerHeight = (options.innerHeight * 3)+(options.margin.top * 4);
   }
 
   return options;
