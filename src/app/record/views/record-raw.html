@@ -4,18 +4,18 @@
       <div class="panel panel-info records-view">
         <div class="panel-body rec-raw-analysis-panel-body">
           <div class="col-xs-10">
-            <div ng-if="raw.chOne && !raw.printing" class="font-size-responsive row chart-header">
+            <div ng-if="raw.currentRecordData && !raw.printing" class="font-size-responsive row chart-header">
               <span class="pull-left chart-header-label">
-                Patient id: {{raw.selectedRecordComponentsParams.patientId}}
+                Patient id: {{raw.currentRecordData.patientId}}
                 <span class="vertical-line">&ensp;&vert;&ensp;</span>
               </span>
               <span class="pull-left chart-header-label">
-                Type: {{raw.selectedRecordComponentsParams.type}}
+                Type: {{raw.currentRecordData.type}}
                 <span class="vertical-line">&ensp;&vert;&ensp;</span>
               </span>
               <span class="pull-left chart-header-label">
                 Duration: {{raw.getDuration(
-                  raw.selectedRecordComponent.end, raw.selectedRecordComponent.start
+                  raw.currentRecordData.end, raw.currentRecordData.start
                 )}} Seconds
                 <span class="vertical-line">&ensp;&vert;&ensp;</span>
               </span>
@@ -47,8 +47,8 @@
           </div>
           <div ng-if="!raw.printing" class="col-xs-2">
             <div class="control-panel">
-              <div ng-if="raw.currentTemp != null" class="info-label font-size-responsive">
-                <span>Temp </span>&ensp;<strong>{{raw.currentTemp | number:1}}&deg;C</strong>
+              <div ng-if="raw.currentRecordData.temp != null" class="info-label font-size-responsive">
+                <span>Temp </span>&ensp;<strong>{{raw.currentRecordData.temp | number:1}}&deg;C</strong>
               </div>
               <input class="text-center form-control font-size-responsive patient-id" type="text"
               placeholder="Patient Id"
@@ -93,7 +93,7 @@
               uib-typeahead="r as r.recStr for r in raw.recordsToDisplay | filter:$viewValue" typeahead-on-select="raw.onRecordSelected()"
               typeahead-select-on-exact="true"
               typeahead-min-length="0" />
-              <div ng-if="raw.recordComponents" class="record-components text-center">
+              <div ng-if="raw.recordComponents" class="font-size-responsive record-components text-center">
                 <ul class="list-group record-components-list-group">
                   <li role="button" class="list-group-item" ng-repeat="c in raw.recordComponents"
                   ng-click="raw.onRecordComponentSelected(c)">

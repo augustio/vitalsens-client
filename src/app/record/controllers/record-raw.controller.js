@@ -24,8 +24,7 @@ export class RecordRawController {
     this.selectedRecordStr = null;
     this.recordComponents = null;
     this.selectedRecordComponent = null;
-    this.selectedRecordComponentsParams = null;
-    this.currentTemp = null;
+    this.currentRecordData = null;
     this.progressValue = 0;
     this.progressType = null;
     this.printing = false;
@@ -49,7 +48,10 @@ export class RecordRawController {
     this.opened = false;
 
     this.getPatients();
-    d3.select(window).on('resize', () => this.drawChart());
+    d3.select(window).on('resize', () => {
+      this.clearChart();
+      this.drawChart();
+    });
   }
 
   getPatients(){
@@ -80,7 +82,7 @@ export class RecordRawController {
             }
           });
           this.allRecords = formatted.map(r => {
-            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy');
+            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy_hh:mm:ss');
             return Object.assign(r, {recStr: `${r.type}_${date}`});
           });
           this.handleDisplayChoiceSelection();
@@ -167,12 +169,12 @@ export class RecordRawController {
       if(_id != null){
         this.$http.get(`${this.API_URL}api/record-details?_id=${_id}`)
         .then(result => {
+          this.currentRecordData = result.data;
           this.isECG = (result.data.type.toUpperCase() === "ECG");
           this.chOne = result.data.chOne;
           this.chTwo = result.data.chTwo
           this.chThree = result.data.chThree;
           this.dataLength = this.chOne.length;
-          this.currentTemp = result.data.temp;
           this.drawChart();
         });
       }
@@ -185,12 +187,14 @@ export class RecordRawController {
 
   printChart(){
     this.printing = true;
+    this.clearChart();
     this.drawChart();
     this.$timeout(() => {window.print();}, 1000);
   }
 
   printViewBackBtnHandler(){
     this.printing = false;
+    this.clearChart();
     this.drawChart();
   }
 
