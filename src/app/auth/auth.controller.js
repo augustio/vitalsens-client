@@ -1,34 +1,33 @@
 export class AuthController{
 
-    constructor($auth, $state){
-        'ngInject';
+  constructor($auth, $state){
+    'ngInject';
 
-        this.$auth = $auth;
-        this.$state = $state;
-    }
-    register(){
-        var vm = this;
-        this.$auth.signup(this.user).then(function(response){
-            vm.$state.go('home');
-        }).catch(function(response){
-            const data = response.data;
-            if(data){
-              vm.message = response.data.message;
-            }
-        });
-    }
+    this.$auth = $auth;
+    this.$state = $state;
+  }
+  register(){
+    this.$auth.signup(this.user)
+      .then(() => this.$state.go('home'))
+      .catch(res => {
+        const data = res.data;
+        if(data){
+          this.message = res.data.message;
+        }
+      });
+  }
 
-    login(){
-        var vm = this;
-        this.$auth.login(this.login.user).then(function(response){
-            vm.$auth.setToken(response.data.token);
-            vm.$state.go('home');
-        }).catch(function(response){
-          const data = response.data;
-          if(data){
-            vm.message = response.data.message;
-          }
-        });
-    }
+  login(){
+    this.$auth.login(this.login.user)
+      .then(res => {
+        this.$auth.setToken(res.data.token);
+        this.$state.go('home');
+      }).catch(response => {
+        const data = response.data;
+        if(data){
+          this.message = response.data.message;
+        }
+      });
+  }
 
 }

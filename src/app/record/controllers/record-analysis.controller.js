@@ -172,7 +172,7 @@ export class RecordAnalysisController {
   /*Functions for date picker widget*/
   clear() {
     this.selectedDate = null;
-  };
+  }
   open() {
     this.opened = true;
   }
@@ -280,8 +280,8 @@ export class RecordAnalysisController {
     chartGroup.selectAll('circle')
       .data(data.pData)
       .enter().append('circle')
-      .attr('cx',(d,i) => x(d.x))
-      .attr('cy',(d,i) => y(d.y))
+      .attr('cx', d => x(d.x))
+      .attr('cy', d => y(d.y))
       .attr('r','5')
       .attr('fill', 'blue');
 
@@ -292,8 +292,8 @@ export class RecordAnalysisController {
     chartGroup.selectAll('circle')
       .data(d)
       .enter().append('circle')
-      .attr('cx',(d,i) => x(d.x))
-      .attr('cy',(d,i) => y(d.y))
+      .attr('cx', d => x(d.x))
+      .attr('cy', d => y(d.y))
       .attr('r','5')
       .attr('fill', 'red');
   }
@@ -303,13 +303,4 @@ export class RecordAnalysisController {
       d3.select('#poincare-chart').select('svg').remove();
     }
   }
-}
-
-const isPVC = value => {
-  for(var i = 0; i < pvcLocs.length; i++){
-    if(value == pvcLocs[i]){
-      return true;
-    }
-  }
-  return false;
 }

@@ -12,6 +12,10 @@
   "globals": {
     "angular": true,
     "module": true,
+    "d3": true,
+    "toJson": true,
+    "JSZip": true,
+    "saveAs": true,
     "inject": true
   }
 }

@@ -1,5 +1,5 @@
 export class RecordRawController {
-  constructor ($http, $state, $auth, $filter, $timeout, API_URL) {
+  constructor ($http, $state, $auth, $filter, $window, $log, $timeout, API_URL) {
     'ngInject';
 
     this.$auth = $auth;
@@ -10,6 +10,8 @@ export class RecordRawController {
     this.$state = $state;
     this.$timeout = $timeout;
     this.$filter = $filter;
+    this.$window = $window;
+    this.$log = $log;
     this.API_URL = API_URL;
     this.samplingRate = 250;
     this.ADC_TO_MV_COEFFICIENT = 0.01465;
@@ -189,7 +191,7 @@ export class RecordRawController {
     this.printing = true;
     this.clearChart();
     this.drawChart();
-    this.$timeout(() => {window.print();}, 1000);
+    this.$timeout(() => {this.$window.print();}, 1000);
   }
 
   printViewBackBtnHandler(){
@@ -200,7 +202,6 @@ export class RecordRawController {
 
   drawChart(){
     if(this.chOne === null){
-      console.log("chOne is null");
       return;
     }
     const options = setOptions();
@@ -335,8 +336,8 @@ export class RecordRawController {
       //Line generator (used to draw chart path)
       let line = d3.line()
         .defined(d => d.y !== null)
-        .x((d,i) => x(d.x))
-        .y((d,i) => y(d.y))
+        .x(d => x(d.x))
+        .y(d => y(d.y))
         .curve(d3.curveNatural);
 
       const chartGroup = svg.append('g')
@@ -359,8 +360,8 @@ export class RecordRawController {
       chartGroup.selectAll('circle')
         .data(options.data[key])
         .enter().append('circle')
-        .attr('cx',(d,i) => x(d.x))
-        .attr('cy',(d,i) => y(d.y))
+        .attr('cx', d => x(d.x))
+        .attr('cy', d => y(d.y))
         .attr('r','5')
         .attr('stroke', 'red')
         .attr('stroke-width', '0')
@@ -395,7 +396,7 @@ export class RecordRawController {
         let data = result.data;
         let zip = new JSZip();
         let fileName = patientId+"_"+timeStamp+"_"+type;
-        zip.file(fileName+".txt", JSON.stringify(data));
+        zip.file(fileName+".txt", toJson(data));
         zip.generateAsync({type:"blob"})
         .then(function(content){
             saveAs(content, fileName+".zip");
@@ -426,7 +427,7 @@ export class RecordRawController {
   /*Functions for date picker widget*/
   clear() {
     this.selectedDate = null;
-  };
+  }
   open() {
     this.opened = true;
   }
