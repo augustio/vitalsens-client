@@ -228,8 +228,8 @@ export class RecordAnalysisController {
     if(node){
       height = 400;
       width = node.offsetWidth;
-      margin.top = 20;
-      margin.right = 25;
+      margin.top = 40;
+      margin.right = 40;
       margin.bottom = 40;
       margin.left = 40;
       yRange.min = margin.top;
@@ -253,37 +253,97 @@ export class RecordAnalysisController {
     //x-y scale generators for chart
     const y = d3.scaleLinear()
       .domain([d3.min(this.pData, d => d.y), d3.max(this.pData, d => d.y)])
-      .range([yRange.max - (margin.bottom*3), yRange.min + (margin.top*3)]);
+      .range([yRange.max - (margin.right*5), yRange.min + (margin.right*5)]);
     const x = d3.scaleLinear()
       .domain([0, d3.max(this.pData, d => d.x)])
-      .range([xRange.min + (margin.left), xRange.max - (margin.right*4)]);
+      .range([xRange.min + (margin.right*5), xRange.max - (margin.right*5)]);
 
     //x-y axis generators
     const yAxis = d3.axisLeft(yA)
-                    .ticks(10);
+                    .ticks(5)
+                    .tickSize((margin.right + margin.left - width), 0, 0);
     const xAxis = d3.axisBottom(xA)
-                    .ticks(10);
+                    .ticks(5)
+                    .tickSize((margin.top + margin.bottom - height), 0, 0);
 
     const chartGroup = svg.append('g').attr('transform', 'translate('+margin.left+',0)');
 
     let tx = margin.left*-1;
     let ty = height - margin.bottom;
 
-    chartGroup.append('g')
-      .attr('class', 'axis y')
+    let gy = chartGroup.append('g')
+      .attr('class', 'poincare-grid')
       .call(yAxis);
-    chartGroup.append('g')
-      .attr('class', 'axis x')
+    let gx = chartGroup.append('g')
+      .attr('class', 'poincare-grid')
       .attr('transform', 'translate('+tx+','+ty+')')
       .call(xAxis);
 
     chartGroup.selectAll('circle')
       .data(data.pData)
       .enter().append('circle')
+      .attr('class', 'dot')
       .attr('cx', d => x(d.x))
       .attr('cy', d => y(d.y))
       .attr('r','5')
       .attr('fill', 'blue');
+
+    let rrEven = data.pData.reduce((a, v) => a + v.y, 0);
+    let meanRREven = rrEven/data.pData.length;
+    let rrOdd = data.pData.reduce((a, v) => a + v.x, 0);
+    let meanRROdd = rrOdd/data.pData.length;
+    let eHeight = 0;
+    let eWidth = 0;
+    if(this.analysis.hrvFeatures){
+      eHeight = this.analysis.hrvFeatures.features.SD1*(height/8);
+      eWidth = this.analysis.hrvFeatures.features.SD2*(width/8);
+    }
+
+    let lineData1 = data.pData.map(d =>{
+      return {
+        x: d.x,
+        y: (-1*d.x)+(meanRROdd + meanRREven)
+      }
+    });
+    let lineData2 = data.pData.map(d =>{
+      return {
+        x: d.x,
+        y: d.x+(meanRROdd - meanRREven)
+      }
+    });
+
+    //Line generator (used to draw dashed lines)
+    let intersectLine = d3.line()
+      .x(d => x(d.x))
+      .y(d => y(d.y));
+
+    chartGroup.append('path')
+      .attr('class', 'intersect-line')
+      .attr('fill', 'none')
+      .attr('stroke', 'green')
+      .attr('stroke-width', 5)
+      .attr('stroke-dasharray', ('5,5'))
+      .attr('d', intersectLine(lineData1))
+
+    chartGroup.append('path')
+      .attr('class', 'intersect-line')
+      .attr('fill', 'none')
+      .attr('stroke', 'green')
+      .attr('stroke-width', 5)
+      .attr('stroke-dasharray', ('5,5'))
+      .attr('d', intersectLine(lineData2))
+
+    chartGroup.append('ellipse')
+      .attr('class', 'poincare-center')
+      .attr('cx', x(meanRREven) )
+      .attr('cy', y(meanRROdd))
+      .attr('ry', eHeight)
+      .attr('rx', eWidth)
+      .attr('stroke', 'red')
+      .attr('fill', 'none')
+      .attr('stroke-width', 4);
+
+    chartGroup.append()
 
     const d = [
       ...data.pData,
@@ -292,10 +352,24 @@ export class RecordAnalysisController {
     chartGroup.selectAll('circle')
       .data(d)
       .enter().append('circle')
+      .attr('class', 'dot')
       .attr('cx', d => x(d.x))
       .attr('cy', d => y(d.y))
       .attr('r','5')
       .attr('fill', 'red');
+
+    let zoom = d3.zoom()
+        .scaleExtent([1, 3])
+        .translateExtent([[margin.right, margin.right], [width, height]])
+        .on('zoom', () => {
+          gx.call(xAxis.scale(d3.event.transform.rescaleX(xA)));
+          gy.call(yAxis.scale(d3.event.transform.rescaleY(yA)));
+          svg.selectAll('circle')
+            .attr('cx', d => d3.event.transform.applyX(x(d.x)))
+            .attr('cy', d => d3.event.transform.applyY(y(d.y)));
+        });
+
+    svg.call(zoom);
   }
 
   clearChart(){
