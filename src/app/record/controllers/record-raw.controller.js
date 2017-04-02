@@ -412,7 +412,7 @@ export class RecordRawController {
         let data = result.data;
         let zip = new JSZip();
         let fileName = patientId+"_"+timeStamp+"_"+type;
-        zip.file(fileName+".txt", toJson(data));
+        zip.file(fileName+".txt", angular.toJson(data));
         zip.generateAsync({type:"blob"})
         .then(function(content){
             saveAs(content, fileName+".zip");
