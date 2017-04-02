@@ -13,7 +13,8 @@ export class RecordRawController {
     this.$window = $window;
     this.$log = $log;
     this.API_URL = API_URL;
-    this.samplingRate = 250;
+    this.samplingRate = 230;
+    this.samplesPerPage = 2300*0.8;
     this.ADC_TO_MV_COEFFICIENT = 0.01465;
     this.MILLIS_IN_ONE_DAY = 8.64e+7;
     this.pageStart = 0;
@@ -171,16 +172,72 @@ export class RecordRawController {
       if(_id != null){
         this.$http.get(`${this.API_URL}api/record-details?_id=${_id}`)
         .then(result => {
-          this.currentRecordData = result.data;
           this.isECG = (result.data.type.toUpperCase() === "ECG");
-          this.chOne = result.data.chOne;
-          this.chTwo = result.data.chTwo
-          this.chThree = result.data.chThree;
-          this.dataLength = this.chOne.length;
+          this.currentRecordData = this.formatData(result.data);
           this.drawChart();
         });
       }
     }
+  }
+
+  formatData(data){
+    let channels = 0;
+    let d = {};
+    const durationPerSample = 1/this.samplingRate; //In seconds
+    if(data.chOne.length > 0) channels++;
+    if(data.chTwo.length > 0) channels++;
+    if(data.chThree.length > 0) channels++;
+    d.length = data.chOne.length;
+    d.isEmpty = d.length <= 0;
+    d.samplesPerPage = data.samplingRate * 8;
+    d.numPages = Math.floor(d.length/this.samplesPerPage)
+                          + (d.length%this.samplesPerPage > 0 ? 1 : 0);
+    d.curPage = 0;
+    switch (channels) {
+      case 3:
+        if(this.isECG){
+          d.ES = data.chTwo.map((e, i) =>{
+            return {
+              x: i*durationPerSample,
+              y: (e == null)
+                  ? e
+                  : (data.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
+            };
+          });
+          d.AS = data.chTwo.map((e, i) =>{
+            return {
+              x: i*durationPerSample,
+              y: (e == null)
+                  ? e
+                  : (data.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
+            };
+          });
+          d.AE = data.chThree.map((e, i) => {
+            return {
+              x: i*durationPerSample,
+              y: (e == null) ? e : (data.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
+            };
+          });
+        }
+        else{
+          d.chOne = data.chOne;
+          d.chTwo = data.chTwo;
+          d.chThree = data.chThree;
+        }
+        break;
+      default:
+    }
+    return Object.assign(d,{
+      type: data.type,
+      timeStamp: data.timeStamp,
+      patientId: data.patientId,
+      samplingRate: data.samplingRate,
+      start: data.start,
+      end: data.end,
+      pEStart: data.pEStart,
+      pEEnd: data.pEEnd,
+      temp: data.temp
+    });
   }
 
   getDuration(end, start){
@@ -201,95 +258,55 @@ export class RecordRawController {
   }
 
   drawChart(){
-    if(this.chOne === null){
+    if(this.currentRecordData.isEmpty){
       return;
     }
     const options = setOptions();
-    this.pageSize = options.itemsPerPage;
-    const end = this.pageStart + options.itemsPerPage;
-    this.pageEnd = end < this.dataLength ? end : this.dataLength;
-    if(this.pageEnd <= this.pageStart){
-      return;
-    }
-    const durationPerSample = 1/this.samplingRate; //In seconds
-    let data1 = this.chOne.slice(this.pageStart, this.pageEnd);
-    let data2 = this.chTwo.slice(this.pageStart, this.pageEnd);
-    let data3 = this.chThree.slice(this.pageStart, this.pageEnd);
-    if(data1.length < options.itemsPerPage){
-      data1 = [
-        ...data1,
-        ...(Array(options.itemsPerPage - data1.length).fill(null))
-      ];
-    }
-    if(data2.length < options.itemsPerPage){
-      data2 = [
-        ...data2,
-        ...(Array(options.itemsPerPage - data2.length).fill(null))
-      ];
-    }
-    if(data3.length < options.itemsPerPage){
-      data3 = [
-        ...data3,
-        ...(Array(options.itemsPerPage - data3.length).fill(null))
-      ];
-    }
-    options.data.ES = data2.map((e, i) =>{
-      return {
-        x: i*durationPerSample,
-        y: (e == null) ? e : (this.chThree[i] - e) *this.ADC_TO_MV_COEFFICIENT
-      };
-    });
-    options.data.AS = data2.map((e, i) =>{
-      return {
-        x: i*durationPerSample,
-        y: (e == null) ? e : (this.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
-      };
-    });
-    options.data.AE = data3.map((e, i) => {
-      return {
-        x: i*durationPerSample,
-        y: (e == null) ? e : (this.chOne[i] - e) *this.ADC_TO_MV_COEFFICIENT
-      };
-    });
-
+    let start = this.currentRecordData.curPage*this.currentRecordData.samplesPerPage;
+    let end = start + this.currentRecordData.samplesPerPage;
+    options.data.ES = this.currentRecordData.ES.slice(start, end);
+    options.data.AS = this.currentRecordData.AS.slice(start, end);
+    options.data.AE = this.currentRecordData.AE.slice(start, end);
     const svg = d3.select('#chart-container').append('svg')
       .attr('height', options.outerHeight)
       .attr('width', options.outerWidth);
 
-    //Background grid definition
-    const defs = svg.append('defs');
-    const smallGrid = defs.append('pattern')
-      .attr('id', 'small-grid')
-      .attr('width', options.smallGridSize)
-      .attr('height', options.smallGridSize)
-      .attr('patternUnits', 'userSpaceOnUse');
-    smallGrid.append('path')
-      .attr('d', 'M '+options.smallGridSize+' 0 L 0 0 0 '+options.smallGridSize)
-      .attr('fill', 'none')
-      .attr('stroke', 'red')
-      .attr('stroke-width', '0.5');
-    const grid = defs.append('pattern')
-      .attr('id', 'grid')
-      .attr('width', options.largeGridSize)
-      .attr('height', options.largeGridSize)
-      .attr('patternUnits', 'userSpaceOnUse')
-    grid.append('rect')
-      .attr('width', options.largeGridSize)
-      .attr('height', options.largeGridSize)
-      .attr('fill', 'url(#small-grid)');
-    grid.append('path')
-      .attr('d', 'M '+options.largeGridSize+' 0 L 0 0 0 '+options.largeGridSize)
-      .attr('fill', 'none')
-      .attr('stroke', 'red')
-      .attr('stroke-width', '1');
-    svg.append('rect')
-      .attr('height', '100%')
-      .attr('width', options.outerWidth)
-      .attr('class', 'chart-box');
-    svg.append('rect')
-      .attr('height', '100%')
-      .attr('width', options.outerWidth)
-      .attr('class', 'chart-bg');
+    //Background grid definition for ECG data
+    if(this.isECG){
+      const defs = svg.append('defs');
+      const smallGrid = defs.append('pattern')
+        .attr('id', 'small-grid')
+        .attr('width', options.smallGridSize)
+        .attr('height', options.smallGridSize)
+        .attr('patternUnits', 'userSpaceOnUse');
+      smallGrid.append('path')
+        .attr('d', 'M '+options.smallGridSize+' 0 L 0 0 0 '+options.smallGridSize)
+        .attr('fill', 'none')
+        .attr('stroke', 'red')
+        .attr('stroke-width', '0.5');
+      const grid = defs.append('pattern')
+        .attr('id', 'grid')
+        .attr('width', options.largeGridSize)
+        .attr('height', options.largeGridSize)
+        .attr('patternUnits', 'userSpaceOnUse')
+      grid.append('rect')
+        .attr('width', options.largeGridSize)
+        .attr('height', options.largeGridSize)
+        .attr('fill', 'url(#small-grid)');
+      grid.append('path')
+        .attr('d', 'M '+options.largeGridSize+' 0 L 0 0 0 '+options.largeGridSize)
+        .attr('fill', 'none')
+        .attr('stroke', 'red')
+        .attr('stroke-width', '1');
+      svg.append('rect')
+        .attr('height', '100%')
+        .attr('width', options.outerWidth)
+        .attr('class', 'chart-box');
+      svg.append('rect')
+        .attr('height', '100%')
+        .attr('width', options.outerWidth)
+        .attr('class', 'chart-bg');
+    }
 
     const dataKeys = Object.keys(options.data);
     dataKeys.forEach( (key, index) => {
@@ -309,21 +326,20 @@ export class RecordRawController {
       const y = d3.scaleLinear()
         .domain([-4, 8])
         .range([options.innerHeight, 0]);
+      let mnX = options.data.ES[0].x;
+      let mxX = mnX + options.maxXDomain;
       const x = d3.scaleLinear()
-        .domain([0, options.maxXDomain])
+        .domain([mnX, mxX])
         .range([0, options.outerWidth]);
 
       //Progress bar calculations
       const progress = d3.scaleLinear()
-        .domain([0, this.dataLength])
+        .domain([0, (this.currentRecordData.numPages -1)])
         .range([0, 100]);
-      this.progressValue = Math.round(progress(this.pageEnd));
+      this.progressValue = Math.round(progress(this.currentRecordData.curPage));
       if(this.progressValue == 100){
         this.progressType = "success";
-      }else if(this.pageStart == 0){
-        this.progressType = "danger";
-      }
-      else{
+      }else{
         this.progressType = null;
       }
 
@@ -410,18 +426,19 @@ export class RecordRawController {
   }
 
   handleForwardBtn(){
-    if(this.pageEnd < this.dataLength){
-      this.pageStart = this.pageEnd;
+    if(this.currentRecordData.curPage < this.currentRecordData.numPages -1){
+      this.currentRecordData.curPage++;
       this.clearChart();
       this.drawChart();
     }
   }
 
   handleBackwardBtn(){
-    const start = this.pageStart - this.pageSize;
-    this.pageStart = start > 0 ? start : 0;
-    this.clearChart();
-    this.drawChart();
+    if(this.currentRecordData.curPage > 0){
+      this.currentRecordData.curPage--;
+      this.clearChart();
+      this.drawChart();
+    }
   }
 
   /*Functions for date picker widget*/
@@ -462,7 +479,6 @@ const setOptions = () => {
     y: {
       ticks: 8
     },
-    itemsPerPage: 2300*0.8,
     maxXDomain: 8
   };
   const node = d3.select("#chart-container").node();

@@ -4,7 +4,7 @@
       <div class="panel panel-info records-view">
         <div class="panel-body rec-raw-analysis-panel-body">
           <div class="col-xs-10">
-            <div ng-if="raw.currentRecordData && !raw.printing" class="font-size-responsive row chart-header">
+            <div ng-if="!raw.currentRecordData.isEmpty && !raw.printing" class="font-size-responsive row chart-header">
               <span class="pull-left chart-header-label">
                 Patient id: {{raw.currentRecordData.patientId}}
                 <span class="vertical-line">&ensp;&vert;&ensp;</span>
@@ -28,7 +28,7 @@
               <button ng-if="raw.printing" type="button"
               ng-click="raw.printViewBackBtnHandler()" name="printViewBackBtn">Back</button>
             </div>
-            <div ng-if="raw.chOne && !raw.printing" class="chart-btn">
+            <div ng-if="!raw.currentRecordData.isEmpty && !raw.printing" class="chart-btn">
               <button
               class="btn btn-info btn-sm back-btn btn-responsive pull-left"
               ng-click="raw.handleBackwardBtn()">
@@ -40,7 +40,7 @@
                 <span class="glyphicon glyphicon-forward"></span>
               </button>
             </div>
-            <uib-progressbar ng-if="raw.chOne && !raw.printing"
+            <uib-progressbar ng-if="!raw.currentRecordData.isEmpty && !raw.printing"
             value="raw.progressValue" type={{raw.progressType}}>
               <b>{{raw.progressValue}}%</b>
             </uib-progressbar>
