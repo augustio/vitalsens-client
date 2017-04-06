@@ -212,11 +212,12 @@ g.tick text {
 }
 
 /*record-raw, record-analysis view*/
-.rec-raw-analysis-panel-body{
-  background-color:#c0eddb;
-}
 .control-panel{
-  margin: 5px 10px;
+  background-color:#c0eddb;
+  border: 2px solid green;
+  border-radius: 2px;
+  padding: 5px 10px;
+  height: 100vh;
 }
 .patient-id{
   background-color: #dce3ef;

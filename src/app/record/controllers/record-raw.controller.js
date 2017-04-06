@@ -14,7 +14,7 @@ export class RecordRawController {
     this.$log = $log;
     this.API_URL = API_URL;
     this.samplingRate = 230;
-    this.samplesPerPage = 2300*0.8;
+    this.samplesPerPage = 2300;
     this.ADC_TO_MV_COEFFICIENT = 0.01465;
     this.MILLIS_IN_ONE_DAY = 8.64e+7;
     this.pageStart = 0;
@@ -479,7 +479,7 @@ const setOptions = () => {
     y: {
       ticks: 8
     },
-    maxXDomain: 8
+    maxXDomain: 10
   };
   const node = d3.select("#chart-container").node();
   if(node){
