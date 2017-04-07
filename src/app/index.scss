@@ -150,6 +150,11 @@ line{
   width: 100%;
 }
 
+#rr-chart-container{
+  width: 100%;
+  margin: 40px;
+}
+
 .poincare-chart-svg{
   background-color: #ffffff;
 }
@@ -207,11 +212,18 @@ g.tick text {
 #analysis-header{
   border-top-right-radius: 0.5em;
 }
+.table{
+  margin: 40px 40px 20px 20px;
+  height: 300px;
+}
 .records-panel-body{
   padding: 0px 10px;
 }
 
 /*record-raw, record-analysis view*/
+.rec-raw-analysis-panel-body{
+  margin: 20px;
+}
 .control-panel{
   background-color:#c0eddb;
   border: 2px solid green;

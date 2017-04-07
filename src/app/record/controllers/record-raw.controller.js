@@ -27,7 +27,7 @@ export class RecordRawController {
     this.selectedRecordStr = null;
     this.recordComponents = null;
     this.selectedRecordComponent = null;
-    this.currentRecordData = null;
+    this.currentRecordData = {isEmpty: true};
     this.progressValue = 0;
     this.progressType = null;
     this.printing = false;
@@ -105,6 +105,7 @@ export class RecordRawController {
     this.selectedRecordComponent = null;
     this.selectedRecordComponentsParams = null;
     this.recordsToDisplay = null;
+    this.currentRecordData = {isEmpty: true};
     if(this.displayChoice == "all"){
       this.recordsToDisplay = this.allRecords;
     }else if(this.displayChoice == "filtered"){
@@ -115,9 +116,6 @@ export class RecordRawController {
   }
 
   getFilteredRecords(){
-    this.chOne = null;
-    this.chTwo = null;
-    this.chThree = null;
     this.clearChart();
     const date = new Date(
       this.selectedDate.getFullYear(),
@@ -137,9 +135,6 @@ export class RecordRawController {
   }
 
   getRecordComponents(){
-    this.chOne = null;
-    this.chTwo = null;
-    this.chThree = null;
     this.clearChart();
     if(this.selectedRecord){
       let {timeStamp, patientId, type} = this.selectedRecord;
@@ -162,9 +157,6 @@ export class RecordRawController {
   }
 
   getRecordDetail(){
-    this.chOne = null;
-    this.chTwo = null;
-    this.chThree = null;
     this.pageStart = this.pageEnd = 0;
     this.clearChart();
     if(this.selectedRecordComponent){

@@ -83,25 +83,30 @@
       <div class="panel panel-info records-view">
         <div class="panel-body rec-raw-analysis-panel-body">
           <div class="col-xs-10">
-            <div class="font-size-responsive row chart-header">
-              <span class="pull-left chart-header-label">
-                Patient id: {{analysis.analysis.patientId}}
-                <span class="vertical-line">&ensp;&vert;&ensp;</span>
-              </span>
-              <span class="pull-left chart-header-label">
-                Type: {{analysis.analysis.type}}
-                <span class="vertical-line">&ensp;&vert;&ensp;</span>
-              </span>
-              <span class="pull-left chart-header-label">
-                Duration: {{analysis.duration}} Seconds
-                <span class="vertical-line">&ensp;&vert;&ensp;</span>
-              </span>
+            <div class="row">
+              <div class="font-size-responsive row chart-header">
+                <span class="pull-left chart-header-label">
+                  Patient id: {{analysis.analysis.patientId}}
+                  <span class="vertical-line">&ensp;&vert;&ensp;</span>
+                </span>
+                <span class="pull-left chart-header-label">
+                  Type: {{analysis.analysis.type}}
+                  <span class="vertical-line">&ensp;&vert;&ensp;</span>
+                </span>
+                <span class="pull-left chart-header-label">
+                  Duration: {{analysis.duration}} Seconds
+                  <span class="vertical-line">&ensp;&vert;&ensp;</span>
+                </span>
+              </div>
             </div>
             <div class="row">
-              <div class="col-md-6">
+              <div id="rr-chart-container" class="font-size-responsive"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
                 <div id="poincare-chart" class="font-size-responsive"></div>
               </div>
-              <div class="col-md-6 table-responsive font-size-responsive">
+              <div class="col-md-5 font-size-responsive">
                 <table class="table">
                   <thead>
                     <tr class="info">

@@ -45,7 +45,7 @@ export class RecordAnalysisController {
 
     this.getPatients();
     d3.select(window).on('resize', () => {
-      this.clearChart();
+      this.clearPoincareChart();
       this.makePoincarePlot();
     });
   }
@@ -108,7 +108,7 @@ export class RecordAnalysisController {
     this.pData = [];
     this.rrData = [];
     this.pvc = [];
-    this.clearChart();
+    this.clearPoincareChart();
     const date = new Date(
       this.selectedDate.getFullYear(),
       this.selectedDate.getMonth(),
@@ -130,7 +130,7 @@ export class RecordAnalysisController {
     this.pData = [];
     this.rrData = [];
     this.pvc = [];
-    this.clearChart();
+    this.clearPoincareChart();
     if(this.selectedRecord){
       const patientId = this.selectedRecord.patientId,
             timeStamp = this.selectedRecord.timeStamp,
@@ -146,6 +146,7 @@ export class RecordAnalysisController {
           this.pvcMarkers = this.analysis.pvcEvents.markers;
           this.formatChartData();
           this.makePoincarePlot();
+          this.drawChart();
         }
         this.$http.get(`${this.API_URL}api/full-record-data?timeStamp=${timeStamp}
         &patientId=${patientId}&type=${type}`)
@@ -210,7 +211,7 @@ export class RecordAnalysisController {
   }
 
   makePoincarePlot(){
-    this.clearChart();
+    this.clearPoincareChart();
     if(this.pData === null){
       return;
     }
@@ -372,9 +373,98 @@ export class RecordAnalysisController {
     svg.call(zoom);
   }
 
-  clearChart(){
+  clearPoincareChart(){
     if(d3.select('#poincare-chart').select('svg')){
       d3.select('#poincare-chart').select('svg').remove();
     }
   }
+
+  drawChart(){
+    this.clearChart();
+    if(this.rrData.length < 1){
+      return;
+    }
+    const options = setOptions();
+    options.data = this.rrData;
+    options.pvc = options.data.filter(v => {
+      if(this.pvcLocations.includes(v.x)){
+        return v;
+      }
+    });
+    const svg = d3.select('#rr-chart-container').append('svg')
+      .attr('height', options.height)
+      .attr('width', options.width);
+
+      //x-y scale generators
+      const y = d3.scaleLinear()
+        .domain([d3.min(options.data, d => d.y), d3.max(options.data, d => d.y)])
+        .range([options.height-options.margin, 0]);
+      const x = d3.scaleLinear()
+        .domain([d3.min(options.data, d => d.x), d3.max(options.data, d => d.x)])
+        .range([0, options.width]);
+
+      //x-y axis generators
+      const yAxis = d3.axisLeft(y);
+      const xAxis = d3.axisBottom(x);
+
+      //Line generator (used to draw chart path)
+      let line = d3.line()
+        .x(d => x(d.x))
+        .y(d => y(d.y))
+        .curve(d3.curveNatural);
+      let ty = options.margin*-1;
+      const chartGroup = svg.append('g').attr('transform', 'translate('+options.margin+','+ty+')');
+
+      chartGroup.append('path')
+        .attr('fill', 'none')
+        .attr('stroke', 'blue')
+        .attr('stroke-width', '1')
+        .attr('d', line(options.data));
+
+      chartGroup.append('g')
+        .attr('class', 'axis y')
+        .call(yAxis);
+      chartGroup.append('g')
+        .attr('class', 'axis x')
+        .attr('transform', 'translate(0,' + (options.height-options.margin) +')')
+        .call(xAxis);
+
+      chartGroup.selectAll('circle')
+        .data(options.pvc)
+        .enter().append('circle')
+        .attr('cx', d => x(d.x))
+        .attr('cy', d => y(d.y))
+        .attr('r','5')
+        .attr('stroke', 'none')
+        .attr('fill', 'red')
+        .on('mouseover', function(){
+          d3.select(this)
+          .attr('stroke-width', '2')
+          .attr('stroke', 'blue')
+          .attr('fill', 'red')
+        })
+        .on('mouseout', function(){
+          d3.select(this)
+          .attr('stroke', 'none')
+        });
+  }
+
+  clearChart(){
+    if(d3.select('#rr-chart-container').select('svg')){
+      d3.select('#rr-chart-container').select('svg').remove();
+    }
+  }
+}
+const setOptions = () => {
+  const options = {
+    width: 1100,
+    height: 300,
+    margin: 15,
+    x: {
+    },
+    y: {
+    }
+  };
+
+  return options;
 }
