@@ -44,6 +44,7 @@ export class RecordRawController {
     ];
     this.format = this.formats[3];
     this.dateOptions = {
+      customClass: this.getDayClass.bind(this),
       maxDate: new Date(2038, 1, 19),
       minDate: new Date(1970, 1, 1),
       startingDay: 1
@@ -136,6 +137,8 @@ export class RecordRawController {
 
   getRecordComponents(){
     this.clearChart();
+    this.recordComponents = [];
+    this.currentRecordData = {isEmpty: true};
     if(this.selectedRecord){
       let {timeStamp, patientId, type} = this.selectedRecord;
       this.$http.get(
@@ -442,6 +445,29 @@ export class RecordRawController {
   }
   setDate(year, month, day) {
     this.selectedDate = new Date(year, month, day);
+  }
+  getEvents(){
+    return this.allRecords.map(r => {
+      return {
+        date: new Date(r.timeStamp),
+        status: 'record-available'
+      };
+    });
+  }
+  getDayClass(data) {
+    let events = this.getEvents();
+    let date = data.date;
+    let mode = data.mode;
+    if (mode === 'day') {
+      let dayToCheck = new Date(date).setHours(0,0,0,0);
+      for (let i = 0; i < events.length; i++) {
+        let currentDay = new Date(events[i].date).setHours(0,0,0,0);
+        if (dayToCheck === currentDay) {
+          return events[i].status;
+        }
+      }
+    }
+    return '';
   }
   handleDateChanged(){
     this.recordsToDisplay = this.getFilteredRecords();

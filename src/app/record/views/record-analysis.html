@@ -1,82 +1,3 @@
-<!--div ng-if="rDetail.$auth.isAuthenticated()" class="container-fluid">
-    <div class="col-md-10">
-        <div class="row" ng-show="rDetail.display == 0">
-            <div class="panel panel-default">
-                <div class="panel-body xy-scroll">
-                    <div >
-                        <span ng-if="rDetail.detail.temp != undefined" class="pull-left font-size-responsive">
-                            <strong>
-                                Temperature at {{rDetail.detail.end | date:'HH:mm:ss'}}: {{rDetail.detail.temp | number:2}}&deg;C
-                            </strong>
-                        </span>
-                        <button ng-if="rDetail.display == 0" ng-show="rDetail.isECG" type="button" class="pull-right btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(1)">
-                            Show Analysis
-                        </button>
-                    </div>
-                    <div>
-                        <div class="text-center" ng-if="rDetail.numPages != undefined">
-                            <ul uib-pagination total-items="rDetail.totalItems" items-per-page="rDetail.itemsPerPage" ng-change="rDetail.populateData()" ng-model="rDetail.currentPage" max-size="rDetail.maxSize" class="pagination-sm" boundary-links="true" force-ellipses="true"></ul>
-                        </div>
-                        <div class="chart">
-                            <canvas id="channel-1" width="1000" height="200"></canvas>
-                        </div>
-                        <div class="chart">
-                            <canvas id="channel-2" width="1000" height="200"></canvas>
-                        </div>
-                        <div class="chart">
-                            <canvas id="channel-3" width="1000" height="200"></canvas>
-                        </div>
-                        <div>
-                            <button ng-if="rDetail.numPages != undefined"  type="button"
-                            class="pull-left btn btn-info btn-responsive font-size-responsive glyphicon glyphicon-print"
-                            aria-label="Print Chart" ng-click="rDetail.saveChart()">
-                            </button>
-                        </div>
-                        <div>
-                            <canvas id="print-chart-context" width="1250" height="900" style="display:none;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" ng-if="rDetail.display == 1">
-            <button type="button" class="pull-right btn btn-info btn-responsive font-size-responsive" ng-click="rDetail.setDisplay(0)">Show Raw</button>
-        </div>
-        <div class="row" ng-if="rDetail.display == 1">
-            <div class="panel panel-default">
-                <div class="panel-heading text-center font-size-responsive">
-                    <span class="text-center"><strong>PVC EVENT</strong></span>
-                </div>
-                <div class="panel-body">
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading text-center">
-                    <span class="text-center font-size-responsive"><strong>TACHOGRAM SIGNAL (RR INTERVAL SERIES)</strong></span>
-                </div>
-                <div class="panel-body">
-                    <nvd3 options="rDetail.rrOptions" data="rDetail.rr" on-ready="rDetail.onReady" class="with-3d-shadow with-transitions rrInt"></nvd3>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="col-md-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading text-center">
-                                <span class="text-center font-size-responsive"><strong>POINCARE PLOT</strong></span>
-                            </div>
-                            <div class="panel-body font-size-responsive">
-                                <!nvd3 options="rDetail.poincareOptions" data="rDetail.poincare" class="with-3d-shadow with-transitions poincarePlot"></nvd3>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div-->
-
 <div ng-if="analysis.$auth.isAuthenticated()" class="container-fluid">
   <div class="row">
     <div class="col-xs-12">
@@ -103,60 +24,11 @@
               <div id="rr-chart-container" class="font-size-responsive"></div>
             </div>
             <div class="row">
-              <div class="col-md-5">
+              <div class="col-md-5 font-size-responsive">
                 <div id="poincare-chart" class="font-size-responsive"></div>
               </div>
               <div class="col-md-5 font-size-responsive">
-                <table class="table">
-                  <thead>
-                    <tr class="info">
-                      <th>Feature</th>
-                      <th>Value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="success">
-                      <td>Mean</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.mean | number:3}}</td>
-                    </tr>
-                    <tr class="info">
-                      <td>Standard Deviation</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.sdnn | number:3}}</td>
-                    </tr>
-                    <tr class="success">
-                      <td>Ratio of Powers (LF/HF)</td>
-                      <td>{{analysis.hrvFeatures.features.LFHF | number:3}}</td>
-                    </tr>
-                    <tr class="info">
-                      <td>Spectral Entropy</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.SPentr | number:3}}</td>
-                    </tr>
-                    <tr class="success">
-                      <td>Dominant Frequency</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.DF | number:3}}</td>
-                    </tr>
-                    <tr class="info">
-                      <td>Standard Deviation (Nearest RR Intervals)</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.stdrr | number:3}}</td>
-                    </tr>
-                    <tr class="success">
-                      <td>Root Mean Square(Standard Deviation)</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.rmssd | number:3}}</td>
-                    </tr>
-                    <tr class="info">
-                      <td>SD1</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.SD1 | number:3}}</td>
-                    </tr>
-                    <tr class="success">
-                      <td>SD2</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.SD2 | number:3}}</td>
-                    </tr>
-                    <tr class="info">
-                      <td>SD1/SD2</td>
-                      <td>{{analysis.analysis.hrvFeatures.features.SD1_SD2 | number:3}}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div id="pvc-plot" class="font-size-responsive"></div>
               </div>
             </div>
           </div>

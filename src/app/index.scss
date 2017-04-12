@@ -54,36 +54,6 @@ ul {
     margin: 10, 0;
 }
 
-.dashed {
-    stroke-dasharray: 5,5;
-}
-
-.nvd3.nv-scatter .nv-groups .nv-point.hover,
-.nvd3 .nv-groups circle.pvc.hover {
-    stroke-width: 20px;
-    fill-opacity: .5;
-    stroke-opacity: .5;
-}
-
-.pvc{
-    fill: #00ff00;
-}
-
-.normal-points{
-    fill: #0000ff;
-}
-
-.pvc-points{
-    fill: #ff0000;
-}
-
-.marked{
-    background-color: darkred;
-    color: white;
-    border: 1px solid darkred;
-    border-radius: 5px;
-}
-
 @media (max-width: 768px) {
   .btn-responsive {
     padding:2px 4px;
@@ -145,27 +115,21 @@ line{
 #chart-container{
   height: 100%;
 }
-#poincare-chart{
-  height: 100%;
-  width: 100%;
-}
 
 #rr-chart-container{
   width: 100%;
   margin: 40px;
 }
-
-.poincare-chart-svg{
-  background-color: #ffffff;
+#poincare-chart{
+  height: 500px;
+  width: 600px;
 }
 
-.poincare-grid tick{
-  stroke: black;
-  opacity: 0.7;
-}
-.poincare-grid line{
-  stroke-width: 0;
-
+#pvc-plot{
+  height: 300px;
+  width: 400px;
+  margin-top: 150px;
+  margin-left: 200px;
 }
 
 g.group0 path,
@@ -175,7 +139,7 @@ g.group0 circle {
 }
 
 g.tick line{
-  stroke: red;
+  stroke: black;
   stroke-width: 0.5;
 }
 
@@ -211,10 +175,6 @@ g.tick text {
 }
 #analysis-header{
   border-top-right-radius: 0.5em;
-}
-.table{
-  margin: 40px 40px 20px 20px;
-  height: 300px;
 }
 .records-panel-body{
   padding: 0px 10px;
@@ -261,6 +221,15 @@ g.tick text {
   stroke: 'green';
   stroke-width: '5px';
   stroke-dasharray: 5, 5;
+}
+
+#event-types{
+  margin-top: 2px;
+}
+
+.record-available button span{
+  background-color: limegreen;
+  border-radius: 20px;
 }
 
 

@@ -27,6 +27,8 @@ export class RecordAnalysisController {
     this.rrData = [];
     this.pvc = [];
 
+    this.showPVCPlot = this.showPVCPlot.bind(this);
+
     this.selectedDate = new Date();
     this.formats = [
       'M!/d!/yyyy',
@@ -37,6 +39,7 @@ export class RecordAnalysisController {
     ];
     this.format = this.formats[3];
     this.dateOptions = {
+      customClass: this.getDayClass.bind(this),
       maxDate: new Date(2038, 1, 19),
       minDate: new Date(1970, 1, 1),
       startingDay: 1
@@ -131,6 +134,8 @@ export class RecordAnalysisController {
     this.rrData = [];
     this.pvc = [];
     this.clearPoincareChart();
+    this.clearChart();
+    this.clearPVCPlot();
     if(this.selectedRecord){
       const patientId = this.selectedRecord.patientId,
             timeStamp = this.selectedRecord.timeStamp,
@@ -180,6 +185,29 @@ export class RecordAnalysisController {
   setDate(year, month, day) {
     this.selectedDate = new Date(year, month, day);
   }
+  getEvents(){
+    return this.allRecords.map(r => {
+      return {
+        date: new Date(r.timeStamp),
+        status: 'record-available'
+      };
+    });
+  }
+  getDayClass(data) {
+    let events = this.getEvents();
+    let date = data.date;
+    let mode = data.mode;
+    if (mode === 'day') {
+      let dayToCheck = new Date(date).setHours(0,0,0,0);
+      for (let i = 0; i < events.length; i++) {
+        let currentDay = new Date(events[i].date).setHours(0,0,0,0);
+        if (dayToCheck === currentDay) {
+          return events[i].status;
+        }
+      }
+    }
+    return '';
+  }
   handleDateChanged(){
     this.recordsToDisplay = this.getFilteredRecords();
     this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
@@ -193,6 +221,7 @@ export class RecordAnalysisController {
     this.pData = [];
     this.rrData = [];
     this.pvc = [];
+    this.nonpvc = [];
     let xValue;
     for(let i=0; i < this.rrIntervals.length; i++){
       let sample = this.rrIntervals[i];
@@ -203,8 +232,9 @@ export class RecordAnalysisController {
         if(this.pvcLocations.indexOf(loc) >= 0){
           this.pvc.push({x: xValue, y: sample});
         }else{
-          this.pData.push({x: xValue, y: sample});
+          this.nonpvc.push({x: xValue, y: sample});
         }
+        this.pData.push({x: xValue, y: sample});
       }
       this.rrData.push({x: i+1, y: sample});
     }
@@ -215,79 +245,20 @@ export class RecordAnalysisController {
     if(this.pData === null){
       return;
     }
-    const node = d3.select("#poincare-chart").node();
-    let width,
-        height,
-        margin = {},
-        yRange = {},
-        xRange = {},
+    let outerWidth = 600,
+        outerHeight = 500,
+        margin = 40,
+        width = outerWidth - margin*2,
+        height = outerHeight - margin*2,
         data = {
           pData: this.pData || [],
           rrData: this.rrData || [],
-          pvc: this.pvc || []
+          pvc: this.pvc || [],
+          nonpvc: this.nonpvc || []
         };
-    if(node){
-      height = 400;
-      width = node.offsetWidth;
-      margin.top = 40;
-      margin.right = 40;
-      margin.bottom = 40;
-      margin.left = 40;
-      yRange.min = margin.top;
-      yRange.max = height - margin.bottom;
-      xRange.min = margin.left;
-      xRange.max = width - margin.right;
-    }
     const svg = d3.select('#poincare-chart').append('svg')
-      .attr('height', height)
-      .attr('width', width)
-      .attr('class', 'poincare-chart-svg');
-
-    //x-y scale generators for axis
-    const yA = d3.scaleLinear()
-      .domain([d3.min(this.pData, d => d.y), d3.max(this.pData, d => d.y)])
-      .range([yRange.max, yRange.min]);
-    const xA = d3.scaleLinear()
-      .domain([0, d3.max(this.pData, d => d.x)])
-      .range([xRange.min, xRange.max]);
-
-    //x-y scale generators for chart
-    const y = d3.scaleLinear()
-      .domain([d3.min(this.pData, d => d.y), d3.max(this.pData, d => d.y)])
-      .range([yRange.max - (margin.right*5), yRange.min + (margin.right*5)]);
-    const x = d3.scaleLinear()
-      .domain([0, d3.max(this.pData, d => d.x)])
-      .range([xRange.min + (margin.right*5), xRange.max - (margin.right*5)]);
-
-    //x-y axis generators
-    const yAxis = d3.axisLeft(yA)
-                    .ticks(5)
-                    .tickSize((margin.right + margin.left - width), 0, 0);
-    const xAxis = d3.axisBottom(xA)
-                    .ticks(5)
-                    .tickSize((margin.top + margin.bottom - height), 0, 0);
-
-    const chartGroup = svg.append('g').attr('transform', 'translate('+margin.left+',0)');
-
-    let tx = margin.left*-1;
-    let ty = height - margin.bottom;
-
-    let gy = chartGroup.append('g')
-      .attr('class', 'poincare-grid')
-      .call(yAxis);
-    let gx = chartGroup.append('g')
-      .attr('class', 'poincare-grid')
-      .attr('transform', 'translate('+tx+','+ty+')')
-      .call(xAxis);
-
-    chartGroup.selectAll('circle')
-      .data(data.pData)
-      .enter().append('circle')
-      .attr('class', 'dot')
-      .attr('cx', d => x(d.x))
-      .attr('cy', d => y(d.y))
-      .attr('r','5')
-      .attr('fill', 'blue');
+      .attr('height', outerHeight)
+      .attr('width', outerWidth);
 
     let rrEven = data.pData.reduce((a, v) => a + v.y, 0);
     let meanRREven = rrEven/data.pData.length;
@@ -312,6 +283,85 @@ export class RecordAnalysisController {
         y: d.x+(meanRROdd - meanRREven)
       }
     });
+    let maxY = Math.max(d3.max(lineData1, d => d.y), d3.max(lineData2, d => d.y)),
+        maxX = Math.max(d3.max(lineData2, d => d.x), d3.max(lineData1, d => d.x)),
+        minY = Math.min(d3.min(lineData1, d => d.y), d3.min(lineData2, d => d.y)),
+        minX = Math.min(d3.min(lineData2, d => d.x), d3.min(lineData1, d => d.x)),
+        maxXDomain = Math.max(maxX, d3.max(data.pData, d => d.x)),
+        maxYDomain = Math.max(maxY, d3.max(data.pData, d => d.y)),
+        minXDomain = Math.min(minX, d3.min(data.pData, d => d.x)),
+        minYDomain = Math.min(minY, d3.min(data.pData, d => d.y));
+
+    //x-y scale generators
+    const y = d3.scaleLinear()
+      .domain([minYDomain, maxYDomain])
+      .range([height, 0]);
+
+    const x = d3.scaleLinear()
+      .domain([minXDomain, maxXDomain])
+      .range([0, width]);
+
+    //x-y axis generators
+    const yAxis = d3.axisLeft(y)
+                    .ticks(5)
+                    .tickSize(-1*width, 0, 0);
+    const xAxis = d3.axisBottom(x)
+                    .ticks(5)
+                    .tickSize(-1*height, 0, 0);
+
+    const chartGroup = svg.append('g')
+      .attr('height', height)
+      .attr('width', width)
+      .attr('transform', 'translate('+margin+','+margin+')');
+
+    let gy = chartGroup.append('g')
+      .attr('class', 'poincare-grid')
+      .call(yAxis);
+
+    let gx = chartGroup.append('g')
+      .attr('class', 'poincare-grid')
+      .attr('transform', 'translate(0,'+height+')')
+      .call(xAxis);
+
+    chartGroup.append('text')
+    .attr('fill', 'black')
+    .attr('x', ((width/2)-margin*1.75))
+    .attr('y', (margin*-1.5))
+    .attr('dy', '3em')
+    .text('POINCARE PLOT');
+    chartGroup.append('text')
+    .attr('fill', 'black')
+    .attr('x', ((width/2)-margin*0.75))
+    .attr('y', (height+margin*0.75))
+    .text('RR(i)');
+    chartGroup.append('text')
+    .attr('fill', 'black')
+    .attr('x', (height/-2))
+    .attr('transform', 'rotate(-90)')
+    .attr('y', (margin*-0.75))
+    .text('RR(i+1)');
+
+    let view = chartGroup.append('rect')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('fill', 'none');
+
+    chartGroup.selectAll('circle')
+      .data(data.nonpvc)
+      .enter().append('circle')
+      .attr('class', 'poincare-non-pvc')
+      .attr('cx', d => x(d.x))
+      .attr('cy', d => y(d.y))
+      .attr('r','5')
+      .attr('fill', 'blue');
+    chartGroup.selectAll('circle')
+      .data(data.pData)
+      .enter().append('circle')
+      .attr('class', 'poincare-pvc')
+      .attr('cx', d => x(d.x))
+      .attr('cy', d => y(d.y))
+      .attr('r','5')
+      .attr('fill', 'red');
 
     //Line generator (used to draw dashed lines)
     let intersectLine = d3.line()
@@ -319,7 +369,7 @@ export class RecordAnalysisController {
       .y(d => y(d.y));
 
     chartGroup.append('path')
-      .attr('class', 'intersect-line')
+      .attr('class', 'intersect-line1')
       .attr('fill', 'none')
       .attr('stroke', 'green')
       .attr('stroke-width', 5)
@@ -327,7 +377,7 @@ export class RecordAnalysisController {
       .attr('d', intersectLine(lineData1))
 
     chartGroup.append('path')
-      .attr('class', 'intersect-line')
+      .attr('class', 'intersect-line2')
       .attr('fill', 'none')
       .attr('stroke', 'green')
       .attr('stroke-width', 5)
@@ -344,30 +394,17 @@ export class RecordAnalysisController {
       .attr('fill', 'none')
       .attr('stroke-width', 4);
 
-    chartGroup.append()
-
-    const d = [
-      ...data.pData,
-      ...data.pvc
-    ];
-    chartGroup.selectAll('circle')
-      .data(d)
-      .enter().append('circle')
-      .attr('class', 'dot')
-      .attr('cx', d => x(d.x))
-      .attr('cy', d => y(d.y))
-      .attr('r','5')
-      .attr('fill', 'red');
-
     let zoom = d3.zoom()
-        .scaleExtent([1, 3])
-        .translateExtent([[margin.right, margin.right], [width, height]])
+        .scaleExtent([1, 4])
+        .translateExtent([[-100, -100], [width + 90, height + 100]])
         .on('zoom', () => {
-          gx.call(xAxis.scale(d3.event.transform.rescaleX(xA)));
-          gy.call(yAxis.scale(d3.event.transform.rescaleY(yA)));
-          svg.selectAll('circle')
-            .attr('cx', d => d3.event.transform.applyX(x(d.x)))
-            .attr('cy', d => d3.event.transform.applyY(y(d.y)));
+          let t = d3.event.transform;
+          view.attr('transform', t)
+          gx.call(xAxis.scale(t.rescaleX(x)));
+          gy.call(yAxis.scale(t.rescaleY(y)));
+        svg.selectAll('circle')
+          .attr('cx', d => t.applyX(x(d.x)))
+          .attr('cy', d => t.applyY(y(d.y)));
         });
 
     svg.call(zoom);
@@ -392,13 +429,13 @@ export class RecordAnalysisController {
       }
     });
     const svg = d3.select('#rr-chart-container').append('svg')
-      .attr('height', options.height)
-      .attr('width', options.width);
+      .attr('height', options.outerHeight)
+      .attr('width', options.outerWidth);
 
       //x-y scale generators
       const y = d3.scaleLinear()
         .domain([d3.min(options.data, d => d.y), d3.max(options.data, d => d.y)])
-        .range([options.height-options.margin, 0]);
+        .range([options.height, 0]);
       const x = d3.scaleLinear()
         .domain([d3.min(options.data, d => d.x), d3.max(options.data, d => d.x)])
         .range([0, options.width]);
@@ -412,8 +449,9 @@ export class RecordAnalysisController {
         .x(d => x(d.x))
         .y(d => y(d.y))
         .curve(d3.curveNatural);
-      let ty = options.margin*-1;
-      const chartGroup = svg.append('g').attr('transform', 'translate('+options.margin+','+ty+')');
+
+      const chartGroup = svg.append('g')
+        .attr('transform', 'translate('+options.margin+','+options.margin+')');
 
       chartGroup.append('path')
         .attr('fill', 'none')
@@ -426,8 +464,20 @@ export class RecordAnalysisController {
         .call(yAxis);
       chartGroup.append('g')
         .attr('class', 'axis x')
-        .attr('transform', 'translate(0,' + (options.height-options.margin) +')')
+        .attr('transform', 'translate(0,' + options.height +')')
         .call(xAxis);
+
+      chartGroup.append('text')
+      .attr('fill', 'black')
+      .attr('x', ((options.width/2) - options.margin*1.75))
+      .attr('y', (options.margin*-1.5))
+      .attr('dy', '3em')
+      .text('TACHOGRAM (RR Interval Signal)');
+      chartGroup.append('text')
+      .attr('fill', 'black')
+      .attr('x', ((options.width/2) - options.margin))
+      .attr('y', (options.height + options.margin))
+      .text('RR Intervals (i = 1,2,...n)');
 
       chartGroup.selectAll('circle')
         .data(options.pvc)
@@ -440,13 +490,92 @@ export class RecordAnalysisController {
         .on('mouseover', function(){
           d3.select(this)
           .attr('stroke-width', '2')
-          .attr('stroke', 'blue')
+          .attr('stroke', 'steel blue')
           .attr('fill', 'red')
         })
         .on('mouseout', function(){
           d3.select(this)
           .attr('stroke', 'none')
-        });
+        })
+        .on('click', this.showPVCPlot);
+  }
+
+  showPVCPlot(element, index){
+    if(this.recData && this.pvcMarkers){
+      let markers = this.pvcMarkers[index];
+      let start = (markers[0] - 100) >= 0 ? markers[0] - 100 : 0;
+      let end = (markers[1] + 100) < this.recData.chOne.length ?
+                                      markers[1] + 100 :
+                                      this.recData.chOne.length-1;
+      let pvcIndex = [markers[0] - start, (markers[0] - start)+(markers[1]-markers[0])];
+      let data = this.recData.chOne.slice(start, end).map((d, i) => {
+        return {x: i, y: d};
+      });
+
+      this.clearPVCPlot();
+      if(data.length < 1){
+        return;
+      }
+      let outerHeight = 300,
+          outerWidth = 400,
+          height = 240,
+          width = 340,
+          margin = 30;
+      const svg = d3.select('#pvc-plot').append('svg')
+        .attr('height', outerHeight)
+        .attr('width', outerWidth);
+
+        //x-y scale generators
+        const y = d3.scaleLinear()
+          .domain([d3.min(data, d => d.y), d3.max(data, d => d.y)])
+          .range([height, 0]);
+        const x = d3.scaleLinear()
+          .domain([d3.min(data, d => d.x), d3.max(data, d => d.x)])
+          .range([0, width]);
+
+        //x-y axis generators
+        const yAxis = d3.axisLeft(y);
+        const xAxis = d3.axisBottom(x);
+
+        //Line generator (used to draw chart path)
+        let line = d3.line()
+          .defined(d => d.y !== null)
+          .x(d => x(d.x))
+          .y(d => y(d.y))
+          .curve(d3.curveNatural);
+
+        const chartGroup = svg.append('g')
+          .attr('transform', 'translate('+margin+','+margin+')');
+
+        chartGroup.append('rect')
+          .attr('x', x(pvcIndex[0]))
+          .attr('y', 0)
+          .attr('width', x(pvcIndex[1])- x(pvcIndex[0]))
+          .attr('height', height)
+          .attr('fill', 'red')
+          .attr('opacity', 0.3);
+
+        chartGroup.append('text')
+        .attr('fill', 'black')
+        .attr('x', ((width/2) - margin*1.75))
+        .attr('y', (margin*-2))
+        .attr('dy', '3em')
+        .text('PVC Event');
+
+        chartGroup.append('path')
+          .attr('fill', 'none')
+          .attr('stroke', 'red')
+          .attr('stroke-width', '1')
+          .attr('d', line(data));
+
+        chartGroup.append('g')
+          .attr('class', 'axis y')
+          .call(yAxis);
+        chartGroup.append('g')
+          .attr('class', 'axis x')
+          .attr('transform', 'translate(0,' + height +')')
+          .call(xAxis);
+    }
   }
 
   clearChart(){
@@ -454,12 +583,20 @@ export class RecordAnalysisController {
       d3.select('#rr-chart-container').select('svg').remove();
     }
   }
+
+  clearPVCPlot(){
+    if(d3.select('#pvc-plot').select('svg')){
+      d3.select('#pvc-plot').select('svg').remove();
+    }
+  }
 }
 const setOptions = () => {
   const options = {
-    width: 1100,
-    height: 300,
-    margin: 15,
+    outerWidth: 1100,
+    outerHeight: 300,
+    height: 240,
+    width: 1040,
+    margin: 30,
     x: {
     },
     y: {
