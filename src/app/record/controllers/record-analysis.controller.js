@@ -49,7 +49,12 @@ export class RecordAnalysisController {
     this.getPatients();
     d3.select(window).on('resize', () => {
       this.clearPoincareChart();
-      this.makePoincarePlot();
+      this.clearChart();
+      this.clearPVCPlot();
+      if(this.rrIntervals && this.pvcLocations && this.pvcMarkers){
+        this.makePoincarePlot();
+        this.drawChart();
+      }
     });
   }
 
@@ -146,12 +151,14 @@ export class RecordAnalysisController {
         this.analysis = result.data;
         if(this.analysis && this.hasProperties(this.analysis)){
           this.isECG = (this.analysis.type.toUpperCase() === "ECG");
-          this.rrIntervals = this.analysis.rrIntervals.signal;
-          this.pvcLocations = this.analysis.pvcEvents.locs;
-          this.pvcMarkers = this.analysis.pvcEvents.markers;
-          this.formatChartData();
-          this.makePoincarePlot();
-          this.drawChart();
+          this.rrIntervals = (this.analysis.rrIntervals ? this.analysis.rrIntervals.signal : null);
+          this.pvcLocations = (this.analysis.pvcEvents ? this.analysis.pvcEvents.locs : null);
+          this.pvcMarkers = (this.analysis.pvcEvents ? this.analysis.pvcEvents.markers : null);
+          if(this.rrIntervals && this.pvcLocations && this.pvcMarkers){
+            this.formatChartData();
+            this.makePoincarePlot();
+            this.drawChart();
+          }
         }
         this.$http.get(`${this.API_URL}api/full-record-data?timeStamp=${timeStamp}
         &patientId=${patientId}&type=${type}`)
@@ -241,10 +248,10 @@ export class RecordAnalysisController {
   }
 
   makePoincarePlot(){
-    this.clearPoincareChart();
-    if(this.pData === null){
+    if(this.pData.length < 1 || this.rrData.length < 1 || this.pvc.length < 1 || this.nonpvc.length < 1){
       return;
     }
+    this.clearPoincareChart();
     let outerWidth = 600,
         outerHeight = 500,
         margin = 40,
