@@ -96,7 +96,7 @@
               <div ng-if="raw.recordComponents" class="font-size-responsive record-components text-center list-group">
                 <a href=""
                 class="list-group-item list-group-item-action list-group-item-info"
-                ng-repeat="c in raw.recordComponents"
+                ng-repeat="c in raw.recordComponents | limitTo : 10 | orderBy : '-start'"
                 ng-click="raw.onRecordComponentSelected(c)">
                   {{c.start | date:'HH:mm:ss'}} - {{c.end | date:'HH:mm:ss'}}
                 </a>
