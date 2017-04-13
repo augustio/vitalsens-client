@@ -13,8 +13,8 @@ export class RecordRawController {
     this.$window = $window;
     this.$log = $log;
     this.API_URL = API_URL;
-    this.samplingRate = 230;
-    this.samplesPerPage = 2300;
+    this.samplingRate = 250;
+    this.samplesPerPage = 2500*0.8;
     this.ADC_TO_MV_COEFFICIENT = 0.01465;
     this.MILLIS_IN_ONE_DAY = 8.64e+7;
     this.pageStart = 0;
@@ -306,6 +306,7 @@ export class RecordRawController {
     const dataKeys = Object.keys(options.data);
     dataKeys.forEach( (key, index) => {
       const height = index * (options.margin.bottom + options.innerHeight)
+      console.log(height);
       const titleYPos = options.margin.top + height;
 
       //Add the title
@@ -319,7 +320,7 @@ export class RecordRawController {
 
       //x-y scale generators
       const y = d3.scaleLinear()
-        .domain([-4, 8])
+        .domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
         .range([options.innerHeight, 0]);
       let mnX = options.data.ES[0].x;
       let mxX = mnX + options.maxXDomain;
@@ -340,7 +341,7 @@ export class RecordRawController {
 
       //x-y axis generators
       const yAxis = d3.axisLeft(y)
-                      .ticks(options.y.ticks);
+                      .ticks(0);
       const xAxis = d3.axisBottom(x)
                       .ticks(options.x.ticks);
 
@@ -497,7 +498,7 @@ const setOptions = () => {
     y: {
       ticks: 8
     },
-    maxXDomain: 10
+    maxXDomain: 8
   };
   const node = d3.select("#chart-container").node();
   if(node){
