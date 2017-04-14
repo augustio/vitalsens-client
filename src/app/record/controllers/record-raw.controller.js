@@ -239,10 +239,25 @@ export class RecordRawController {
     return Math.round((end - start) * 0.001);
   }
 
+
+
+
   printChart(){
     this.printing = true;
     this.clearChart();
     this.drawChart();
+    let css = '@page { size: landscape; }',
+      head = document.head || document.getElementsByTagName('head')[0],
+      style = document.createElement('style');
+    style.type = 'text/css';
+    style.media = 'print';
+    if (style.styleSheet){
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+    head.appendChild(style);
+    
     this.$timeout(() => {this.$window.print();}, 1000);
   }
 
