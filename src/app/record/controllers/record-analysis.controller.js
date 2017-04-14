@@ -462,7 +462,7 @@ export class RecordAnalysisController {
 
       chartGroup.append('path')
         .attr('fill', 'none')
-        .attr('stroke', 'blue')
+        .attr('stroke', '#B0C4DE')
         .attr('stroke-width', '1')
         .attr('d', line(options.data));
 
@@ -492,17 +492,16 @@ export class RecordAnalysisController {
         .attr('cx', d => x(d.x))
         .attr('cy', d => y(d.y))
         .attr('r','5')
-        .attr('stroke', 'none')
         .attr('fill', 'red')
         .on('mouseover', function(){
           d3.select(this)
-          .attr('stroke-width', '2')
-          .attr('stroke', 'steel blue')
-          .attr('fill', 'red')
+          .attr('r', '10')
+          .attr('fill-opacity', 0.5);
         })
         .on('mouseout', function(){
           d3.select(this)
-          .attr('stroke', 'none')
+          .attr('r', '5')
+          .attr('fill-opacity', 1);
         })
         .on('click', this.showPVCPlot);
   }
@@ -541,8 +540,8 @@ export class RecordAnalysisController {
           .range([0, width]);
 
         //x-y axis generators
-        const yAxis = d3.axisLeft(y);
-        const xAxis = d3.axisBottom(x);
+        const yAxis = d3.axisLeft(y).ticks('0');
+        const xAxis = d3.axisBottom(x).ticks('0');
 
         //Line generator (used to draw chart path)
         let line = d3.line()
@@ -571,7 +570,7 @@ export class RecordAnalysisController {
 
         chartGroup.append('path')
           .attr('fill', 'none')
-          .attr('stroke', 'red')
+          .attr('stroke', 'black')
           .attr('stroke-width', '1')
           .attr('d', line(data));
 

@@ -306,7 +306,6 @@ export class RecordRawController {
     const dataKeys = Object.keys(options.data);
     dataKeys.forEach( (key, index) => {
       const height = index * (options.margin.bottom + options.innerHeight)
-      console.log(height);
       const titleYPos = options.margin.top + height;
 
       //Add the title
