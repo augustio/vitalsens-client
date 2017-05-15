@@ -108,9 +108,9 @@ export class RecordRawController {
     this.recordsToDisplay = null;
     this.currentRecordData = {isEmpty: true};
     if(this.displayChoice == "all"){
-      this.recordsToDisplay = this.allRecords;
+      this.recordsToDisplay = this.allRecords.reverse();
     }else if(this.displayChoice == "filtered"){
-      this.recordsToDisplay = this.getFilteredRecords();
+      this.recordsToDisplay = this.getFilteredRecords().reverse();
     }
     this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
     this.getRecordComponents();
@@ -257,7 +257,7 @@ export class RecordRawController {
       style.appendChild(document.createTextNode(css));
     }
     head.appendChild(style);
-    
+
     this.$timeout(() => {this.$window.print();}, 1000);
   }
 
@@ -485,7 +485,7 @@ export class RecordRawController {
     return '';
   }
   handleDateChanged(){
-    this.recordsToDisplay = this.getFilteredRecords();
+    this.recordsToDisplay = this.getFilteredRecords().reverse();
     this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
     this.getRecordComponents();
   }

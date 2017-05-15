@@ -50,12 +50,14 @@
               <div ng-if="raw.currentRecordData.temp != null" class="info-label font-size-responsive">
                 <span>Temp </span>&ensp;<strong>{{raw.currentRecordData.temp | number:1}}&deg;C</strong>
               </div>
-              <input class="text-center form-control font-size-responsive patient-id" type="text"
-              placeholder="Patient Id"
-              ng-model="raw.selectedPId"
-              uib-typeahead="p as p.patientId for p in raw.patients | filter:$viewValue" typeahead-on-select="raw.onSelectPatient($item.patientId)"
-              typeahead-select-on-exact="true"
-              typeahead-min-length="0" />
+              <div class="scrollable-dropdown-menu">
+                <input class="text-center form-control font-size-responsive patient-id" type="text"
+                placeholder="Patient Id"
+                ng-model="raw.selectedPId"
+                uib-typeahead="p as p.patientId for p in raw.patients | filter:$viewValue" typeahead-on-select="raw.onSelectPatient($item.patientId)"
+                typeahead-select-on-exact="true"
+                typeahead-min-length="0" />
+              </div>
               <div class="full-filtered-display-choice">
                 <label>
                   <input ng-change="raw.handleDisplayChoiceSelection()"
@@ -87,16 +89,18 @@
               <div ng-if="raw.recordsToDisplay.length" class="info-label font-size-responsive">
                 <span>Records Found: </span>&ensp;<strong>{{raw.recordsToDisplay.length}}</strong>
               </div>
-              <input class="text-center form-control font-size-responsive filtered-records" type="text"
-              placeholder="Record"
-              ng-model="raw.selectedRecord"
-              uib-typeahead="r as r.recStr for r in raw.recordsToDisplay | filter:$viewValue" typeahead-on-select="raw.onRecordSelected()"
-              typeahead-select-on-exact="true"
-              typeahead-min-length="0" />
-              <div ng-if="raw.recordComponents" class="font-size-responsive record-components text-center list-group">
+              <div class="scrollable-dropdown-menu">
+                <input class="text-center form-control font-size-responsive filtered-records" type="text"
+                placeholder="Record"
+                ng-model="raw.selectedRecord"
+                uib-typeahead="r as r.recStr for r in raw.recordsToDisplay | filter:$viewValue" typeahead-on-select="raw.onRecordSelected()"
+                typeahead-select-on-exact="true"
+                typeahead-min-length="0" />
+              </div>
+              <div ng-if="raw.recordComponents" class="font-size-responsive record-components text-center list-group record-components-list">
                 <a href=""
                 class="list-group-item list-group-item-action list-group-item-info"
-                ng-repeat="c in raw.recordComponents | limitTo : 10 | orderBy : '-start'"
+                ng-repeat="c in raw.recordComponents | orderBy : '-start'"
                 ng-click="raw.onRecordComponentSelected(c)">
                   {{c.start | date:'HH:mm:ss'}} - {{c.end | date:'HH:mm:ss'}}
                 </a>
