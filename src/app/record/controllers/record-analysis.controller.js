@@ -616,7 +616,7 @@ const setOptions = () => {
     outerHeight: 300,
     height: 240,
     width: 1040,
-    margin: 30,
+    margin: 40,
     x: {
     },
     y: {
