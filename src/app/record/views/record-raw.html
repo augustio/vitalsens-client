@@ -70,6 +70,16 @@
                   Records By Date
                 </label>
               </div>
+              <div>
+                <input type="text"
+                class="record-types text-center form-control font-size-responsive"
+                placeholder="Record Type"
+                ng-model="raw.selectedType"
+                uib-typeahead="t for t in raw.type | filter:$viewValue"
+                typeahead-on-select="raw.onTypeSelected($item)"
+                typeahead-select-on-exact="true"
+                typeahead-min-length="0" />
+              </div>
               <div ng-if="raw.displayChoice != 'all'" class="record-date">
                 <p class="input-group">
                   <input type="text"

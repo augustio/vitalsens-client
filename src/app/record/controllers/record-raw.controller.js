@@ -27,12 +27,19 @@ export class RecordRawController {
     this.selectedRecordStr = null;
     this.recordComponents = null;
     this.selectedRecordComponent = null;
+    this.selectedType = "ECG";
     this.currentRecordData = {isEmpty: true};
     this.progressValue = 0;
     this.progressType = null;
     this.printing = false;
     this.displayChoice = "all";
 
+    this.type = [
+      "ECG",
+      "PPG",
+      "ACC",
+      "IMP"
+    ];
 
     this.selectedDate = new Date();
     this.formats = [
@@ -85,9 +92,10 @@ export class RecordRawController {
               type: type.substr(0, 3)
             }
           });
-          this.allRecords = formatted.map(r => {
-            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy_HH:mm:ss');
-            return Object.assign(r, {recStr: `${r.type}_${date}`});
+          let recOfSelectedType = formatted.filter(r => r.type == this.selectedType);
+          this.allRecords = recOfSelectedType.map(r => {
+            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy  HH:mm:ss');
+            return Object.assign(r, {recStr: ''+date});
           });
           this.handleDisplayChoiceSelection();
         }
@@ -97,6 +105,11 @@ export class RecordRawController {
 
   onSelectPatient(pId){
     this.selectedPId = pId;
+    this.getRecordsByPatientId();
+  }
+
+  onTypeSelected(type){
+    this.selectedType = type;
     this.getRecordsByPatientId();
   }
 
