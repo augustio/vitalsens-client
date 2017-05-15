@@ -94,7 +94,7 @@ export class RecordRawController {
           });
           let recOfSelectedType = formatted.filter(r => r.type == this.selectedType);
           this.allRecords = recOfSelectedType.map(r => {
-            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy  HH:mm:ss');
+            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy | HH:mm:ss');
             return Object.assign(r, {recStr: ''+date});
           });
           this.handleDisplayChoiceSelection();
