@@ -26,6 +26,14 @@ export class RecordAnalysisController {
     this.pData = [];
     this.rrData = [];
     this.pvc = [];
+    this.selectedType = "ECG";
+
+    this.type = [
+      "ECG",
+      "PPG",
+      "ACC",
+      "IMP"
+    ];
 
     this.showPVCPlot = this.showPVCPlot.bind(this);
 
@@ -76,7 +84,7 @@ export class RecordAnalysisController {
       .then(result => {
         const records = result.data || [];
         if(records.length > 0){
-          const sorted = records.sort((a,b) => a.timeStamp - b.timeStamp);
+          const sorted = records.sort((a,b) => b.timeStamp - a.timeStamp);
           const formatted = sorted.map(rec => {
             let type = rec.type.toUpperCase();
             return {
@@ -85,9 +93,10 @@ export class RecordAnalysisController {
               type: type.substr(0, 3)
             }
           });
-          this.allRecords = formatted.map(r => {
-            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy');
-            return Object.assign(r, {recStr: `${r.type}_${date}`});
+          let recOfSelectedType = formatted.filter(r => r.type == this.selectedType);
+          this.allRecords = recOfSelectedType.map(r => {
+            let date = this.$filter('date')(r.timeStamp, 'dd.MM.yyyy | HH:mm:ss');
+            return Object.assign(r, {recStr: ''+date});
           });
           this.handleDisplayChoiceSelection();
         }
@@ -132,6 +141,11 @@ export class RecordAnalysisController {
 
   onRecordSelected(){
     this.getRecordData();
+  }
+
+  onTypeSelected(type){
+    this.selectedType = type;
+    this.getRecordsByPatientId();
   }
 
   getRecordData(){

@@ -34,12 +34,14 @@
           </div>
           <div class="col-xs-2">
             <div class="control-panel">
-              <input class="text-center form-control font-size-responsive patient-id" type="text"
-              placeholder="Patient Id"
-              ng-model="analysis.selectedPId"
-              uib-typeahead="p as p.patientId for p in analysis.patients | filter:$viewValue" typeahead-on-select="analysis.onSelectPatient($item.patientId)"
-              typeahead-select-on-exact="true"
-              typeahead-min-length="0" >
+              <div class="scrollable-dropdown-menu">
+                <input class="text-center form-control font-size-responsive patient-id" type="text"
+                placeholder="Patient Id"
+                ng-model="analysis.selectedPId"
+                uib-typeahead="p as p.patientId for p in analysis.patients | filter:$viewValue" typeahead-on-select="analysis.onSelectPatient($item.patientId)"
+                typeahead-select-on-exact="true"
+                typeahead-min-length="0" >
+              </div>
               <div class="full-filtered-display-choice">
                 <label>
                   <input ng-change="analysis.handleDisplayChoiceSelection()"
@@ -51,6 +53,16 @@
                   type="radio" ng-model="analysis.displayChoice" value="filtered">
                   Records By Date
                 </label>
+              </div>
+              <div>
+                <input type="text"
+                class="record-types text-center form-control font-size-responsive"
+                placeholder="Record Type"
+                ng-model="analysis.selectedType"
+                uib-typeahead="t for t in analysis.type | filter:$viewValue"
+                typeahead-on-select="analysis.onTypeSelected($item)"
+                typeahead-select-on-exact="true"
+                typeahead-min-length="0" />
               </div>
               <div ng-if="analysis.displayChoice != 'all'" class=" record-date">
                 <p class="input-group">
@@ -71,12 +83,14 @@
               <div ng-if="analysis.recordsToDisplay.length" class="info-label font-size-responsive">
                 <span>Records Found: </span>&ensp;<strong>{{analysis.recordsToDisplay.length}}</strong>
               </div>
-              <input class="text-center form-control font-size-responsive filtered-records" type="text"
-              placeholder="Record"
-              ng-model="analysis.selectedRecord"
-              uib-typeahead="a as a.recStr for a in analysis.recordsToDisplay | filter:$viewValue" typeahead-on-select="analysis.onRecordSelected()"
-              typeahead-select-on-exact="true"
-              typeahead-min-length="0" />
+              <div class="scrollable-dropdown-menu">
+                <input class="text-center form-control font-size-responsive filtered-records" type="text"
+                placeholder="Record"
+                ng-model="analysis.selectedRecord"
+                uib-typeahead="a as a.recStr for a in analysis.recordsToDisplay | filter:$viewValue" typeahead-on-select="analysis.onRecordSelected()"
+                typeahead-select-on-exact="true"
+                typeahead-min-length="0" />
+              </div>
             </div>
           </div>
         </div>
