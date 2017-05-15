@@ -83,7 +83,7 @@ export class RecordRawController {
       .then(result => {
         const records = result.data || [];
         if(records.length > 0){
-          const sorted = records.sort((a,b) => a.timeStamp - b.timeStamp);
+          const sorted = records.sort((a,b) => b.timeStamp - a.timeStamp);
           const formatted = sorted.map(rec => {
             let type = rec.type.toUpperCase();
             return {
@@ -121,9 +121,9 @@ export class RecordRawController {
     this.recordsToDisplay = null;
     this.currentRecordData = {isEmpty: true};
     if(this.displayChoice == "all"){
-      this.recordsToDisplay = this.allRecords.reverse();
+      this.recordsToDisplay = this.allRecords;
     }else if(this.displayChoice == "filtered"){
-      this.recordsToDisplay = this.getFilteredRecords().reverse();
+      this.recordsToDisplay = this.getFilteredRecords();
     }
     this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
     this.getRecordComponents();
@@ -498,7 +498,7 @@ export class RecordRawController {
     return '';
   }
   handleDateChanged(){
-    this.recordsToDisplay = this.getFilteredRecords().reverse();
+    this.recordsToDisplay = this.getFilteredRecords();
     this.selectedRecord = this.recordsToDisplay.filter(r => r.type === "ECG")[0];
     this.getRecordComponents();
   }
