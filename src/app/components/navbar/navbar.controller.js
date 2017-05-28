@@ -9,7 +9,7 @@ export class NavbarController{
 
     logout(){
         this.$auth.logout();
-        this.$state.go('home');
+        this.$state.go('login');
     }
 
     isAdmin(){
