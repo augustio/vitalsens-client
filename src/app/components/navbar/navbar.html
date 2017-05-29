@@ -4,22 +4,42 @@
           <li class="navbar-header active">
               <a class="navbar-brand font-size-responsive" ng-href="#">Vitalsens</a>
           </li>
-          <ul ng-show="nav.isAuthenticated()" class="nav navbar-nav">
-              <li><a ui-sref="record">Records</a></li>
+          <ul ng-show="nav.canManageUser()" class="nav navbar-nav">
+            <li uib-dropdown>
+              <a href uib-dropdown-toggle>
+                Users
+              </a>
+              <ul class="dropdown-menu" uib-dropdown-menu>
+                <li>
+                  <a ui-sref="users-list">Show Users</a>
+                </li>
+                <li>
+                  <a ui-sref="register">Register User</a>
+                </li>
+              </ul>
+            </li>
           </ul>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-          <li ng-show="nav.isAuthenticated() && nav.getUser()">
-              <a role="button">{{nav.userEmail}}</a>
+          <li uib-dropdown ng-show="nav.isAuthenticated()">
+            <a href uib-dropdown-toggle>
+              <button class ="btn btn-xs btn-info glyphicon glyphicon-user"></button>
+            </a>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+              <li role="menuitem">
+                <a ui-sref="user-detail({userId: nav.getAuthUser().userId})" >
+                  <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;
+                  {{nav.getAuthUser().userId}}
+                </a>
+              </li>
+              <li role="menuitem">
+                <a href ng-click="nav.logout()">
+                  <span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Logout
+                </a>
+              </li>
+            </ul>
           </li>
-          <li ng-show="nav.isAuthenticated() && nav.isAdmin()">
-              <a ui-sref="register">Register</a>
-          </li>
-          <li ng-hide="nav.isAuthenticated()">
-              <a ui-sref="login">Login</a>
-          </li>
-          <li ng-show="nav.isAuthenticated()"><a role="button" ng-click="nav.logout()" >Logout</a></li>
       </ul>
     </div>
 </nav>

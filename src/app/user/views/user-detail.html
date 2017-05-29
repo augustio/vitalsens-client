@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-centered">
+      <div class="panel panel-default">
+        <div class="panel-heading">{{usr.currentUser.userId | uppercase}}</div>
+        <div class="panel-body user-detail">
+          <div class="col-md-3">
+            <button class ="btn btn-lg btn-info glyphicon glyphicon-user"></button>
+          </div>
+          <div class="col-md-9">
+            <div>Username: {{usr.currentUser.userId}}</div>
+            <div>Email: {{usr.currentUser.email}}</div>
+            <div>Role: {{usr.currentUser.role}}</div>
+            <div>Group: {{usr.currentUser.group.name}}</div>
+            <div>
+              <button ng-disabled="!usr.canDeleteUser()">
+                <span glyphicon glyphicon-remove>Delete</span>
+              </button>
+              <button ng-click="usr.editUser(usr.currentUser.userId)">
+                <span glyphicon glyphicon-edit>Edit</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

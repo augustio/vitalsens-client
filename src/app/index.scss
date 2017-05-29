@@ -247,6 +247,20 @@ g.tick text {
   max-height: 200px;
   overflow-y: auto;
 }
+.user-list table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.user-list td, .user-list th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 10px;
+}
+
+.user-list tr:nth-child(even) {
+  background-color: #dddddd;
+}
 
 
 

@@ -12,12 +12,17 @@ export class NavbarController{
         this.$state.go('login');
     }
 
-    isAdmin(){
-        return this.$auth.getPayload().user.role === "admin";
+    canManageUser(){
+      let user = this.getAuthUser();
+      return user.role === 'admin' || user.role === 'sudo';
     }
 
-    getUser(){
-        this.userEmail = this.$auth.getPayload().user.email;
-        return this.userEmail != null;
+    getAuthUser(){
+      let authUser = {};
+      let payload = this.$auth.getPayload();
+      if(payload){
+        authUser = payload.user;
+      }
+      return authUser;
     }
 }

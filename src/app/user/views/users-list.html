@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-centered">
+      <div class="panel panel-default">
+        <div class="panel-heading text-center">Users</div>
+        <div class="panel-body user-list">
+          <table>
+            <tr>
+              <th>Username</td>
+              <th>Email</td>
+              <th>Role</td>
+            </tr>
+            <tr role="button" ng-click="usr.showUserDetail(user.userId)" ng-repeat="user in usr.users">
+              <td>{{user.userId}}</td>
+              <td>{{user.email}}</td>
+              <td>{{user.role}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

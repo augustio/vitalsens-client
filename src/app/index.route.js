@@ -7,6 +7,26 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
       controller: 'MainController',
       controllerAs: 'main'
     })
+    .state('users-list', {
+      url: '/users-list',
+      templateUrl: 'app/user/views/users-list.html',
+      controller: 'UserController',
+      controllerAs: 'usr'
+    })
+    .state('user-detail', {
+      url: '/user-detail',
+      params:{userId: null},
+      templateUrl: 'app/user/views/user-detail.html',
+      controller: 'UserController',
+      controllerAs: 'usr'
+    })
+    .state('edit-user', {
+      url: '/edit-user',
+      params:{userId: null},
+      templateUrl: 'app/user/views/edit-user.html',
+      controller: 'UserController',
+      controllerAs: 'usr'
+    })
     .state('patient', {
       url: '/patient',
       templateUrl: 'app/patient/views/patient.html',
@@ -42,9 +62,9 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
     })
     .state('register', {
       url: '/register',
-      templateUrl: 'app/auth/register.html',
-      controller: 'AuthController',
-      controllerAs: 'auth'
+      templateUrl: 'app/user/views/register.html',
+      controller: 'UserController',
+      controllerAs: 'usr'
     })
     .state('login', {
       url: '/login',

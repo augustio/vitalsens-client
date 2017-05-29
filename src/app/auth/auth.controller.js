@@ -1,20 +1,12 @@
 export class AuthController{
 
-  constructor($auth, $state){
+  constructor($auth, $state, $http, API_URL){
     'ngInject';
 
-    this.$auth = $auth;
+    this.$http = $http;
     this.$state = $state;
-  }
-  register(){
-    this.$auth.signup(this.user)
-      .then(() => this.$state.go('home'))
-      .catch(res => {
-        const data = res.data;
-        if(data){
-          this.message = res.data.message;
-        }
-      });
+    this.$auth = $auth;
+    this.API_URL = API_URL;
   }
 
   login(){
@@ -29,5 +21,4 @@ export class AuthController{
         }
       });
   }
-
 }

@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-centered">
+      <div class="panel panel-default">
+        <div class="panel-heading">Register</div>
+        <div class="panel-body">
+          <form name="register" ng-submit="usr.register()">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" ng-model="usr.register.user.email">
+            </div>
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" class="form-control" ng-model="usr.register.user.userId">
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="form-control" name="password" ng-model="usr.register.user.password">
+            </div>
+            <div class="form-group">
+              <label>Password Confirm</label>
+              <input type="password" class="form-control" compare-to="usr.register.user.password" name="passwordConfirm" ng-model="usr.passwordConfirm">
+              <span class="alert-danger" ng-show="register.passwordConfirm.$dirty && register.passwordConfirm.$invalid">Passwords do not match</span>
+            </div>
+              <div class="form-group">
+                <label>Role</label>
+                <select class="form-control" name="role" ng-model="usr.register.user.role">
+                  <option value="patient">Patient</option>
+                  <option value="doctor">Doctor</option>
+                  <option ng-if="usr.getAuthUser().role == 'sudo'" value="admin">Admin</option>
+                </select>
+              </div>
+            <div class="form-group">
+              <label>Group</label>
+              <select class="form-control"
+                name="group"
+                ng-model="usr.register.user.group"
+                ng-options="group.name for group in usr.groups">
+              </select>
+            </div>
+            <button ng-disabled="register.pwdConfirm.$invalid" type="submit" class="btn btn-default">Register</button>
+            <br><br><span class="alert-danger">{{usr.errorMessage}}</span>
+            <br><br><span class="alert-success">{{usr.successMessage}}</span>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
