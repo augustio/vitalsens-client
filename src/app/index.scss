@@ -247,22 +247,28 @@ g.tick text {
   max-height: 200px;
   overflow-y: auto;
 }
-.user-list table {
+table {
   border-collapse: collapse;
   width: 100%;
 }
 
-.user-list td, .user-list th {
+td, th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 10px;
 }
 
-.user-list tr:nth-child(even) {
+tr:nth-child(even) {
   background-color: #dddddd;
 }
 
-
+.record-filter-dashboard{
+  background-color: #dddddd;
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
 
 
 /**

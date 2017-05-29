@@ -1,11 +1,77 @@
-<section>
-    <div class="jumbotron text-center">
-        <br>
-        <div class="row">
-            <p class="lead">
-                Vitalsens Cloud Service
-            </p>
+<div class="container">
+  <div class="record-filter-dashboard">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Patient Id</label>
+          <select class="form-control"
+            name="patientId"
+            ng-model="main.selectedPatient"
+            ng-change="main.getPatientRecords()"
+            ng-options="patient.userId for patient in main.patients">
+          </select>
         </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>Type</label>
+          <select class="form-control" name="type" ng-model="main.filters.type">
+            <option value=""></option>
+            <option value="ECG">ECG</option>
+            <option value="PPG">PPG</option>
+            <option value="IMP">IMPED</option>
+            <option value="ACC">ACCEL</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>From</label>
+          <input class="form-control"
+            type="date"
+            name="dateFrom"
+            ng-model="main.filters.dateFrom">
+          </input>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label>To</label>
+          <input class="form-control"
+            type="date"
+            name="dateTo"
+            ng-model="main.filters.dateTo">
+          </input>
+        </div>
+      </div>
     </div>
-
-</section>
+    <button class="btn btn-sm btn-primary" ng-click="main.filterRecords()">
+      <i class="glyphicon glyphicon-ok"></i>
+      OK
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-md-10 col-centered">
+      <div class="panel-body">
+        <table ng-if="main.filteredRecords.length > 0">
+          <tr>
+            <th>#</th>
+            <th>Patient Id</td>
+            <th>Date</td>
+            <th>Time</td>
+            <th>Duration (minutes)</td>
+            <th>Type</td>
+          </tr>
+          <tr role="button" ng-repeat="r in main.filteredRecords">
+            <td>{{$index}}
+            <td>{{r.patientId}}</td>
+            <td>{{r.recStart | date:'dd.MM.yyyy'}}</td>
+            <td>{{r.recStart | date:'HH:mm:ss'}}</td>
+            <td>{{main.getDuration(r.recStart, r.recEnd) | number:2}}</td>
+            <td>{{r.type}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
