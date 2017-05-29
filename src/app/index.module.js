@@ -12,6 +12,7 @@ import { PatientRecordController } from './patient/controllers/patient.record.co
 import { RecordController } from './record/controllers/record.controller';
 import { RecordRawController } from './record/controllers/record-raw.controller';
 import { RecordAnalysisController } from './record/controllers/record-analysis.controller';
+import { UserController } from './user/controllers/user.controller';
 import { GithubContributorService } from '../app/components/githubContributor/githubContributor.service';
 import { WebDevTecService } from '../app/components/webDevTec/webDevTec.service';
 import { NavbarDirective } from '../app/components/navbar/navbar.directive';
@@ -35,6 +36,7 @@ angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer'
   .controller('RecordController', RecordController)
   .controller('RecordRawController', RecordRawController)
   .controller('RecordAnalysisController', RecordAnalysisController)
+  .controller('UserController', UserController)
   .directive('acmeNavbar', NavbarDirective)
   .directive('acmeMalarkey', MalarkeyDirective)
   .directive('compareTo', CompareToDirective);
