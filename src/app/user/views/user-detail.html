@@ -13,13 +13,15 @@
             <div>Role: {{usr.currentUser.role}}</div>
             <div>Group: {{usr.currentUser.group.name}}</div>
             <div>
-              <button ng-disabled="!usr.canDeleteUser()">
+              <button ng-disabled="!usr.canDeleteUser()"
+              ng-click="usr.deleteUser(usr.currentUser.userId)">
                 <span glyphicon glyphicon-remove>Delete</span>
               </button>
-              <button ng-click="usr.editUser(usr.currentUser.userId)">
+              <button ng-click="usr.editUserView(usr.currentUser.userId)">
                 <span glyphicon glyphicon-edit>Edit</span>
               </button>
             </div>
+            <br><br><span class="alert-danger">{{usr.errorMessage}}</span>
           </div>
         </div>
       </div>

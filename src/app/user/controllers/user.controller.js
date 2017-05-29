@@ -61,7 +61,7 @@ export class UserController{
     this.$state.go('user-detail', {userId});
   }
 
-  editUser(userId){
+  editUserView(userId){
     this.$state.go('edit-user', {userId});
   }
 
@@ -79,8 +79,21 @@ export class UserController{
 
   updateUser(){
     this.$http.put(this.API_URL+'api/users/'+this.currentUserId, this.edit.user)
-      .then(successRes => {
+      .then(() => {
         this.showUserDetail(this.currentUserId);
+      }, errorRes => {
+        this.errorMessage = errorRes.data.message;
+      });
+  }
+
+  deleteUser(userId){
+    if(userId == this.getAuthUser().userId){
+      this.errorMessage = 'You cannot delete own account';
+      return;
+    }
+    this.$http.delete(this.API_URL+'api/users/'+userId)
+      .then(successRes => {
+        this.$state.go('users-list');
       }, errorRes => {
         this.errorMessage = errorRes.data.message;
       });
