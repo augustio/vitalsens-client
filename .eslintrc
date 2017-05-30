@@ -16,6 +16,7 @@
     "toJson": true,
     "JSZip": true,
     "saveAs": true,
-    "inject": true
+    "inject": true,
+    "moment": true
   }
 }
