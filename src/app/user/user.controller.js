@@ -92,7 +92,7 @@ export class UserController{
       return;
     }
     this.$http.delete(this.API_URL+'api/users/'+userId)
-      .then(successRes => {
+      .then(() => {
         this.$state.go('users-list');
       }, errorRes => {
         this.errorMessage = errorRes.data.message;
