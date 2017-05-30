@@ -258,7 +258,12 @@ td, th {
   padding: 10px;
 }
 
-tr:nth-child(even) {
+th{
+  background-color: #dddddd;
+  border-color: black
+}
+
+tr:hover{
   background-color: #dddddd;
 }
 
