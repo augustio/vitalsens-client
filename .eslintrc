@@ -17,6 +17,7 @@
     "JSZip": true,
     "saveAs": true,
     "inject": true,
-    "moment": true
+    "moment": true,
+    "async": true
   }
 }

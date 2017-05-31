@@ -2,8 +2,8 @@
   color: white;
 }
 
-a {
-  color: black;
+.nav-bar-header  a {
+  color: white;
 }
 
 h1 {
@@ -12,6 +12,10 @@ h1 {
   line-height: 1.25em;
 }
 
-a:hover, a:focus {
-  color: greenyellow;
+ .nav-bar-header a:hover, .nav-bar-header a:focus {
+  color: black;
+}
+
+.nav-bar-header{
+  background-color: blue;
 }

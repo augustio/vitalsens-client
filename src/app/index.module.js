@@ -9,18 +9,18 @@ import { NavbarController } from './components/navbar/navbar.controller';
 import { CompareToDirective } from './directives/compareTo.directive';
 import { PatientController } from './patient/controllers/patient.controller';
 import { PatientRecordController } from './patient/controllers/patient.record.controller';
-import { RecordController } from './record/controllers/record.controller';
+import { RecordController } from './record/record.controller';
 import { RecordRawController } from './record/controllers/record-raw.controller';
 import { RecordAnalysisController } from './record/controllers/record-analysis.controller';
-import { UserController } from './user/controllers/user.controller';
+import { UserController } from './user/user.controller';
 import { GithubContributorService } from '../app/components/githubContributor/githubContributor.service';
 import { WebDevTecService } from '../app/components/webDevTec/webDevTec.service';
 import { NavbarDirective } from '../app/components/navbar/navbar.directive';
 import { MalarkeyDirective } from '../app/components/malarkey/malarkey.directive';
 
 angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer'])
-  .constant('API_URL', 'http://83.136.249.208:5000/')
-  //.constant('API_URL', 'http://localhost:5000/')
+  //.constant('API_URL', 'http://83.136.249.208:5000/')
+  .constant('API_URL', 'http://localhost:5000/')
   .constant('malarkey', malarkey)
   .constant('moment', moment)
   .config(config)

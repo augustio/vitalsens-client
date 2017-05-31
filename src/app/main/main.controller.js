@@ -14,6 +14,7 @@ export class MainController {
     this.filters = {};
     this.selectedPatient = null;
     this.getPatients();
+    this.getPatientRecords(this.$state.params.patientId);
   }
 
   getPatients(){
@@ -23,9 +24,11 @@ export class MainController {
       });
   }
 
-  getPatientRecords(){
-    if(!this.selectedPatient) { return; }
-    this.$http.get(this.API_URL+'api/records/user/'+this.selectedPatient.userId)
+  getPatientRecords(patientId){
+    let id = patientId;
+    if(this.selectedPatient) { id = this.selectedPatient.userId; }
+    if(id == null) {return;}
+    this.$http.get(this.API_URL+'api/records/user/'+id)
       .then(successRes => {
         this.records = successRes.data || [];
         this.filteredRecords = this.records;
@@ -54,5 +57,9 @@ export class MainController {
   getDuration(from, to){
     if(to < from) { return 0; }
     return (to - from)/60000;
+  }
+
+  showRecord(r){
+    this.$state.go('record', {record_id: r._id});
   }
 }

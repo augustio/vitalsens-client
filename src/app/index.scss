@@ -283,18 +283,18 @@ tr:hover{
 }
 
 .record-container{
-  height: 100vh;
   margin: 0px 20px 20px 20px;
 }
 
 .record-data-analysis-heading{
   font-weight: bold;
   text-decoration: none;
+  color: blue;
 }
 
-.record-data-analysis-heading a:hover{
-  color: gray;
-}
+// .record-data-analysis-heading a:hover{
+//   color: gray;
+// }
 
 .ok_btn{
   color: blue;
