@@ -248,19 +248,25 @@ g.tick text {
   overflow-y: auto;
 }
 table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 10px;
   width: 100%;
 }
 
-td, th {
+td{
   border: 1px solid #dddddd;
   text-align: left;
   padding: 10px;
 }
 
 th{
-  background-color: #dddddd;
-  border-color: black
+  text-align: center;
+  color: #ffffff;
+  padding: 10px;
+  background-color: blue;
+  border: 1px solid blue;
+  border-radius: 5px;
+  border-spacing: 10px;
 }
 
 tr:hover{
@@ -268,13 +274,36 @@ tr:hover{
 }
 
 .record-filter-dashboard{
-  background-color: #dddddd;
+  background-color: blue;
+  color: #ffffff;
   margin: 10px;
   padding: 5px;
   border: 1px solid black;
   border-radius: 5px;
 }
 
+.record-container{
+  height: 100vh;
+  margin: 0px 20px 20px 20px;
+}
+
+.record-data-analysis-heading{
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.record-data-analysis-heading a:hover{
+  color: gray;
+}
+
+.ok_btn{
+  color: blue;
+  background-color: #ffffff;
+}
+
+button.ok_btn:hover{
+  background-color: #dddddd;
+}
 
 /**
  *  Do not remove the comments below. It's the markers used by gulp-inject to inject

@@ -45,7 +45,7 @@
         </div>
       </div>
     </div>
-    <button class="btn btn-sm btn-primary" ng-click="main.filterRecords()">
+    <button class="btn btn-sm ok_btn" ng-click="main.filterRecords()">
       <i class="glyphicon glyphicon-ok"></i>
       OK
     </button>
@@ -62,7 +62,7 @@
             <th>Duration (minutes)</td>
             <th>Type</td>
           </tr>
-          <tr role="button" ng-repeat="r in main.filteredRecords">
+          <tr role="button" ng-click="main.showRecord(r)" ng-repeat="r in main.filteredRecords">
             <td>{{$index}}
             <td>{{r.patientId}}</td>
             <td>{{r.recStart | date:'dd.MM.yyyy'}}</td>
