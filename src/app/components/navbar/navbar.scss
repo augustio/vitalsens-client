@@ -13,9 +13,14 @@ h1 {
 }
 
  .nav-bar-header a:hover, .nav-bar-header a:focus {
-  color: black;
+  color: #000000;
+  font-weight: bold;
 }
-
 .nav-bar-header{
-  background-color: blue;
+  height: 4em;
+  font-weight: bolder;
+  background-color: #009fda;
+}
+.nav-bar-link{
+  height: 4em;
 }

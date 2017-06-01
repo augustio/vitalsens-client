@@ -4,12 +4,14 @@ export class MainController {
 
     this.$auth = $auth;
     this.$state = $state;
+
+    if(!this.$auth.isAuthenticated()){
+      this.$state.go('login');
+      return;
+    }
+
     this.$http = $http;
     this.API_URL = API_URL;
-
-    this.authUser = this.$auth.getPayload().user;
-    let token = this.$auth.getToken();
-    if(!token) { this.$state.go('login'); }
 
     this.filters = {};
     this.selectedPatient = null;

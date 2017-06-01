@@ -5,8 +5,10 @@ export class RecordController {
       this.$auth = $auth;
       this.$state = $state;
 
-      if(!this.$auth.isAuthenticated())
-          this.$state.go('login');
+      if(!this.$auth.isAuthenticated()){
+        this.$state.go('login');
+        return;
+      }
 
       this.$http = $http;
       this.$timeout = $timeout;

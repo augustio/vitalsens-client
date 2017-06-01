@@ -6,6 +6,12 @@ export class UserController{
     this.$http = $http;
     this.$state = $state;
     this.$auth = $auth;
+
+    if(!this.$auth.isAuthenticated()){
+      this.$state.go('login');
+      return;
+    }
+
     this.API_URL = API_URL;
 
     this.groups = [];

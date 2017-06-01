@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6 col-centered">
-      <div class="panel panel-default">
+      <div class="panel panel-primary">
         <div class="panel-heading">Edit &nbsp;&nbsp;{{usr.currentUserId}}</div>
         <div class="panel-body">
           <form name="login" ng-submit="usr.updateUser()">
@@ -13,7 +13,7 @@
               <label>Password</label>
               <input type="password" class="form-control" ng-model="usr.edit.user.password">
             </div>
-            <button type="submit" class="btn btn-default">Send</button>
+            <button type="submit" class="btn btn-info">Send</button>
             <br><br><span class="alert-danger">{{usr.errorMessage}}</span>
           </form>
         </div>

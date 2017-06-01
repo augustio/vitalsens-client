@@ -3,6 +3,7 @@
  *  The list of variables are listed here bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss
  */
 $navbar-inverse-link-color: #5AADBB;
+$blue: #009fda;
 //$icon-font-path: "../../bootstrap-sass/assets/fonts/bootstrap/";
 
 /**
@@ -109,7 +110,7 @@ line{
 }
 
 .vertical-line{
-  color: blue;
+  color: #009fda;
 }
 
 #chart-container{
@@ -251,6 +252,7 @@ table {
   border-collapse: separate;
   border-spacing: 10px;
   width: 100%;
+  background-color: #ffffff;
 }
 
 td{
@@ -263,8 +265,8 @@ th{
   text-align: center;
   color: #ffffff;
   padding: 10px;
-  background-color: blue;
-  border: 1px solid blue;
+  background-color: $blue;
+  border: 1px solid $blue;
   border-radius: 5px;
   border-spacing: 10px;
 }
@@ -274,7 +276,7 @@ tr:hover{
 }
 
 .record-filter-dashboard{
-  background-color: blue;
+  background-color: $blue;
   color: #ffffff;
   margin: 10px;
   padding: 5px;
@@ -289,7 +291,7 @@ tr:hover{
 .record-data-analysis-heading{
   font-weight: bold;
   text-decoration: none;
-  color: blue;
+  color: $blue;
 }
 
 // .record-data-analysis-heading a:hover{
@@ -297,12 +299,29 @@ tr:hover{
 // }
 
 .ok_btn{
-  color: blue;
+  color: $blue;
   background-color: #ffffff;
 }
 
 button.ok_btn:hover{
   background-color: #dddddd;
+}
+
+.login-view-bg{
+  background: url(/images/app-bg.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+.login-view-header{
+  margin-top: 1em;
+  margin-bottom: 3em;
+}
+.login-btn{
+  margin-top: 3em;
+  font-size: 1.2em;
+  color: #ffffff;
+  background-color: $blue;
 }
 
 /**
