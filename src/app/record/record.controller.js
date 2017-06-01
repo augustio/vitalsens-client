@@ -1,5 +1,5 @@
 export class RecordController {
-  constructor ($http, $auth, $state, $timeout, $window, API_URL) {
+  constructor ($http, $auth, $state, $timeout, $filter, $window, API_URL) {
       'ngInject';
 
       this.$auth = $auth;
@@ -12,6 +12,7 @@ export class RecordController {
 
       this.$http = $http;
       this.$timeout = $timeout;
+      this.$filter = $filter;
       this.$window = $window;
       this.API_URL = API_URL;
       this.ADC_TO_MV_COEFFICIENT = 0.01465;
@@ -21,12 +22,12 @@ export class RecordController {
       this.recordAnalysis = null;
       this.printing = false;
 
-      this.progressValue = 0;
       this.currentPage = 0;
       this.pages = 0;
       this.period = 0;
       this.pageSize = 0;
       this.channels = 0;
+      this.recSegments = [];
 
       this.getRecordDetail();
 
@@ -61,10 +62,18 @@ export class RecordController {
     }, (err, results) => {
       if(results.record){
         this.record = results.record;
-        this.pageSize = this.record.samplingRate * 7.5 //7.5pages
+        this.pageSize = this.record.samplingRate * 7 //7 seconds
         this.pages = Math.floor(this.record.size/this.pageSize)
                               + (this.record.size%this.pageSize > 0 ? 1 : 0);
         this.period = 1/this.record.samplingRate; //In seconds
+        let a = Array(this.pages).fill(0);
+        this.recSegments = a.map((s, i) => {
+          let tStamp = this.record.recStart + i*7000;
+          let from = this.$filter('date')(tStamp, 'HH:mm:ss');
+          let to = this.$filter('date')(tStamp + 7000, 'HH:mm:ss');
+          return `${from} - ${to}`;
+        });
+        this.currentRecSegment = this.recSegments[0];
       }
       if(results.recordData){
         this.recordData = results.recordData;
@@ -198,17 +207,6 @@ export class RecordController {
         .domain([mnX, mxX])
         .range([0, options.outerWidth]);
 
-      //Progress bar calculations
-      const progress = d3.scaleLinear()
-        .domain([0, (this.pages -1)])
-        .range([0, 100]);
-      this.progressValue = Math.round(progress(this.currentPage));
-      if(this.progressValue == 100){
-        this.progressType = "success";
-      }else{
-        this.progressType = null;
-      }
-
       //x-y axis generators
       const yAxis = d3.axisLeft(y)
                       .ticks(0);
@@ -292,20 +290,10 @@ export class RecordController {
     this.drawECGChart();
   }
 
-  handleForwardBtn(){
-    if(this.currentPage < this.pages -1){
-      this.currentPage++;
-      this.clearECGChart();
-      this.drawECGChart();
-    }
-  }
-
-  handleBackwardBtn(){
-    if(this.currentPage > 0){
-      this.currentPage--;
-      this.clearECGChart();
-      this.drawECGChart();
-    }
+  updateECGChart(){
+    this.currentPage = this.recSegments.indexOf(this.currentRecSegment);
+    this.clearECGChart();
+    this.drawECGChart();
   }
 
   goToRecords(){
@@ -351,10 +339,12 @@ const setOptions = () => {
                     .range([0, options.outerWidth]);
     options.smallGridSize = scale(0.04);
     options.largeGridSize = scale(0.2);
-    options.margin.left = options.margin.right = options.margin.top = options.largeGridSize;
+    options.margin.left = options.largeGridSize * 2;
+    options.margin.right = options.largeGridSize;
+    options.margin.top = options.largeGridSize * 2;
     options.margin.bottom = options.largeGridSize * 2;
-    options.innerHeight = options.largeGridSize * 4;
-    options.outerHeight = (options.innerHeight * 3)+(options.margin.bottom * 3);
+    options.innerHeight = options.largeGridSize * 3;
+    options.outerHeight = (options.innerHeight * 4)+(options.margin.bottom * 3);
   }
 
   return options;

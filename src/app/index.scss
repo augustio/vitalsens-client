@@ -148,14 +148,6 @@ g.tick text {
   font-size: 12px;
 }
 
-.back-btn{
-  padding: 0px 10px;
-}
-
-.forward-btn{
-  padding: 0px 10px;
-}
-
 /*record view*/
 .records-view{
   margin: 0px -15px;
@@ -294,10 +286,6 @@ tr:hover{
   color: $blue;
 }
 
-// .record-data-analysis-heading a:hover{
-//   color: gray;
-// }
-
 .ok_btn{
   color: $blue;
   background-color: #ffffff;
@@ -322,6 +310,17 @@ button.ok_btn:hover{
   font-size: 1.2em;
   color: #ffffff;
   background-color: $blue;
+}
+
+.rec-segment-select{
+  margin-right: 3em;
+}
+
+.loading{
+  margin-top: 2em;
+  color: red;
+  font-weight: bold;
+  font-style: italic;
 }
 
 /**

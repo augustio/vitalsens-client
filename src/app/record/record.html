@@ -28,25 +28,18 @@
             <button class="btn btn-info btn-responsive glyphicon glyphicon-print" title="Print chart" aria-label="Print chart" ng-click="rec.printChart()"></button>
             <button class="btn btn-info btn-responsive glyphicon glyphicon-download" aria-label="download" ng-click="rec.downloadData()"></button>
           </span>
+          <span class="btn-group pull-right font-size-responsive rec-segment-select">
+            <select class="form-control"
+              name="rec-segment"
+              ng-model="rec.currentRecSegment"
+              ng-change="rec.updateECGChart()"
+              ng-options="s for s in rec.recSegments">
+            </select>
+          </span>
         </div>
         <div id="chart-container" class="font-size-responsive">
         </div>
-        <div class="chart-btn" ng-if="rec.recordData && !rec.printing">
-          <button
-          class="btn btn-info btn-sm back-btn btn-responsive pull-left"
-          ng-click="rec.handleBackwardBtn()">
-            <span class="glyphicon glyphicon-backward"></span>
-          </button>
-          <button
-          class="btn btn-info btn-sm forward-btn btn-responsive pull-right"
-          ng-click="rec.handleForwardBtn()">
-            <span class="glyphicon glyphicon-forward"></span>
-          </button>
-        </div>
-        <uib-progressbar ng-if="rec.recordData && !rec.printing"
-        value="rec.progressValue" type={{rec.progressType}}>
-          <b>{{rec.progressValue}}%</b>
-        </uib-progressbar>
+        <div ng-if="!rec.recData" class="loading">Loading Chart ....</div>
         <button ng-if="rec.printing" class="btn btn-info" ng-click="rec.printViewBackBtnHandler()"name="printViewBackBtn">
           Back
         </button>
