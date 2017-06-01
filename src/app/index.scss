@@ -321,6 +321,12 @@ button.ok_btn:hover{
   color: red;
   font-weight: bold;
   font-style: italic;
+  animation: loading 1s infinite alternate;
+}
+
+@keyframes loading{
+  from {color: red;}
+  to{color: white}
 }
 
 /**
