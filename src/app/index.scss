@@ -331,6 +331,14 @@ button.ok_btn:hover{
   to{color: white}
 }
 
+.main-trash:hover{
+  color: red;
+}
+
+.main-trash{
+  color: $blue;
+}
+
 /**
  *  Do not remove the comments below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically

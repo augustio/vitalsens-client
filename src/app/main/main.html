@@ -56,14 +56,20 @@
         <table ng-if="main.filteredRecords.length > 0">
           <tr>
             <th>#</th>
-            <th>Patient Id</td>
-            <th>Date</td>
-            <th>Time</td>
-            <th>Duration (minutes)</td>
-            <th>Type</td>
+            <th>Patient Id</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Duration (minutes)</th>
+            <th>Type</th>
           </tr>
           <tr role="button" ng-click="main.showRecord(r)" ng-repeat="r in main.filteredRecords">
-            <td>{{$index}}
+            <td>
+              <span class="glyphicon glyphicon-trash main-trash"
+                ng-if="main.getAuthUser().role === 'sudo'"
+                ng-click="main.deleteRecord(e, r._id)">
+                </span>
+              &nbsp;&nbsp;{{$index}}
+            </td>
             <td>{{r.patientId}}</td>
             <td>{{r.recStart | date:'dd.MM.yyyy'}}</td>
             <td>{{r.recStart | date:'HH:mm:ss'}}</td>

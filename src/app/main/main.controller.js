@@ -1,5 +1,5 @@
 export class MainController {
-  constructor($auth, $state, $http, API_URL){
+  constructor($auth, $state, $http, $window, API_URL){
     'ngInject';
 
     this.$auth = $auth;
@@ -11,29 +11,52 @@ export class MainController {
     }
 
     this.$http = $http;
+    this.$window = $window;
     this.API_URL = API_URL;
 
     this.filters = {};
     this.selectedPatient = null;
     this.getPatients();
-    this.getPatientRecords(this.$state.params.patientId);
+  }
+
+  getAuthUser(){
+    let authUser = {}
+    let payload = this.$auth.getPayload();
+    if(payload) { authUser = payload.user || {}; }
+    return authUser;
   }
 
   getPatients(){
     this.$http.get(this.API_URL+'api/users/patients')
       .then(successRes => {
         this.patients = successRes.data.users;
+        let id = this.$state.params.patientId;
+        if(id){ this.getPatientRecords(id); }
       });
   }
 
   getPatientRecords(patientId){
-    let id = patientId;
+    let id = '';
     if(this.selectedPatient) { id = this.selectedPatient.userId; }
+    else if(patientId){
+      id = patientId;
+      this.selectedPatient = this.patients.find(p => p.userId == patientId);
+    }
     if(id == null) {return;}
     this.$http.get(this.API_URL+'api/records/user/'+id)
       .then(successRes => {
         this.records = successRes.data || [];
         this.filteredRecords = this.records;
+      });
+  }
+
+  deleteRecord(e, record_id){
+    if(!e) { e = this.$window.event; }
+    if(e.stopPropagation){ e.stopPropagation(); }
+    else { e.cancelBubble = true; }
+    this.$http.delete(this.API_URL+'api/records/'+record_id)
+      .then(successRes => {
+        this.getPatientRecords(this.selectedPatient.userId);
       });
   }
 
