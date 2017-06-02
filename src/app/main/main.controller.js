@@ -55,7 +55,7 @@ export class MainController {
     if(e.stopPropagation){ e.stopPropagation(); }
     else { e.cancelBubble = true; }
     this.$http.delete(this.API_URL+'api/records/'+record_id)
-      .then(successRes => {
+      .then(() => {
         this.getPatientRecords(this.selectedPatient.userId);
       });
   }

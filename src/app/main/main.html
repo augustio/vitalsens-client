@@ -64,17 +64,27 @@
           </tr>
           <tr role="button" ng-click="main.showRecord(r)" ng-repeat="r in main.filteredRecords">
             <td>
-              <span class="glyphicon glyphicon-trash main-trash"
-                ng-if="main.getAuthUser().role === 'sudo'"
-                ng-click="main.deleteRecord(e, r._id)">
-                </span>
-              &nbsp;&nbsp;{{$index}}
+              <span class="glyphicon glyphicon-trash main-trash pull-left"
+              ng-if="main.getAuthUser().role === 'sudo'"
+              ng-click="main.deleteRecord(e, r._id)">
+              </span>{{$index}}
             </td>
             <td>{{r.patientId}}</td>
             <td>{{r.recStart | date:'dd.MM.yyyy'}}</td>
             <td>{{r.recStart | date:'HH:mm:ss'}}</td>
             <td>{{main.getDuration(r.recStart, r.recEnd) | number:2}}</td>
-            <td>{{r.type}}</td>
+            <td>
+              {{r.type}}
+              <span class="glyphicon glyphicon-bell pull-right main-red-alarm"
+              ng-if="r.alarms[0]">
+              </span>
+              <span class="glyphicon glyphicon-bell pull-right main-yellow-alarm"
+              ng-if="r.alarms[1]">
+              </span>
+              <span class="glyphicon glyphicon-bell pull-right main-green-alarm"
+              ng-if="r.alarms[2]"
+              </span>
+            </td>
           </tr>
         </table>
       </div>

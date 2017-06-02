@@ -248,8 +248,8 @@ table {
 }
 
 td{
+  text-align: center;
   border: 1px solid #dddddd;
-  text-align: left;
   padding: 10px;
 }
 
@@ -334,9 +334,23 @@ button.ok_btn:hover{
 .main-trash:hover{
   color: red;
 }
-
 .main-trash{
   color: $blue;
+}
+.main-red-alarm{
+  color: #e60000;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+.main-green-alarm{
+  color: #009900;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+.main-yellow-alarm{
+  color: #ffff00;
+  margin-left: 1px;
+  margin-right: 1px;
 }
 
 /**
