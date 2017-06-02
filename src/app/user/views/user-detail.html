@@ -8,15 +8,23 @@
             <button class ="btn btn-lg btn-info glyphicon glyphicon-user"></button>
           </div>
           <div class="col-md-9">
-            <div>Username: {{usr.currentUser.userId}}</div>
-            <div>Email: {{usr.currentUser.email}}</div>
-            <div>Role: {{usr.currentUser.role}}</div>
-            <div>Group: {{usr.currentUser.group.name}}</div>
-            <button class="btn btn-sm btn-danger" ng-disabled="!usr.canDeleteUser()"
+            <div class="panel panel-info">
+              <div class="panel-body">
+                <div>
+                  <span class="pull-left"><b>{{usr.currentUser.userId}}</b></span>
+                  <span class="glyphicon glyphicon-email pull-right">{{usr.currentUser.email}}</span>
+                </div>
+                <hr>
+                <div><span>{{usr.currentUser.group.name}}</span></div>
+                <hr>
+                <div>{{usr.currentUser.role}}</div>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-danger user-detail-btn" ng-if="usr.canDeleteUser()"
             ng-click="usr.deleteUser(usr.currentUser.userId)">
               <i class="glyphicon glyphicon-remove"></i>&nbsp;&nbsp;Delete
             </button>
-            <button class="btn btn-sm btn-info" ng-click="usr.editUserView(usr.currentUser.userId)">
+            <button class="btn btn-sm btn-info user-detail-btn" ng-click="usr.editUserView(usr.currentUser.userId)">
               <i class="glyphicon glyphicon-edit"></i>&nbsp;&nbsp;Edit
             </button>
             <br><br><span class="alert-danger">{{usr.errorMessage}}</span>
