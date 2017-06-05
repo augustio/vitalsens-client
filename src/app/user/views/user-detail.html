@@ -10,14 +10,11 @@
           <div class="col-md-9">
             <div class="panel panel-info">
               <div class="panel-body">
-                <div>
-                  <span class="pull-left"><b>{{usr.currentUser.userId}}</b></span>
-                  <span class="glyphicon glyphicon-email pull-right">{{usr.currentUser.email}}</span>
-                </div>
+                <div><b>{{usr.currentUser.userId}}</b></div>
+                <div>{{usr.currentUser.email}}</div>
+                <div>{{usr.currentUser.group.name}}</div>
                 <hr>
-                <div><span>{{usr.currentUser.group.name}}</span></div>
-                <hr>
-                <div>{{usr.currentUser.role}}</div>
+                <div>Role: {{usr.currentUser.role}}</div>
               </div>
             </div>
             <button class="btn btn-sm btn-danger user-detail-btn" ng-if="usr.canDeleteUser()"

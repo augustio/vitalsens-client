@@ -14,8 +14,28 @@ export class MainController {
     this.$window = $window;
     this.API_URL = API_URL;
 
-    this.filters = {};
+    this.filters = {
+      dateFrom: new Date(),
+      dateTo: new Date()
+    };
     this.selectedPatient = null;
+
+    this.formats = [
+      'M!/d!/yyyy',
+      'dd-MMMM-yyyy',
+      'yyyy/MM/dd',
+      'dd.MM.yyyy',
+      'shortDate'
+    ];
+    this.dateOptions = {
+      maxDate: new Date(2030, 12, 31),
+      minDate: new Date(2016, 1, 1),
+      startingDay: 1
+    };
+    this.format = this.formats[3];
+    this.fromOpened = false;
+    this.toOpened = false;
+
     this.getPatients();
   }
 
@@ -86,5 +106,18 @@ export class MainController {
 
   showRecord(r){
     this.$state.go('record', {record_id: r._id});
+  }
+
+  clear() {
+    this.selectedDate = null;
+  }
+  openFrom() {
+    this.fromOpened = true;
+  }
+  openTo(){
+    this.toOpened = true;
+  }
+  setDate(year, month, day) {
+    this.selectedDate = new Date(year, month, day);
   }
 }

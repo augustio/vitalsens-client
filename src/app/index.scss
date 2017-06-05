@@ -240,20 +240,20 @@ g.tick text {
   max-height: 200px;
   overflow-y: auto;
 }
-table {
+table.rec-list, table.user-list {
   border-collapse: separate;
   border-spacing: 10px;
   width: 100%;
   background-color: #ffffff;
 }
 
-td{
+table.rec-list td, table.user-list td{
   text-align: center;
   border: 1px solid #dddddd;
   padding: 10px;
 }
 
-th{
+table.rec-list th, table.user-list th{
   text-align: center;
   color: #ffffff;
   padding: 10px;
@@ -263,8 +263,12 @@ th{
   border-spacing: 10px;
 }
 
-tr:hover{
+table.rec-list tr:hover, table.user-list tr:hover{
   background-color: #dddddd;
+}
+
+table{
+  background: $blue;
 }
 
 .record-filter-dashboard{
