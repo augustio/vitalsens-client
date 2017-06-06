@@ -187,15 +187,6 @@ export class RecordController {
       const height = index * (options.margin.bottom + options.innerHeight)
       const titleYPos = options.margin.top + height;
 
-      //Add the title
-      svg.append("text")
-          .attr("x", options.innerWidth - options.margin.right*2)
-          .attr("y", titleYPos)
-          .attr("text-anchor", "middle")
-          .style("font-size", "14px")
-          .style("text-decoration", "underline")
-          .text(dataKeys[index]);
-
       //x-y scale generators
       const y = d3.scaleLinear()
         .domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
@@ -206,6 +197,17 @@ export class RecordController {
       const x = d3.scaleLinear()
         .domain([mnX, mxX])
         .range([0, options.outerWidth]);
+
+      //Add the title
+      let delta = 14 - (options.outerWidth/1300)*14;
+      let titleFontSize = delta > 0 ? 14 - delta*0.75 : 14;
+      svg.append("text")
+          .attr("x", options.outerWidth - options.margin.left*2)
+          .attr("y", titleYPos)
+          .attr("text-anchor", "middle")
+          .style("font-size", titleFontSize)
+          .style("text-decoration", "underline")
+          .text(dataKeys[index]);
 
       //x-y axis generators
       const yAxis = d3.axisLeft(y)
@@ -230,10 +232,10 @@ export class RecordController {
         .attr('d', line(options.data[key]));
 
       chartGroup.append('g')
-        .attr('class', 'axis y')
+        .attr('class', 'y-axis')
         .call(yAxis);
       chartGroup.append('g')
-        .attr('class', 'axis x')
+        .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + options.innerHeight +')')
         .call(xAxis);
 
