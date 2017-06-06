@@ -82,7 +82,7 @@
             <td>
               <span class="glyphicon glyphicon-trash main-trash pull-left"
               ng-if="main.getAuthUser().role === 'sudo'"
-              ng-click="main.deleteRecord(e, r._id)">
+              ng-click="main.deleteRecord($event, r._id)">
               </span>{{$index}}
             </td>
             <td>{{r.patientId}}</td>
