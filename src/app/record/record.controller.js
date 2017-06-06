@@ -32,8 +32,8 @@ export class RecordController {
       this.getRecordDetail();
 
       d3.select(window).on('resize', () => {
-        this.clearECGChart();
-        this.drawECGChart();
+        this.clearRawChart();
+        this.drawRawChart();
       });
   }
 
@@ -63,9 +63,13 @@ export class RecordController {
       if(results.record){
         this.record = results.record;
         this.pageSize = this.record.samplingRate * 7 //7 seconds
+        this.period = 1/this.record.samplingRate; //In seconds
+        if(this.record.type === 'ACC'){
+          this.period = 1/16;
+          this.pageSize = 16*7;
+        }
         this.pages = Math.floor(this.record.size/this.pageSize)
                               + (this.record.size%this.pageSize > 0 ? 1 : 0);
-        this.period = 1/this.record.samplingRate; //In seconds
         let a = Array(this.pages).fill(0);
         this.recSegments = a.map((s, i) => {
           let tStamp = this.record.recStart + i*7000;
@@ -80,7 +84,7 @@ export class RecordController {
         if(this.recordData.chOne.length > 0) this.channels++;
         if(this.recordData.chTwo.length > 0) this.channels++;
         if(this.recordData.chThree.length > 0) this.channels++;
-        this.drawECGChart();
+        this.drawRawChart();
       }
       if(results.recordAnalysis){this.recordAnalysis = results.recordAnalysis;}
     });
@@ -124,9 +128,15 @@ export class RecordController {
           });
         }
         else{
-          d.chOne = chOne;
-          d.chTwo = chTwo;
-          d.chThree = chThree;
+          d.chOne = chOne.map((e, i) => {
+            return{x: i*this.period, y: e}
+          });
+          d.chTwo = chTwo.map((e, i) => {
+            return{x: i*this.period, y: e}
+          });
+          d.chThree = chThree.map((e, i) => {
+            return{x: i*this.period, y: e}
+          });
         }
         break;
       default:
@@ -134,7 +144,7 @@ export class RecordController {
     return d;
   }
 
-  drawECGChart(){
+  drawRawChart(){
     if(!this.recordData){
       return;
     }
@@ -146,122 +156,120 @@ export class RecordController {
       .attr('height', options.outerHeight)
       .attr('width', options.outerWidth);
 
-    //Background grid definition for ECG data
-    if(this.record.type === 'ECG'){
-      const defs = svg.append('defs');
-      const smallGrid = defs.append('pattern')
-        .attr('id', 'small-grid')
-        .attr('width', options.smallGridSize)
-        .attr('height', options.smallGridSize)
-        .attr('patternUnits', 'userSpaceOnUse');
-      smallGrid.append('path')
-        .attr('d', 'M '+options.smallGridSize+' 0 L 0 0 0 '+options.smallGridSize)
-        .attr('fill', 'none')
-        .attr('stroke', 'red')
-        .attr('stroke-width', '0.5');
-      const grid = defs.append('pattern')
-        .attr('id', 'grid')
-        .attr('width', options.largeGridSize)
-        .attr('height', options.largeGridSize)
-        .attr('patternUnits', 'userSpaceOnUse')
-      grid.append('rect')
-        .attr('width', options.largeGridSize)
-        .attr('height', options.largeGridSize)
-        .attr('fill', 'url(#small-grid)');
-      grid.append('path')
-        .attr('d', 'M '+options.largeGridSize+' 0 L 0 0 0 '+options.largeGridSize)
-        .attr('fill', 'none')
-        .attr('stroke', 'red')
-        .attr('stroke-width', '1');
-      svg.append('rect')
-        .attr('height', '100%')
-        .attr('width', options.outerWidth)
-        .attr('class', 'chart-box');
-      svg.append('rect')
-        .attr('height', '100%')
-        .attr('width', options.outerWidth)
-        .attr('class', 'chart-bg');
-    }
+    //Background grid definition
+    const defs = svg.append('defs');
+    const smallGrid = defs.append('pattern')
+      .attr('id', 'small-grid')
+      .attr('width', options.smallGridSize)
+      .attr('height', options.smallGridSize)
+      .attr('patternUnits', 'userSpaceOnUse');
+    smallGrid.append('path')
+      .attr('d', 'M '+options.smallGridSize+' 0 L 0 0 0 '+options.smallGridSize)
+      .attr('fill', 'none')
+      .attr('stroke', 'red')
+      .attr('stroke-width', '0.5');
+    const grid = defs.append('pattern')
+      .attr('id', 'grid')
+      .attr('width', options.largeGridSize)
+      .attr('height', options.largeGridSize)
+      .attr('patternUnits', 'userSpaceOnUse')
+    grid.append('rect')
+      .attr('width', options.largeGridSize)
+      .attr('height', options.largeGridSize)
+      .attr('fill', 'url(#small-grid)');
+    grid.append('path')
+      .attr('d', 'M '+options.largeGridSize+' 0 L 0 0 0 '+options.largeGridSize)
+      .attr('fill', 'none')
+      .attr('stroke', 'red')
+      .attr('stroke-width', '1');
+    svg.append('rect')
+      .attr('height', '100%')
+      .attr('width', options.outerWidth)
+      .attr('class', 'chart-box');
+    svg.append('rect')
+      .attr('height', '100%')
+      .attr('width', options.outerWidth)
+      .attr('class', 'chart-bg');
     const dataKeys = Object.keys(options.data);
     dataKeys.forEach( (key, index) => {
       const height = index * (options.margin.bottom + options.innerHeight)
       const titleYPos = options.margin.top + height;
 
-      //x-y scale generators
-      const y = d3.scaleLinear()
-        .domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
-        .range([options.innerHeight, 0]);
-      let mnX = 0;
-      if(this.record.type === 'ECG') {mnX = options.data.ES[0].x;}
-      let mxX = mnX + options.maxXDomain;
-      const x = d3.scaleLinear()
-        .domain([mnX, mxX])
-        .range([0, options.outerWidth]);
+    //x-y scale generators
+    const y = d3.scaleLinear()
+      .domain([d3.min(options.data[key], d => d.y), d3.max(options.data[key], d => d.y)])
+      .range([options.innerHeight, 0]);
+    let mnX = 0;
+    if(this.record.type === 'ECG') {mnX = options.data.ES[0].x;}
+    let mxX = mnX + options.maxXDomain;
+    const x = d3.scaleLinear()
+      .domain([mnX, mxX])
+      .range([0, options.outerWidth]);
 
-      //Add the title
-      let delta = 14 - (options.outerWidth/1300)*14;
-      let titleFontSize = delta > 0 ? 14 - delta*0.75 : 14;
-      svg.append("text")
-          .attr("x", options.outerWidth - options.margin.left*2)
-          .attr("y", titleYPos)
-          .attr("text-anchor", "middle")
-          .style("font-size", titleFontSize)
-          .style("text-decoration", "underline")
-          .text(dataKeys[index]);
+    //Add the title
+    let delta = 14 - (options.outerWidth/1300)*14;
+    let titleFontSize = delta > 0 ? 14 - delta*0.75 : 14;
+    svg.append("text")
+        .attr("x", options.outerWidth - options.margin.left*2)
+        .attr("y", titleYPos)
+        .attr("text-anchor", "middle")
+        .style("font-size", titleFontSize)
+        .style("text-decoration", "underline")
+        .text(dataKeys[index]);
 
-      //x-y axis generators
-      const yAxis = d3.axisLeft(y)
-                      .ticks(0);
-      const xAxis = d3.axisBottom(x)
-                      .ticks(options.x.ticks);
+    //x-y axis generators
+    const yAxis = d3.axisLeft(y)
+                    .ticks(0);
+    const xAxis = d3.axisBottom(x)
+                    .ticks(options.x.ticks);
 
-      //Line generator (used to draw chart path)
-      let line = d3.line()
-        .defined(d => d.y !== null)
-        .x(d => x(d.x))
-        .y(d => y(d.y))
-        .curve(d3.curveNatural);
+    //Line generator (used to draw chart path)
+    let line = d3.line()
+      .defined(d => d.y !== null && !Number.isNaN(d.y))
+      .x(d => x(d.x))
+      .y(d => y(d.y))
+      .curve(d3.curveNatural);
 
-      const chartGroup = svg.append('g')
-        .attr('transform', 'translate('+options.margin.left+','+(options.margin.top +  height)+')');
+    const chartGroup = svg.append('g')
+      .attr('transform', 'translate('+options.margin.left+','+(options.margin.top +  height)+')');
 
-      chartGroup.append('path')
-        .attr('fill', 'none')
-        .attr('stroke', 'black')
+    chartGroup.append('path')
+      .attr('fill', 'none')
+      .attr('stroke', 'black')
+      .attr('stroke-width', '1')
+      .attr('d', line(options.data[key]));
+
+    chartGroup.append('g')
+      .attr('class', 'y-axis')
+      .call(yAxis);
+    chartGroup.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', 'translate(0,' + options.innerHeight +')')
+      .call(xAxis);
+
+    chartGroup.selectAll('circle')
+      .data(options.data[key])
+      .enter().append('circle')
+      .attr('cx', d => x(d.x))
+      .attr('cy', d => y(d.y))
+      .attr('r','5')
+      .attr('stroke', 'red')
+      .attr('stroke-width', '0')
+      .attr('fill', 'transparent')
+      .on('mouseover', function(){
+        d3.select(this)
         .attr('stroke-width', '1')
-        .attr('d', line(options.data[key]));
-
-      chartGroup.append('g')
-        .attr('class', 'y-axis')
-        .call(yAxis);
-      chartGroup.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', 'translate(0,' + options.innerHeight +')')
-        .call(xAxis);
-
-      chartGroup.selectAll('circle')
-        .data(options.data[key])
-        .enter().append('circle')
-        .attr('cx', d => x(d.x))
-        .attr('cy', d => y(d.y))
-        .attr('r','5')
-        .attr('stroke', 'red')
+        .attr('fill', 'blue')
+      })
+      .on('mouseout', function(){
+        d3.select(this)
         .attr('stroke-width', '0')
         .attr('fill', 'transparent')
-        .on('mouseover', function(){
-          d3.select(this)
-          .attr('stroke-width', '1')
-          .attr('fill', 'blue')
-        })
-        .on('mouseout', function(){
-          d3.select(this)
-          .attr('stroke-width', '0')
-          .attr('fill', 'transparent')
-        });
+      });
     });
   }
 
-  clearECGChart(){
+  clearRawChart(){
     if(d3.select('#chart-container').select('svg')){
       d3.select('#chart-container').select('svg').remove();
     }
@@ -269,8 +277,8 @@ export class RecordController {
 
   printChart(){
     this.printing = true;
-    this.clearECGChart();
-    this.drawECGChart();
+    this.clearRawChart();
+    this.drawRawChart();
     let css = '@page { size: landscape; }',
       head = document.head || document.getElementsByTagName('head')[0],
       style = document.createElement('style');
@@ -288,14 +296,14 @@ export class RecordController {
 
   printViewBackBtnHandler(){
     this.printing = false;
-    this.clearECGChart();
-    this.drawECGChart();
+    this.clearRawChart();
+    this.drawRawChart();
   }
 
-  updateECGChart(){
+  updateRawChart(){
     this.currentPage = this.recSegments.indexOf(this.currentRecSegment);
-    this.clearECGChart();
-    this.drawECGChart();
+    this.clearRawChart();
+    this.drawRawChart();
   }
 
   goToRecords(){
