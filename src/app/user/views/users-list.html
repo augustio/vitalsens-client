@@ -6,16 +6,27 @@
         <div class="panel-body">
           <table class="user-list">
             <tr>
+              <th>#</td>
               <th>Username</td>
               <th>Email</td>
               <th>Role</td>
             </tr>
-            <tr role="button" ng-click="usr.showUserDetail(user.userId)" ng-repeat="user in usr.users">
+            <tr role="button" ng-click="usr.showUserDetail(user.userId)" ng-repeat="user in usr.currentUsers">
+              <td>{{user.index}}</td>
               <td>{{user.userId}}</td>
               <td>{{user.email}}</td>
               <td>{{user.role}}</td>
             </tr>
           </table>
+          <ul ng-if="usr.currentUsers.length > 0"
+          uib-pagination total-items="usr.itemsSize"
+          ng-model="usr.currentPage"
+          ng-change="usr.onPageChange()"
+          items-per-page="usr.pageSize"
+          class="pagination-sm"
+          boundary-links="true"
+          force-ellipses="true">
+          </ul>
         </div>
       </div>
     </div>

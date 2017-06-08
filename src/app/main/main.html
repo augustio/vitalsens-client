@@ -69,7 +69,7 @@
   <div class="row">
     <div class="col-md-10 col-centered">
       <div class="panel-body">
-        <table class="rec-list" ng-if="main.filteredRecords.length > 0">
+        <table class="rec-list" ng-if="main.currentRecords.length > 0">
           <tr>
             <th>#</th>
             <th>Patient Id</th>
@@ -78,12 +78,12 @@
             <th>Duration (minutes)</th>
             <th>Type</th>
           </tr>
-          <tr role="button" ng-click="main.showRecord(r)" ng-repeat="r in main.filteredRecords">
+          <tr role="button" ng-click="main.showRecord(r)" ng-repeat="r in main.currentRecords">
             <td>
               <span class="glyphicon glyphicon-trash main-trash pull-left"
               ng-if="main.getAuthUser().role === 'sudo'"
               ng-click="main.deleteRecord($event, r._id)">
-              </span>{{$index}}
+            </span>{{r.index}}
             </td>
             <td>{{r.patientId}}</td>
             <td>{{r.recStart | date:'dd.MM.yyyy'}}</td>
@@ -103,6 +103,15 @@
             </td>
           </tr>
         </table>
+        <ul ng-if="main.currentRecords.length > 0"
+        uib-pagination total-items="main.itemsSize"
+        ng-model="main.currentPage"
+        ng-change="main.onPageChange()"
+        items-per-page="main.pageSize"
+        class="pagination-sm"
+        boundary-links="true"
+        force-ellipses="true">
+        </ul>
       </div>
     </div>
   </div>

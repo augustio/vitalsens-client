@@ -36,6 +36,9 @@ export class MainController {
     this.fromOpened = false;
     this.toOpened = false;
 
+    this.pageSize = 10;
+    this.currentPage = 1;
+
     this.getPatients();
   }
 
@@ -66,7 +69,13 @@ export class MainController {
     this.$http.get(this.API_URL+'api/records/user/'+id)
       .then(successRes => {
         this.records = successRes.data || [];
-        this.filteredRecords = this.records;
+        this.filteredRecords = this.records.map((r,i) => {
+          let rec = {};
+          Object.assign(rec, r, {index: i+1});
+          return rec;
+        });
+        this.itemsSize = this.filteredRecords.length;
+        this.onPageChange();
       });
   }
 
@@ -96,7 +105,14 @@ export class MainController {
       this.filteredRecords = this.filteredRecords.filter(r => {
         return r.recStart <= to;
       });
+      this.itemsSize = this.filteredRecords.length;
     }
+  }
+
+  onPageChange(){
+    let start = (this.currentPage - 1)*this.pageSize,
+        end = start + this.pageSize;
+    this.currentRecords = this.filteredRecords.slice(start, end);
   }
 
   getDuration(from, to){

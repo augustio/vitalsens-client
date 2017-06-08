@@ -18,6 +18,9 @@ export class UserController{
     this.users = [];
     this.currentUser = {};
 
+    this.pageSize = 10;
+    this.currentPage = 1;
+
     let current = this.$state.current.name;
     if(current == 'users-list') { this.getUsers(); }
     if(current == 'register') { this.getGroups(); }
@@ -47,7 +50,13 @@ export class UserController{
   getUsers(){
     this.$http.get(this.API_URL+'api/users/')
       .then(successRes => {
-        this.users = successRes.data.users;
+        this.users = successRes.data.users.map((u,i) => {
+          let user = {};
+          Object.assign(user, u, {index: i+1});
+          return user;
+        });
+        this.itemsSize = this.users.length;
+        this.onPageChange();
       }, errorRes => {
         this.errorMessage = errorRes.data.message;
       });
@@ -109,5 +118,11 @@ export class UserController{
     this.$http.get(this.API_URL+'api/groups').then( successRes => {
       this.groups = successRes.data.groups || [];
     });
+  }
+
+  onPageChange(){
+    let start = (this.currentPage - 1)*this.pageSize,
+        end = start + this.pageSize;
+    this.currentUsers = this.users.slice(start, end);
   }
 }
