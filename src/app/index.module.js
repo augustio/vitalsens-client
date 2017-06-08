@@ -37,6 +37,6 @@ angular.module('vitalsens', ['ui.router', 'ui.bootstrap', 'toastr', 'satellizer'
   .controller('RecordRawController', RecordRawController)
   .controller('RecordAnalysisController', RecordAnalysisController)
   .controller('UserController', UserController)
-  .directive('acmeNavbar', NavbarDirective)
+  .directive('navbar', NavbarDirective)
   .directive('acmeMalarkey', MalarkeyDirective)
   .directive('compareTo', CompareToDirective);

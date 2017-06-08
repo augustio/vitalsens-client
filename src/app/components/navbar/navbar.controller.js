@@ -25,4 +25,13 @@ export class NavbarController{
       }
       return authUser;
     }
+
+    openNavMenu(){
+      let nav = document.getElementById('vs-navbar');
+      if(nav.className === 'navbar'){
+        nav.className += ' responsive';
+      }else{
+        nav.className = 'navbar';
+      }
+    }
 }
