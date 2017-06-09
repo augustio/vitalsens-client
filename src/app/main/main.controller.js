@@ -105,8 +105,14 @@ export class MainController {
       this.filteredRecords = this.filteredRecords.filter(r => {
         return r.recStart <= to;
       });
-      this.itemsSize = this.filteredRecords.length;
     }
+    this.filteredRecords = this.filteredRecords.map((r,i) => {
+      let rec = {};
+      Object.assign(rec, r, {index: i+1});
+      return rec;
+    });
+    this.itemsSize = this.filteredRecords.length;
+    this.onPageChange();
   }
 
   onPageChange(){
