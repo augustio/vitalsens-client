@@ -104,19 +104,21 @@ line{
 }
 
 #rr-chart-container{
-  width: 100%;
-  margin: 40px;
+  width: 1100px;
+  margin: auto;
+  display: block;
 }
 #poincare-chart{
   height: 500px;
   width: 600px;
 }
 
-#pvc-plot{
-  height: 300px;
-  width: 400px;
-  margin-top: 150px;
-  margin-left: 200px;
+#events-chart-container{
+  height: 200px;
+  width: 1100px;
+  margin: auto;
+  padding-top: 20px;
+  display: block;
 }
 
 g.group0 path,
@@ -358,6 +360,10 @@ hr {
 
 .analysis-select{
   margin-top: 1em;
+}
+
+.event-plot-delete-btn{
+  cursor: pointer;
 }
 
 /**

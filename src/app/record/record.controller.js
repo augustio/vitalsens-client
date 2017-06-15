@@ -19,7 +19,7 @@ export class RecordController {
       this.MILLIS_IN_ONE_DAY = 8.64e+7;
       this.record = null;
       this.recordData = null;
-      this.recordAnalysis = null;
+      this.analysisAvailable = false;
       this.printing = false;
 
       this.currentPage = 0;
@@ -28,8 +28,13 @@ export class RecordController {
       this.pageSize = 0;
       this.channels = 0;
       this.recSegments = [];
+      this.analysisType = 'pvc';
 
       this.getRecordDetail();
+
+      this.drawEventsChart = this.drawEventsChart.bind(this);
+      this.drawRRChart = this.drawRRChart.bind(this);
+      this.clearEventsChart = this.clearEventsChart.bind(this);
 
       d3.select(window).on('resize', () => {
         this.clearRawChart();
@@ -61,7 +66,6 @@ export class RecordController {
       }
     }, (err, results) => {
       if(results.recordAnalysis){
-        console.log(results.recordAnalysis);
         this.recordAnalysis = results.recordAnalysis;
       }
       if(results.record){
@@ -90,17 +94,31 @@ export class RecordController {
         if(this.recordData.chThree.length > 0) this.channels++;
         this.drawRawChart();
       }
-      if(results.recordAnalysis){this.recordAnalysis = results.recordAnalysis;}
+      if(results.recordAnalysis){
+        this.analysisAvailable = true;
+        this.rrIntervals = results.recordAnalysis.rrIntervals || [];
+        this.pvcEvents = results.recordAnalysis.pvcEvents || {};
+        this.afibEvents = results.recordAnalysis.afibEvents || [];
+        this.hrvFeatures = results.recordAnalysis.hrvFeatures || [];
+        this.alarms = results.recordAnalysis.alarms || [];
+        this.rPeaks = results.recordAnalysis.rPeaks || {};
+        this.drawRRChart();
+      }
     });
   }
 
-  formatRecordData(){
+  formatRecordData(allData){
     let d = {};
     let start = this.currentPage*this.pageSize;
     let end = start + this.pageSize;
     let chOne = this.recordData.chOne.slice(start, end);
     let chTwo = this.recordData.chTwo.slice(start, end);
     let chThree = this.recordData.chThree.slice(start, end);
+    if(allData){
+      chOne = this.recordData.chOne;
+      chTwo = this.recordData.chTwo;
+      chThree = this.recordData.chThree;
+    }
     switch (this.channels) {
       case 1:
         break;
@@ -279,6 +297,224 @@ export class RecordController {
     }
   }
 
+  drawRRChart(){
+    this.clearRRChart();
+    if(this.rrIntervals.length < 1){
+      return;
+    }
+    let height = 200;
+    let width = 1040;
+    let margin = 40;
+    let outerHeight = 280;
+    let outerWidth = 1100;
+    let data = this.rrIntervals.map((v, i) => {
+      return {x: i+1, y: v};
+    });
+    let eventsLocations = [];
+    if(this.analysisType === 'pvc') {
+      eventsLocations = this.pvcEvents.locs || [];
+    }
+    if(this.analysisType === 'afib'){
+      eventsLocations = this.afibEvents.locs || [];
+    }
+    let events = data.filter(v => {
+      if(eventsLocations.includes(v.x)){
+        return v;
+      }
+    });
+    const svg = d3.select('#rr-chart-container').append('svg')
+      .attr('height', outerHeight)
+      .attr('width', outerWidth);
+
+      //x-y scale generators
+      const y = d3.scaleLinear()
+        .domain([d3.min(data, d => d.y), d3.max(data, d => d.y)])
+        .range([height, 0]);
+      const x = d3.scaleLinear()
+        .domain([d3.min(data, d => d.x), d3.max(data, d => d.x)])
+        .range([0, width]);
+
+      //x-y axis generators
+      const yAxis = d3.axisLeft(y);
+      const xAxis = d3.axisBottom(x);
+
+      //Line generator (used to draw chart path)
+      let line = d3.line()
+        .x(d => x(d.x))
+        .y(d => y(d.y))
+        .curve(d3.curveNatural);
+
+      const chartGroup = svg.append('g')
+        .attr('transform', 'translate('+margin+','+margin+')');
+
+      chartGroup.append('path')
+        .attr('fill', 'none')
+        .attr('stroke', '#B0C4DE')
+        .attr('stroke-width', '1')
+        .attr('d', line(data));
+
+      chartGroup.append('g')
+        .attr('class', 'axis y')
+        .call(yAxis);
+      chartGroup.append('g')
+        .attr('class', 'axis x')
+        .attr('transform', 'translate(0,' + height +')')
+        .call(xAxis);
+
+      chartGroup.append('text')
+      .attr('fill', 'black')
+      .attr('x', ((width/2) - margin*1.75))
+      .attr('y', (margin*-1.5))
+      .attr('dy', '3em')
+      .text('TACHOGRAM (RR Interval Signal)');
+      chartGroup.append('text')
+      .attr('fill', 'black')
+      .attr('x', ((width/2) - margin))
+      .attr('y', (height + margin))
+      .text('RR Intervals (i = 1,2,...n)');
+
+      chartGroup.selectAll('circle')
+        .data(events)
+        .enter().append('circle')
+        .attr('cx', d => x(d.x))
+        .attr('cy', d => y(d.y))
+        .attr('r','5')
+        .attr('fill', 'red')
+        .on('mouseover', function(){
+          d3.select(this)
+          .attr('r', '10')
+          .attr('fill-opacity', 0.5);
+        })
+        .on('mouseout', function(){
+          d3.select(this)
+          .attr('r', '5')
+          .attr('fill-opacity', 1);
+        })
+        .on('click', this.drawEventsChart);
+  }
+
+  clearRRChart(){
+    if(d3.select('#rr-chart-container').select('svg')){
+      d3.select('#rr-chart-container').select('svg').remove();
+    }
+  }
+
+  drawEventsChart(element, index){
+    let eventMarkers = null;
+    let title;
+    if(this.analysisType === 'pvc'){
+      eventMarkers = this.pvcEvents.markers;
+      title = 'PVC Event';
+    }
+    if(this.analysisType === 'afib'){
+      eventMarkers = this.afibEvents.markers;
+      title = 'AFIB Event';
+    }
+    if(this.recordData && eventMarkers){
+      let recData = this.formatRecordData(true);
+      let markers = eventMarkers[index];
+      let start = (markers[0] - 500) >= 0 ? markers[0] - 500 : 0;
+      let end = (markers[1] + 500) < recData.ES.length ?
+                                      markers[1] + 500 :
+                                      recData.ES.length-1;
+      let eventIndex = [markers[0] - start, (markers[0] - start)+(markers[1]-markers[0])];
+      let data = recData.ES.slice(start, end);
+
+      this.clearEventsChart();
+      if(data.length < 1){
+        return;
+      }
+      let outerHeight = 250,
+          outerWidth = 1100,
+          height = 200,
+          width = 1040,
+          margin = 30;
+      const svg = d3.select('#events-chart-container').append('svg')
+        .attr('height', outerHeight)
+        .attr('width', outerWidth);
+
+        //x-y scale generators
+        const y = d3.scaleLinear()
+          .domain([d3.min(data, d => d.y), d3.max(data, d => d.y)])
+          .range([height, 0]);
+        const x = d3.scaleLinear()
+          .domain([d3.min(data, d => d.x), d3.max(data, d => d.x)])
+          .range([0, width]);
+
+        //x-y axis generators
+        const yAxis = d3.axisLeft(y).ticks('0');
+        const xAxis = d3.axisBottom(x).ticks('0');
+
+        //Line generator (used to draw chart path)
+        let line = d3.line()
+          .defined(d => d.y !== null)
+          .x(d => x(d.x))
+          .y(d => y(d.y))
+          .curve(d3.curveNatural);
+
+        const chartGroup = svg.append('g')
+          .attr('transform', 'translate('+margin+','+margin+')');
+
+        chartGroup.append('rect')
+          .attr('x', x(data[eventIndex[0]].x))
+          .attr('y', 0)
+          .attr('width', x(data[eventIndex[1]].x)- x(data[eventIndex[0]].x))
+          .attr('height', height)
+          .attr('fill', 'red')
+          .attr('opacity', 0.3);
+
+        chartGroup.append('text')
+        .attr('fill', 'black')
+        .attr('x', ((width/2) - margin*1.75))
+        .attr('y', (margin*-2))
+        .attr('dy', '3em')
+        .text(title);
+
+        chartGroup.append('text')
+        .attr('fill', 'red')
+        .attr('x', width)
+        .attr('y', (margin/2))
+        .attr('class', 'event-plot-delete-btn')
+        .style('font-size', '16px')
+        .style('font-weight', 'bold')
+        .text('X')
+        .on('mouseover', function(){
+          d3.select(this)
+          .style('font-size', '18px')
+          .attr('fill', 'blue');
+        })
+        .on('mouseout', function(){
+          d3.select(this)
+          .style('font-size', '16px')
+          .attr('fill', 'red');
+        })
+        .on('click', () => {
+          this.clearEventsChart();
+          this.drawRRChart();
+        });
+
+        chartGroup.append('path')
+          .attr('fill', 'none')
+          .attr('stroke', '#B0C4DE')
+          .attr('stroke-width', '1')
+          .attr('d', line(data));
+
+        chartGroup.append('g')
+          .attr('class', 'axis y')
+          .call(yAxis);
+        chartGroup.append('g')
+          .attr('class', 'axis x')
+          .attr('transform', 'translate(0,' + height +')')
+          .call(xAxis);
+    }
+  }
+
+  clearEventsChart(){
+    if(d3.select('#events-chart-container').select('svg')){
+      d3.select('#events-chart-container').select('svg').remove();
+    }
+  }
+
   printChart(){
     this.printing = true;
     this.clearRawChart();
@@ -308,6 +544,19 @@ export class RecordController {
     this.currentPage = this.recSegments.indexOf(this.currentRecSegment);
     this.clearRawChart();
     this.drawRawChart();
+  }
+
+  setAnalysisType(type){
+    this.analysisType = type;
+    this.clearEventsChart();
+    if(type === 'alarm'){
+      this.clearRRChart();
+    }else if(type === 'poincare'){
+      this.clearRRChart();
+    }else{
+      this.clearRRChart();
+      this.drawRRChart();
+    }
   }
 
   goToRecords(){

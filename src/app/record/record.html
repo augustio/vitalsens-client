@@ -45,20 +45,26 @@
         </button>
       </uib-tab>
       <uib-tab index="1" heading="ANALYSIS" classes="record-data-analysis-heading">
-        <span ng-if="rec.recordAnalysis" class="btn-group pull-right analysis-select">
+        <span ng-if="rec.analysisAvailable" class="btn-group pull-right analysis-select">
           <div class="btn-group font-size-responsive" uib-dropdown is-open="status.isopen">
             <button id="single-button" type="button" class="btn btn-info btn-responsive" uib-dropdown-toggle ng-disabled="disabled">
               Analysis Types <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-              <li role="menuitem"><a href="#">Afib Events</a></li>
-              <li role="menuitem"><a href="#">PVC events</a></li>
+              <li ng-click="rec.setAnalysisType('afib')"><a role="button">Afib Events</a></li>
+              <li ng-click="rec.setAnalysisType('pvc')"><a role="button">PVC events</a></li>
               <li class="divider"></li>
-              <li role="menuitem"><a href="#">Alarms</a></li>
-              <li role="menuitem"><a href="#">Poincare Plot</a></li>
+              <li ng-click="rec.setAnalysisType('alarm')"><a role="button">Alarms</a></li>
+              <li ng-click="rec.setAnalysisType('poincare')"><a role="button">Poincare Plot</a></li>
             </ul>
           </div>
         </span>
+        <div class="row">
+          <div class="col-xs-12">
+            <div id="rr-chart-container" class="font-size-responsive"></div>
+            <div id="events-chart-container" class="font-size-responsive"></div>
+          </div>
+        </div>
       </uib-tab>
     </uib-tabset>
   </div>
