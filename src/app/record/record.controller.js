@@ -101,6 +101,7 @@ export class RecordController {
         this.afibEvents = results.recordAnalysis.afibEvents || [];
         this.hrvFeatures = results.recordAnalysis.hrvFeatures || [];
         this.alarms = results.recordAnalysis.alarms || [];
+        console.log(this.alarms);
         this.rPeaks = results.recordAnalysis.rPeaks || {};
         this.drawRRChart();
       }

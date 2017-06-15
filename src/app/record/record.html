@@ -61,6 +61,22 @@
         </span>
         <div class="row">
           <div class="col-xs-12">
+            <table class="rec-list" ng-if="rec.analysisType === 'alarm'">
+              <tr ng-if="rec.alarms">
+                <th>Time Period</th>
+                <th>Pipeline</th>
+                <th>Severity</th>
+                <th>Analysis Unit</th>
+                <th>Description</th>
+              </tr>
+              <tr ng-repeat="alarm in rec.alarms">
+                <td>"---"</td>
+                <td>{{alarm.pipeline}}</td>
+                <td>{{alarm.severity}}</td>
+                <td>{{alarm.analysisunit}}</td>
+                <td>{{alarm.description}}</td>
+              </tr>
+            </table>
             <div id="rr-chart-container" class="font-size-responsive"></div>
             <div id="events-chart-container" class="font-size-responsive"></div>
           </div>
