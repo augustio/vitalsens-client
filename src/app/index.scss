@@ -228,20 +228,20 @@ g.tick text {
   max-height: 200px;
   overflow-y: auto;
 }
-table.rec-list, table.user-list {
+table.rec-list, table.user-list, table.alarms{
   border-collapse: separate;
   border-spacing: 10px;
   width: 100%;
   background-color: #ffffff;
 }
 
-table.rec-list td, table.user-list td{
+table.rec-list td, table.user-list td, table.alarms td{
   text-align: center;
   border: 1px solid #dddddd;
   padding: 10px;
 }
 
-table.rec-list th, table.user-list th{
+table.rec-list th, table.user-list th, table.alarms th{
   text-align: center;
   color: #ffffff;
   padding: 10px;
@@ -253,6 +253,10 @@ table.rec-list th, table.user-list th{
 
 table.rec-list tr:hover, table.user-list tr:hover{
   background-color: #dddddd;
+}
+
+table.alarms tr:hover{
+  opacity: 1;
 }
 
 table{

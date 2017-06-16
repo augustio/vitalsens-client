@@ -113,7 +113,6 @@ export class RecordController {
             const scale = d3.scaleLinear()
               .domain([0, size])
               .range([start, end]);
-            console.log(this.$filter('date')(scale(0), 'HH:mm:ss'), this.$filter('date')(scale(size), 'HH:mm:ss'));
             let from = this.$filter('date')(scale(a.data.ecg_marker[0]), 'HH:mm:ss');
             let to = this.$filter('date')(scale(a.data.ecg_marker[1]), 'HH:mm:ss');
             Object.assign(alarm, a, {timePeriod: `${from} - ${to}`});
