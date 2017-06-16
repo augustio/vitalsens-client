@@ -69,7 +69,8 @@
                 <th>Analysis Unit</th>
                 <th>Description</th>
               </tr>
-              <tr ng-repeat="alarm in rec.currentAlarms">
+              <tr ng-repeat="alarm in rec.currentAlarms"
+              ng-class="{'red-alarm': alarm.severity === 2, 'yellow-alarm': alarm.severity === 1, 'green-alarm': alarm.severity === 0}">
                 <td>{{alarm.timePeriod}}</td>
                 <td>{{alarm.pipeline}}</td>
                 <td>{{alarm.severity}}</td>

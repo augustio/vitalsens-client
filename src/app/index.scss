@@ -344,6 +344,21 @@ button.ok_btn:hover{
   margin-left: 1px;
   margin-right: 1px;
 }
+.red-alarm{
+  background-color: #e60000;
+  color: #ffffff;
+  opacity: 0.5;
+}
+.green-alarm{
+  background-color: #009900;
+  color: #ffffff;
+  opacity: 0.5;
+}
+.yellow-alarm{
+  background-color: #ffff00;
+  color: #ffffff;
+  opacity: 0.5;
+}
 
 .user-detail-btn{
   margin: 4px 4px 0px 0px;
