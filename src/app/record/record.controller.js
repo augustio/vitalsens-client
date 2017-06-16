@@ -30,6 +30,9 @@ export class RecordController {
       this.recSegments = [];
       this.analysisType = 'pvc';
 
+      this.alarmsItemsPerPage = 10;
+      this.currentAlarmsPage = 1;
+
       this.getRecordDetail();
 
       this.drawEventsChart = this.drawEventsChart.bind(this);
@@ -101,11 +104,36 @@ export class RecordController {
         this.afibEvents = results.recordAnalysis.afibEvents || [];
         this.hrvFeatures = results.recordAnalysis.hrvFeatures || [];
         this.alarms = results.recordAnalysis.alarms || [];
-        console.log(this.alarms);
+        this.alarms = this.alarms.map(a => {
+          let alarm = {};
+          if(this.record){
+            let start = this.record.recStart;
+            let end = this.record.recEnd;
+            let size = this.record.size;
+            const scale = d3.scaleLinear()
+              .domain([0, size])
+              .range([start, end]);
+            console.log(this.$filter('date')(scale(0), 'HH:mm:ss'), this.$filter('date')(scale(size), 'HH:mm:ss'));
+            let from = this.$filter('date')(scale(a.data.ecg_marker[0]), 'HH:mm:ss');
+            let to = this.$filter('date')(scale(a.data.ecg_marker[1]), 'HH:mm:ss');
+            Object.assign(alarm, a, {timePeriod: `${from} - ${to}`});
+          }else{
+            Object.assign(alarm, a, {timePeriod: 'N/A'});
+          }
+          return alarm;
+        });
+        this.alarmsCount = this.alarms.length;
+        this.onAlarmsPageChange();
         this.rPeaks = results.recordAnalysis.rPeaks || {};
         this.drawRRChart();
       }
     });
+  }
+
+  onAlarmsPageChange(){
+    let start = (this.currentAlarmsPage - 1)*this.alarmsItemsPerPage,
+        end = start + this.alarmsItemsPerPage;
+    this.currentAlarms = this.alarms.slice(start, end);
   }
 
   formatRecordData(allData){

@@ -69,14 +69,23 @@
                 <th>Analysis Unit</th>
                 <th>Description</th>
               </tr>
-              <tr ng-repeat="alarm in rec.alarms">
-                <td>"---"</td>
+              <tr ng-repeat="alarm in rec.currentAlarms">
+                <td>{{alarm.timePeriod}}</td>
                 <td>{{alarm.pipeline}}</td>
                 <td>{{alarm.severity}}</td>
                 <td>{{alarm.analysisunit}}</td>
                 <td>{{alarm.description}}</td>
               </tr>
             </table>
+            <ul ng-if="rec.analysisType === 'alarm' && rec.alarms"
+            uib-pagination total-items="rec.alarmsCount"
+            ng-model="rec.currentAlarmsPage"
+            ng-change="rec.onAlarmsPageChange()"
+            items-per-page="rec.alarmsItemsPerPage"
+            class="pagination-sm"
+            boundary-links="true"
+            force-ellipses="true">
+            </ul>
             <div id="rr-chart-container" class="font-size-responsive"></div>
             <div id="events-chart-container" class="font-size-responsive"></div>
           </div>
