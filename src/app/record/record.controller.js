@@ -47,6 +47,7 @@ export class RecordController {
 
   getRecordDetail(){
     let record_id = this.$state.params.record_id;
+    this.pageOnList = this.$state.params.currentPage;
     if(record_id == null) { return; }
     async.parallel({
       record: callback => {
@@ -588,7 +589,11 @@ export class RecordController {
   }
 
   goToRecords(){
-    this.$state.go('home', {patientId: this.record.patientId});
+    this.$state.go('home', {
+      patientId: this.record.patientId,
+      currentPage: this.pageOnList,
+      currentRecordId: this.record._id
+    });
   }
 
   downloadData(){

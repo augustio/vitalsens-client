@@ -37,7 +37,7 @@ export class MainController {
     this.toOpened = false;
 
     this.pageSize = 10;
-    this.currentPage = 1;
+    this.currentPage = this.$state.params.currentPage || 1;
 
     this.getPatients();
   }
@@ -74,6 +74,12 @@ export class MainController {
           Object.assign(rec, r, {index: i+1});
           return rec;
         });
+        let recordId = this.$state.params.currentRecordId;
+        this.filteredRecords.forEach(r => {
+          if(r._id == recordId){ r.selected = true; }
+        });
+        console.log(this.filteredRecords);
+        console.log(this.$state.params.currentRecordId);
         this.itemsSize = this.filteredRecords.length;
         this.onPageChange();
       });
@@ -127,7 +133,10 @@ export class MainController {
   }
 
   showRecord(r){
-    this.$state.go('record', {record_id: r._id});
+    this.$state.go('record', {
+      record_id: r._id,
+      currentPage: this.currentPage
+    });
   }
 
   clear() {

@@ -3,7 +3,11 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: '/',
-      params: {patientId: null},
+      params: {
+        patientId: null,
+        currentPage: null,
+        currentRecordId: null
+      },
       templateUrl: 'app/main/main.html',
       controller: 'MainController',
       controllerAs: 'main'
@@ -45,7 +49,10 @@ export function routerConfig ($stateProvider, $urlRouterProvider) {
     })
     .state('record', {
       url: '/record',
-      params:{record_id: null},
+      params:{
+        record_id: null,
+        currentPage: null
+      },
       templateUrl: 'app/record/record.html',
       controller: 'RecordController',
       controllerAs: 'rec'

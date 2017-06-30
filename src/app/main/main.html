@@ -78,7 +78,8 @@
             <th>Duration (minutes)</th>
             <th>Type</th>
           </tr>
-          <tr role="button" ng-click="main.showRecord(r)" ng-repeat="r in main.currentRecords">
+          <tr role="button" ng-click="main.showRecord(r)" ng-repeat="r in main.currentRecords"
+            ng-class="{selected: r.selected}">
             <td>
               <span class="glyphicon glyphicon-trash main-trash pull-left"
               ng-if="main.getAuthUser().role === 'sudo'"
