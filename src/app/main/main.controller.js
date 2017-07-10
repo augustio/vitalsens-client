@@ -78,8 +78,6 @@ export class MainController {
         this.filteredRecords.forEach(r => {
           if(r._id == recordId){ r.selected = true; }
         });
-        console.log(this.filteredRecords);
-        console.log(this.$state.params.currentRecordId);
         this.itemsSize = this.filteredRecords.length;
         this.onPageChange();
       });
