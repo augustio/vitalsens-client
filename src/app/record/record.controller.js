@@ -569,6 +569,21 @@ export class RecordController {
     this.drawRawChart();
   }
 
+  handleForwardBtn(){
+    let idx = this.recSegments.indexOf(this.currentRecSegment);
+    let max = this.recSegments.length - 1;
+    if(idx < max){idx += 1;}
+    this.currentRecSegment = this.recSegments[idx];
+    this.updateRawChart();
+  }
+
+  handleBackwardBtn(){
+    let idx = this.recSegments.indexOf(this.currentRecSegment);
+    if(idx > 1){idx -= 1;}
+    this.currentRecSegment = this.recSegments[idx];
+    this.updateRawChart();
+  }
+
   updateRawChart(){
     this.currentPage = this.recSegments.indexOf(this.currentRecSegment);
     this.clearRawChart();
