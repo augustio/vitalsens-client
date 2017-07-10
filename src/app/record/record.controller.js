@@ -576,7 +576,7 @@ export class RecordController {
 
   handleBackwardBtn(){
     let idx = this.recSegments.indexOf(this.currentRecSegment);
-    if(idx > 1){idx -= 1;}
+    if(idx > 0){idx -= 1;}
     this.currentRecSegment = this.recSegments[idx];
     this.updateRawChart();
   }
