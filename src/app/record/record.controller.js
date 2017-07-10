@@ -524,7 +524,7 @@ export class RecordController {
 
         chartGroup.append('path')
           .attr('fill', 'none')
-          .attr('stroke', '#B0C4DE')
+          .attr('stroke', 'steelblue')
           .attr('stroke-width', '1')
           .attr('d', line(data));
 
