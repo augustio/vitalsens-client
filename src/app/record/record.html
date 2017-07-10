@@ -39,7 +39,7 @@
         </div>
         <div id="chart-container" class="font-size-responsive">
         </div>
-        <div ng-if="!rec.recordData && !rec.printing" class="chart-btn">
+        <div ng-if="rec.recordData && !rec.printing" class="chart-btn">
           <button
           class="btn btn-info btn-sm back-btn btn-responsive pull-left"
           ng-click="rec.handleBackwardBtn()">
@@ -51,7 +51,7 @@
             <span class="glyphicon glyphicon-forward"></span>
           </button>
         </div>
-        <uib-progressbar ng-if="!rec.recordData && !rec.printing"
+        <uib-progressbar ng-if="rec.recordData && !rec.printing"
         max="100" value="100" type="info">
           <b>{{rec.currentRecSegment}}</b>
         </uib-progressbar>
