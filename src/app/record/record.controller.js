@@ -69,9 +69,6 @@ export class RecordController {
         });
       }
     }, (err, results) => {
-      if(results.recordAnalysis){
-        this.recordAnalysis = results.recordAnalysis;
-      }
       if(results.record){
         this.record = results.record;
         this.pageSize = this.record.samplingRate * 7 //7 seconds
