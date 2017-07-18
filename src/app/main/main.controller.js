@@ -125,9 +125,9 @@ export class MainController {
     this.currentRecords = this.filteredRecords.slice(start, end);
   }
 
-  getDuration(from, to){
-    if(to < from) { return 0; }
-    return (to - from)/60000;
+  getDuration(tStamp){
+    if(tStamp < 0) { return 0; }
+    return (tStamp)/60000;
   }
 
   showRecord(r){

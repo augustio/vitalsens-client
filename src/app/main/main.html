@@ -89,7 +89,7 @@
             <td>{{r.patientId}}</td>
             <td>{{r.recStart | date:'dd.MM.yyyy'}}</td>
             <td>{{r.recStart | date:'HH:mm:ss'}}</td>
-            <td>{{main.getDuration(r.recStart, r.recEnd) | number:2}}</td>
+            <td>{{main.getDuration(r.timeStamp) | number:2}}</td>
             <td>
               {{r.type}}
               <span class="glyphicon glyphicon-bell pull-right main-red-alarm"
