@@ -1,5 +1,5 @@
 export class MainController {
-  constructor($auth, $state, $http, $window, API_URL){
+  constructor($auth, $state, $http, $window, $interval, API_URL){
     'ngInject';
 
     this.$auth = $auth;
@@ -12,6 +12,7 @@ export class MainController {
 
     this.$http = $http;
     this.$window = $window;
+    this.$interval = $interval;
     this.API_URL = API_URL;
 
     this.filters = {
@@ -19,6 +20,9 @@ export class MainController {
       dateTo: new Date()
     };
     this.selectedPatient = null;
+    this.$interval(() => {
+      if(this.selectedPatient){ this.getPatientRecords(); }
+    }, 30000);
 
     this.formats = [
       'M!/d!/yyyy',
