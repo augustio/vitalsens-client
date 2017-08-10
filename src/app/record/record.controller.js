@@ -33,6 +33,9 @@ export class RecordController {
       this.alarmsItemsPerPage = 10;
       this.currentAlarmsPage = 1;
 
+      this.curRRIndex = 0;
+      this.RRGraphWindow = 250;
+
       this.getRecordDetail();
 
       this.drawEventsChart = this.drawEventsChart.bind(this);
@@ -98,6 +101,11 @@ export class RecordController {
       if(results.recordAnalysis){
         this.analysisAvailable = true;
         this.rrIntervals = results.recordAnalysis.rrIntervals || [];
+        this.rrGraphData =
+        this.rrIntervals.filter(v => v > 0)
+                        .map((v, i) => {
+                          return {x: i+1, y: v};
+                        });
         this.pvcEvents = results.recordAnalysis.pvcEvents || {};
         this.afibEvents = results.recordAnalysis.afibEvents || [];
         this.hrvFeatures = results.recordAnalysis.hrvFeatures || [];
@@ -333,9 +341,7 @@ export class RecordController {
     let margin = 40;
     let outerHeight = 280;
     let outerWidth = 1100;
-    let data = this.rrIntervals.map((v, i) => {
-      return {x: i+1, y: v};
-    });
+    let data = this.nextRRData();
     let eventsLocations = [];
     if(this.analysisType === 'pvc') {
       eventsLocations = this.pvcEvents.locs || [];
@@ -417,12 +423,45 @@ export class RecordController {
           .attr('fill-opacity', 1);
         })
         .on('click', this.drawEventsChart);
+
+      chartGroup.append('text')
+      .attr('class', 'next-rr-data-btn')
+      .attr('fill', 'steelblue')
+      .attr('x', width)
+      .attr('y', (margin/2))
+      .style('font-size', '16px')
+      .style('font-weight', 'bold')
+      .text('>>')
+      .on('mouseover', function(){
+        d3.select(this)
+        .style('font-size', '18px')
+        .attr('opacity', '0.5');
+      })
+      .on('mouseout', function(){
+        d3.select(this)
+        .style('font-size', '16px')
+        .attr('opacity', '1');
+      })
+      .on('click', () => {
+        this.clearRRChart();
+        this.drawRRChart();
+      });
   }
 
   clearRRChart(){
     if(d3.select('#rr-chart-container').select('svg')){
       d3.select('#rr-chart-container').select('svg').remove();
     }
+  }
+
+  nextRRData(){
+    let idx = this.curRRIndex;
+    let i = idx + this.RRGraphWindow;
+    this.curRRIndex = 0;
+    if(i < this.rrGraphData.length){
+      this.curRRIndex = i;
+    }
+    return this.rrGraphData.slice(idx, i);
   }
 
   drawEventsChart(element, index){
@@ -441,8 +480,8 @@ export class RecordController {
       let markers = eventMarkers[index];
       let start = (markers[0] - 500) >= 0 ? markers[0] - 500 : 0;
       let end = (markers[1] + 500) < recData.ES.length ?
-                                      markers[1] + 500 :
-                                      recData.ES.length-1;
+      markers[1] + 500 :
+      recData.ES.length-1;
       let eventIndex = [markers[0] - start, (markers[0] - start)+(markers[1]-markers[0])];
       let data = recData.ES.slice(start, end);
 
