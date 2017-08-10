@@ -346,16 +346,24 @@ export class RecordController {
     let outerWidth = 1100;
     let data = this.curRRGraphData;
     let eventsLocations = [];
+    let eventsMarkers = [];
     if(this.analysisType === 'pvc') {
       eventsLocations = this.pvcEvents.locs || [];
+      eventsMarkers = this.pvcEvents.markers || [];
     }
     if(this.analysisType === 'afib'){
       eventsLocations = this.afibEvents.locs || [];
+      eventsMarkers = this.afibEvents.markers || [];
     }
-    let events = data.filter(v => {
+    let e = data.filter(v => {
       if(eventsLocations.includes(v.x)){
         return v;
       }
+    });
+    let events = e.map(v => {
+      let markers = eventsMarkers[eventsLocations.indexOf(v.x)]
+      v.markers = markers;
+      return v;
     });
     const svg = d3.select('#rr-chart-container').append('svg')
       .attr('height', outerHeight)
@@ -468,27 +476,27 @@ export class RecordController {
     this.curRRGraphData =  this.rrGraphData.slice(idx, i);
   }
 
-  drawEventsChart(element, index){
-    let eventMarkers = null;
+  drawEventsChart(d){
     let title;
     if(this.analysisType === 'pvc'){
-      eventMarkers = this.pvcEvents.markers;
       title = 'PVC Event';
     }
     if(this.analysisType === 'afib'){
-      eventMarkers = this.afibEvents.markers;
       title = 'AFIB Event';
     }
-    if(this.recordData && eventMarkers){
+    if(this.recordData && d.markers){
       let recData = this.formatRecordData(true);
-      let markers = eventMarkers[index];
-      let start = (markers[0] - 500) >= 0 ? markers[0] - 500 : 0;
-      let end = (markers[1] + 500) < recData.ES.length ?
-      markers[1] + 500 :
+      let start = (d.markers[0] - 500) >= 0 ? d.markers[0] - 500 : 0;
+      let end = (d.markers[1] + 500) < recData.ES.length ?
+      d.markers[1] + 500 :
       recData.ES.length-1;
-      let eventIndex = [markers[0] - start, (markers[0] - start)+(markers[1]-markers[0])];
+      let eventIndex = [d.markers[0] - start, (d.markers[0] - start)+(d.markers[1]- d.markers[0])];
       let data = recData.ES.slice(start, end);
-
+      if(this.analysisType === 'afib'){
+        let end = data.length > 1750 ? 1750 : data.length;
+        data = data.slice(0, end);
+        eventIndex = [0, end - 1];
+      }
       this.clearEventsChart();
       if(data.length < 1){
         return;
