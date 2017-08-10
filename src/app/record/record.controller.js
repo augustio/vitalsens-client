@@ -35,11 +35,13 @@ export class RecordController {
 
       this.curRRIndex = 0;
       this.RRGraphWindow = 250;
+      this.curRRGraphData = [];
 
       this.getRecordDetail();
 
       this.drawEventsChart = this.drawEventsChart.bind(this);
       this.drawRRChart = this.drawRRChart.bind(this);
+      this.nextRRData = this.nextRRData.bind(this);
       this.clearEventsChart = this.clearEventsChart.bind(this);
 
       d3.select(window).on('resize', () => {
@@ -130,6 +132,7 @@ export class RecordController {
         this.alarmsCount = this.alarms.length;
         this.onAlarmsPageChange();
         this.rPeaks = results.recordAnalysis.rPeaks || {};
+        this.nextRRData();
         this.drawRRChart();
       }
     });
@@ -341,7 +344,7 @@ export class RecordController {
     let margin = 40;
     let outerHeight = 280;
     let outerWidth = 1100;
-    let data = this.nextRRData();
+    let data = this.curRRGraphData;
     let eventsLocations = [];
     if(this.analysisType === 'pvc') {
       eventsLocations = this.pvcEvents.locs || [];
@@ -444,6 +447,7 @@ export class RecordController {
       })
       .on('click', () => {
         this.clearRRChart();
+        this.nextRRData();
         this.drawRRChart();
       });
   }
@@ -461,7 +465,7 @@ export class RecordController {
     if(i < this.rrGraphData.length){
       this.curRRIndex = i;
     }
-    return this.rrGraphData.slice(idx, i);
+    this.curRRGraphData =  this.rrGraphData.slice(idx, i);
   }
 
   drawEventsChart(element, index){
