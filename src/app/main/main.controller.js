@@ -123,6 +123,11 @@ export class MainController {
     this.onPageChange();
   }
 
+  onPatientSelected(){
+    this.currentPage = 1;
+    this.getPatientRecords();
+  }
+
   onPageChange(){
     let start = (this.currentPage - 1)*this.pageSize,
         end = start + this.pageSize;

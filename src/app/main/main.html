@@ -7,7 +7,7 @@
           <select class="form-control"
             name="patientId"
             ng-model="main.selectedPatient"
-            ng-change="main.getPatientRecords()"
+            ng-change="main.onPatientSelected()"
             ng-options="patient.userId for patient in main.patients">
           </select>
         </div>
