@@ -405,10 +405,11 @@ export class RecordController {
         .call(xAxis);
 
       chartGroup.append('text')
-      .attr('fill', 'black')
+      .attr('fill', 'steelblue')
       .attr('x', ((width/2) - margin*1.75))
       .attr('y', (margin*-1.5))
       .attr('dy', '3em')
+      .style('font-weight', 'bold')
       .text('TACHOGRAM (RR Interval Signal)');
       chartGroup.append('text')
       .attr('fill', 'black')
@@ -541,10 +542,11 @@ export class RecordController {
           .attr('opacity', 0.3);
 
         chartGroup.append('text')
-        .attr('fill', 'black')
+        .attr('fill', 'steelblue')
         .attr('x', ((width/2) - margin*1.75))
         .attr('y', (margin*-2))
         .attr('dy', '3em')
+        .style('font-weight', 'bold')
         .text(title);
 
         chartGroup.append('text')
