@@ -103,7 +103,8 @@
             boundary-links="true"
             force-ellipses="true">
             </ul>
-            <div id="rr-chart-container" class="font-size-responsive"></div>
+            <div ng-if="rec.analysisType === 'poincare'" id="poincare-chart-container" class="font-size-responsive"></div>
+            <div ng-if="rec.analysisType === 'afib' || rec.analysisType === 'pvc'" id="rr-chart-container" class="font-size-responsive"></div>
             <div id="events-chart-container" class="font-size-responsive"></div>
           </div>
         </div>

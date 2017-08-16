@@ -108,9 +108,10 @@ line{
   margin: auto;
   display: block;
 }
-#poincare-chart{
-  height: 500px;
-  width: 600px;
+#poincare-chart-container{
+  height: 620px;
+  width: 620px;
+  margin: 0 auto;
 }
 
 #events-chart-container{
@@ -201,13 +202,6 @@ g.tick text {
 
 .record-components{
   margin-top: 1em;
-}
-
-.intersectLine{
-  fill: 'none';
-  stroke: 'green';
-  stroke-width: '5px';
-  stroke-dasharray: 5, 5;
 }
 
 #event-types{

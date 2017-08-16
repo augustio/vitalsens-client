@@ -104,8 +104,7 @@ export class RecordController {
         this.analysisAvailable = true;
         this.rrIntervals = results.recordAnalysis.rrIntervals || [];
         this.rrGraphData =
-        this.rrIntervals.filter(v => v > 0)
-                        .map((v, i) => {
+        this.rrIntervals.map((v, i) => {
                           return {x: i+1, y: v};
                         });
         this.pvcEvents = results.recordAnalysis.pvcEvents || {};
@@ -419,7 +418,9 @@ export class RecordController {
 
       chartGroup.selectAll('circle')
         .data(events)
-        .enter().append('circle')
+        .enter()
+        .filter(d => d.y >= 0)
+        .append('circle')
         .attr('cx', d => x(d.x))
         .attr('cy', d => y(d.y))
         .attr('r','5')
@@ -588,6 +589,205 @@ export class RecordController {
     }
   }
 
+  drawPoincareChart(){
+    if(this.rrIntervals.length < 1 ){
+      return;
+    }
+    this.clearPoincareChart();
+    let rrOdd = this.rrGraphData
+      .filter(v => v.x%2 !== 0)
+      .map(v => v.y);
+    let rrEven = this.rrGraphData
+      .filter(v => v.x%2 === 0)
+      .map(v => v.y);
+    if(rrOdd.length < 1 || rrEven.length < 1)
+      return;
+    let pData = rrEven.map((v,i) => {
+      return {x: rrOdd[i], y: v}
+    });
+    let pvcLocs = this.pvcEvents.locs || [];
+    let pvc = this.rrGraphData
+      .filter(v => pvcLocs.includes(v.x))
+      .map(v => v.y);
+    let meanRROdd = d3.mean(rrOdd);
+    let meanRREven = d3.mean(rrEven);
+    rrOdd = rrOdd.sort((a, b) => a - b);
+    let outerWidth = 620,
+      outerHeight = 620,
+      margin = 40,
+      width = outerWidth - margin*2,
+      height = outerHeight - margin*2,
+      data = {
+        pData,
+        line1: rrOdd.map(v => ({
+          x: v,
+          y: -1*v+(meanRROdd + meanRREven)
+        })),
+        line2: rrOdd.map(v => ({
+          x: v,
+          y: v+(meanRROdd - meanRREven)
+        })),
+        cx: meanRREven,
+        cy: meanRROdd,
+        pvc
+      };
+
+    const svg = d3.select('#poincare-chart-container').append('svg')
+      .attr('height', outerHeight)
+      .attr('width', outerWidth);
+    let eHeight = 0;
+    let eWidth = 0;
+    if(this.hrvFeatures){
+      eHeight = this.hrvFeatures.SD1*(height/16);
+      eWidth = this.hrvFeatures.SD2*(width/16);
+    }
+
+    //x-y scale generators
+    let yMax = d3.max(data.pData, d => d.y);
+    let yMin = d3.min(data.pData, d => d.y);
+    let xMax = d3.max(data.pData, d => d.x);
+    let xMin = d3.min(data.pData, d => d.x);
+    const y = d3.scaleLinear()
+      .domain([
+        yMin - (yMax - yMin),
+        yMax + (yMax - yMin)
+      ]).range([height, 0]);
+
+    const x = d3.scaleLinear()
+      .domain([
+        xMin - (xMax - xMin),
+        xMax + (xMax - xMin)
+      ]).range([0, width]);
+
+    //x-y axis generators
+    const yAxis = d3.axisLeft(y)
+                    .ticks(5)
+                    .tickSize(-1*width, 0, 0);
+    const xAxis = d3.axisBottom(x)
+                    .ticks(5)
+                    .tickSize(-1*height, 0, 0);
+
+    const chartGroup = svg.append('g')
+        .attr('height', height)
+        .attr('width', width)
+        .attr('stroke-width', 5)
+        .attr('transform', 'translate('+margin+','+margin+')');
+
+    let gy = chartGroup.append('g')
+      .attr('class', 'poincare-grid')
+      .call(yAxis);
+
+    let gx = chartGroup.append('g')
+      .attr('class', 'poincare-grid')
+      .attr('transform', 'translate(0,'+height+')')
+      .call(xAxis);
+
+    chartGroup.append('text')
+      .attr('fill', 'steelblue')
+      .attr('x', ((width/2)-margin*1.75))
+      .attr('y', (margin*-1.5))
+      .attr('dy', '3em')
+      .style('font-weight', 'bold')
+      .text('POINCARE PLOT');
+      chartGroup.append('text')
+      .attr('fill', 'black')
+      .attr('x', ((width/2)-margin*0.75))
+      .attr('y', (height+margin*0.75))
+      .text('RR(i)');
+      chartGroup.append('text')
+      .attr('fill', 'black')
+      .attr('x', (height/-2))
+      .attr('transform', 'rotate(-90)')
+      .attr('y', (margin*-0.75))
+      .text('RR(i+1)');
+
+    let points = chartGroup.selectAll('circle')
+      .data(data.pData);
+
+    chartGroup.selectAll('circle')
+    .data(data.pData)
+    .enter().append('circle')
+    .attr('class', 'poincare-non-pvc')
+    .attr('cx', d => x(d.x))
+    .attr('cy', d => y(d.y))
+    .attr('r','5')
+    .attr('fill', (d => {
+      return (data.pvc.includes(d.x) || data.pvc.includes(d.y)) ?
+        'red' :
+        'blue';
+    }));
+
+    //Line generator (used to draw dashed lines)
+    let intersectLine = d3.line()
+      .x(d => x(d.x))
+      .y(d => y(d.y));
+
+    chartGroup.append('path')
+      .attr('fill', 'none')
+      .attr('stroke', 'green')
+      .attr('stroke-width', 5)
+      .attr('stroke-dasharray', '5,5')
+      .attr('d', intersectLine(data.line1))
+
+    chartGroup.append('path')
+      .attr('fill', 'none')
+      .attr('stroke', 'green')
+      .attr('stroke-width', 5)
+      .attr('stroke-dasharray', '5,5')
+      .attr('d', intersectLine(data.line2))
+
+    chartGroup.append('ellipse')
+      .attr('class', 'poincare-center')
+      .attr('cx', x(data.cx) )
+      .attr('cy', y(data.cy))
+      .attr('ry', eHeight)
+      .attr('rx', eWidth)
+      .attr('transform', 'rotate(-45,' + x(data.cx) + ',' + y(data.cy) + ')')
+      .attr('stroke', 'steelblue')
+      .attr('fill', 'none')
+      .attr('stroke-width', 4);
+
+    let zoom = d3.zoom()
+      .scaleExtent([1, 8])
+      .on('zoom', () => {
+        let t = d3.event.transform;
+        gx.call(xAxis.scale(t.rescaleX(x)));
+        gy.call(yAxis.scale(t.rescaleY(y)));
+        chartGroup.selectAll('circle')
+          .attr('cx', d => {
+            if(d.x > meanRROdd)
+              return x(d.x +(d.x - meanRROdd)*t.k);
+            else
+              return x(meanRROdd - (meanRROdd - d.x)*t.k);
+          })
+          .attr('cy', d => {
+            if(d.y > meanRREven)
+              return y(d.y +(d.y - meanRREven)*t.k);
+            else
+              return y(meanRREven - (meanRREven - d.y)*t.k);
+          });
+        chartGroup.selectAll('ellipse').remove();
+        chartGroup.append('ellipse')
+          .attr('class', 'poincare-center')
+          .attr('cx', x(data.cx))
+          .attr('cy', y(data.cy))
+          .attr('ry', eHeight*t.k)
+          .attr('rx', eWidth*t.k)
+          .attr('transform', 'rotate(-45,' + x(data.cx) + ',' + y(data.cy) + ')')
+          .attr('stroke', 'steelblue')
+          .attr('fill', 'none')
+          .attr('stroke-width', 4);
+      });
+
+    svg.call(zoom);
+  }
+
+  clearPoincareChart(){
+    if(d3.select('#poincare-chart-container').select('svg')){
+      d3.select('#poincare-chart-container').select('svg').remove();
+    }
+  }
+
   clearEventsChart(){
     if(d3.select('#events-chart-container').select('svg')){
       d3.select('#events-chart-container').select('svg').remove();
@@ -642,15 +842,20 @@ export class RecordController {
 
   setAnalysisType(type){
     this.analysisType = type;
-    this.clearEventsChart();
-    if(type === 'alarm'){
-      this.clearRRChart();
-    }else if(type === 'poincare'){
-      this.clearRRChart();
-    }else{
-      this.clearRRChart();
-      this.drawRRChart();
-    }
+    this.$timeout(() => {
+      this.clearEventsChart();
+      if(type === 'alarm'){
+        this.clearRRChart();
+        this.clearPoincareChart();
+      }else if(type === 'poincare'){
+        this.clearRRChart();
+        this.drawPoincareChart();
+      }else if(type === 'afib' || type === 'pvc'){
+        this.clearPoincareChart();
+        this.clearRRChart();
+        this.drawRRChart();
+      }
+    }, 500);
   }
 
   goToRecords(){
